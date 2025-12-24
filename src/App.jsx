@@ -6,6 +6,7 @@ import MissionCard from './components/diagnostic/MissionCard'; // Import Step 6 
 import DataSeeder from './components/admin/DataSeeder';
 import { auth } from './firebase/config';
 import PowerMap from './components/dashboard/PowerMap';
+import BossTracker from './components/dashboard/BossTracker';
 
 function BlueNinjaContent() {
   const { user, ninjaStats, updatePower, loading } = useNinja();
@@ -15,7 +16,9 @@ function BlueNinjaContent() {
     totalQuestions,
     submitAnswer,
     startRecoveryTimer, // Fixed: Destructured to resolve ReferenceError
-    isComplete
+    isComplete,
+    masteryData,
+    hurdles // Step 12 integration
   } = useDiagnostic();
 
   if (loading) return (
@@ -31,6 +34,11 @@ function BlueNinjaContent() {
     <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
       <div className="w-full max-w-md">
         <PowerMap masteryData={masteryData} />
+      </div>
+
+      {/* NEW: Display the Bosses identified during the test */}
+      <div className="w-full max-w-md">
+        <BossTracker hurdles={hurdles} />
       </div>
 
       <div className="ninja-card text-center max-w-md bg-white">
@@ -77,7 +85,12 @@ function BlueNinjaContent() {
             question={currentQuestion}
             onStartRecovery={startRecoveryTimer} // Step 10 integration
             onAnswer={(isCorrect, choice, isRecovered = false) => {
-              submitAnswer(currentQuestion.id, isCorrect, currentQuestion.atom, isRecovered);
+              // Find the diagnostic tag of the chosen distractor to track hurdles
+              const chosenDistractor = currentQuestion.distractors.find(d => d.option === choice);
+              const tag = chosenDistractor?.diagnostic_tag || null;
+
+              submitAnswer(currentQuestion.id, isCorrect, currentQuestion.atom, isRecovered, tag);
+
               if (isCorrect) updatePower(10);
               else if (isRecovered) updatePower(5); // Partial power for recovery
             }}
