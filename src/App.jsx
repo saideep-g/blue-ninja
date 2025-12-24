@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { NinjaProvider, useNinja } from './context/NinjaContext';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import Login from './components/auth/Login';
 import MissionCard from './components/diagnostic/MissionCard'; // Import Step 6 component
 import DataSeeder from './components/admin/DataSeeder';
-import { auth } from './firebase/config';
 import PowerMap from './components/dashboard/PowerMap';
 import BossTracker from './components/dashboard/BossTracker';
 import Achievements from './components/dashboard/Achievements';
 import AchievementUnlock from './components/dashboard/AchievementUnlock';
+import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
+import { auth } from './firebase/config';
 
+/**
+ * Blue Ninja Content Component
+ * Updated in Step 14 to support Dashboard and Quest views.
+ */
 function BlueNinjaContent() {
-  const { user, ninjaStats, updatePower, loading, activeAchievement, triggerAchievement } = useNinja();
+  const { user, ninjaStats, updatePower, loading, activeAchievement } = useNinja();
+  const [currentView, setCurrentView] = useState('QUEST'); // 'QUEST' or 'DASHBOARD'
+
   const {
     currentQuestion,
     currentIndex,
@@ -31,34 +38,54 @@ function BlueNinjaContent() {
 
   if (!user) return <Login />;
 
-  // Test End Screen (Dashboard preview)
-  if (isComplete) return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
-      <div className="w-full max-w-md">
-        <PowerMap masteryData={masteryData} />
-      </div>
+  // --- DASHBOARD VIEW ---
+  if (currentView === 'DASHBOARD' || isComplete) {
+    return (
+      <div className="min-h-screen bg-[var(--color-surface)] p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
+        <AchievementUnlock achievement={activeAchievement} />
 
-      {/* NEW: Display the Bosses identified during the test */}
-      <div className="w-full max-w-md">
-        <BossTracker hurdles={hurdles} />
-        <Achievements ninjaStats={ninjaStats} />
-      </div>
+        {/* Dashboard Header */}
+        <header className="flex justify-between items-center mb-10">
+          <h1 className="text-3xl font-black italic text-blue-800 uppercase tracking-tighter">
+            Blue Ninja Dashboard
+          </h1>
+          <button
+            onClick={() => auth.signOut()}
+            className="text-xs font-black text-blue-400 uppercase tracking-widest hover:text-blue-800 transition-colors"
+          >
+            Sign Out 🚪
+          </button>
+        </header>
 
-      <div className="ninja-card text-center max-w-md bg-white">
-        <h3 className="text-xl font-bold text-blue-800">Mission Report Syncing...</h3>
-        <p className="text-slate-500 mt-2 text-sm">
-          Bayesian mastery confirmed. Your Ninja Profile has been updated in the cloud.
-        </p>
-        <button
-          className="btn-primary w-full mt-6"
-          onClick={() => window.location.reload()}
-        >
-          Go to Dashboard ➤
-        </button>
-      </div>
-    </div>
-  );
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Hero Column */}
+          <div className="lg:col-span-2 space-y-8">
+            <PowerMap masteryData={masteryData} />
+            <ConceptPowerMap masteryData={masteryData} />
+          </div>
+        </div>
 
+        {/* Intel Column */}
+        <div className="space-y-8">
+          <BossTracker hurdles={hurdles} />
+          <Achievements ninjaStats={ninjaStats} />
+
+          {/* Action Card */}
+          <div className="ninja-card bg-blue-600 text-white border-none text-center py-10">
+            <h3 className="text-xl font-black uppercase italic mb-4">Sky Is Calling</h3>
+            <button
+              onClick={() => isComplete ? window.location.reload() : setCurrentView('QUEST')}
+              className="bg-yellow-400 text-blue-900 px-8 py-3 rounded-2xl font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all"
+            >
+              {isComplete ? 'New Quest' : 'Continue Quest'} ➤
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- QUEST VIEW (Diagnostic) ---
   return (
     <div className="min-h-screen pb-20">
       {/* Global Achievement Overlay */}
@@ -108,6 +135,15 @@ function BlueNinjaContent() {
           </div>
         )}
       </main>
+
+      <div className="flex justify-center mt-10">
+        <button
+          onClick={() => setCurrentView('DASHBOARD')}
+          className="text-[10px] font-black text-blue-400 hover:text-blue-800 uppercase tracking-widest border-b border-blue-100 pb-1 transition-all"
+        >
+          Check Mission Intel Dashboard
+        </button>
+      </div>
 
       {/* Footer Branding */}
       <p className="text-center mt-10 text-[10px] font-black text-blue-300 uppercase tracking-widest">
