@@ -1,0 +1,863 @@
+{
+  "test_metadata": {
+    "title": "The Ninja Entrance Exam",
+    "version": "4.0",
+    "total_questions": 30,
+    "adaptive": true,
+    "adaptive_stopping": {
+      "enabled": true,
+      "stop_condition": "CONFIDENCE_THRESHOLD",
+      "confidence_threshold": 0.85,
+      "min_questions_per_atom": 2,
+      "max_questions_total": 24,
+      "timeout_minutes": 30
+    }
+  },
+  "questions": [
+    {
+      "id": "DIAG_M1_01",
+      "module": "M1: Integers",
+      "atom": "A3",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "Simplify: $-12 - (-15) + (-8)$",
+      "correct_answer": "-5",
+      "distractors": [
+        {
+          "option": "-35",
+          "diagnostic_tag": "SIGN_IGNORANCE",
+          "engagement_framing": "You're SO close! Let's unlock this one concept.",
+          "follow_up": {
+            "text": "Quick check: What is the result of $-(-15)$?",
+            "engagement_message": "What's the opposite of -15?",
+            "options": ["15", "-15", "0"],
+            "correct": "15",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD",
+            "ai_hint_template": true,
+            "hint_stage": 1,
+            "recovery_tracking": {
+              "measure_time": true,
+              "latent_knowledge_threshold": 0.6
+            }
+          }
+        },
+        {
+          "option": "7",
+          "diagnostic_tag": "ARITHMETIC_ERROR",
+          "engagement_framing": "Close! Double-check your subtraction."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M4_01",
+      "module": "M4: Simple Equations",
+      "atom": "A13",
+      "type": "Verbal",
+      "difficulty": 3,
+      "text": "Seven less than three times a number is 20. Find the number.",
+      "correct_answer": "9",
+      "influences_math_atoms": {
+        "A13": "PRIMARY",
+        "A14": "SECONDARY"
+      },
+      "distractors": [
+        {
+          "option": "4.33",
+          "diagnostic_tag": "SEMANTIC_ORDER_ERROR",
+          "engagement_framing": "Nice try! You've got the numbers, let's look at the 'order'.",
+          "follow_up": {
+            "text": "In '7 less than x', which is correct?",
+            "options": ["7 - x", "x - 7"],
+            "correct": "x - 7",
+            "type": "TRANSLATOR_BRIDGE",
+            "intervention_strategy": "TRANSLATOR_BRIDGE",
+            "recovery_tracking": {
+              "measure_time": true,
+              "latent_knowledge_threshold": 0.5
+            }
+          }
+        },
+        {
+          "option": "9.33",
+          "diagnostic_tag": "OPERATOR_ERROR",
+          "engagement_framing": "Check: Did you add 7 to 20 or subtract it?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_L1_01",
+      "module": "L_GEN: Logic",
+      "atom": "L1",
+      "type": "Logical",
+      "difficulty": 4,
+      "text": "Find the next number: $2, 6, 12, 20, 30, ...$",
+      "correct_answer": "42",
+      "influences_math_atoms": {
+        "A29": "SCAFFOLDING_BOOST",
+        "A20": "SCAFFOLDING_BOOST",
+        "A30": "DIRECT_DEPENDENCE"
+      },
+      "distractors": [
+        {
+          "option": "40",
+          "diagnostic_tag": "PATTERN_GAP",
+          "engagement_framing": "You found a pattern! Check the differences more carefully.",
+          "pattern_reasoning": {
+            "error_type": "INCOMPLETE_PATTERN",
+            "recovery_hint": "The differences are +4, +6, +8, +10... what's next?"
+          },
+          "follow_up": {
+            "text": "What is the next difference after +10?",
+            "options": ["+11", "+12"],
+            "correct": "+12",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M2_01",
+      "module": "M2: Fractions",
+      "atom": "A5",
+      "type": "Procedural",
+      "difficulty": 4,
+      "text": "Calculate: $\\frac{3}{4} \\div \\frac{9}{8}$",
+      "correct_answer": "2/3",
+      "distractors": [
+        {
+          "option": "27/32",
+          "diagnostic_tag": "RECIPROCAL_FAILURE",
+          "engagement_framing": "Almost there! One quick flip and you've got this.",
+          "follow_up": {
+            "text": "To divide, we multiply by the __________.",
+            "options": ["Square", "Reciprocal"],
+            "correct": "Reciprocal",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        },
+        {
+          "option": "3/32",
+          "diagnostic_tag": "MULTIPLICATION_ERROR",
+          "engagement_framing": "Check your multiplication of the numerators and denominators."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M5_01",
+      "module": "M5: Angles",
+      "atom": "A15",
+      "type": "Verbal",
+      "difficulty": 3,
+      "text": "One angle is twice its supplement. Find the larger angle.",
+      "correct_answer": "120",
+      "distractors": [
+        {
+          "option": "60",
+          "diagnostic_tag": "RESULT_TARGET_ERROR",
+          "engagement_framing": "You solved for x! Now check what the question asked for."
+        },
+        {
+          "option": "90",
+          "diagnostic_tag": "CONCEPT_CONFUSION",
+          "engagement_framing": "Supplementary angles add to 180°, not 90°."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M6_01",
+      "module": "M6: Triangles",
+      "atom": "A20",
+      "type": "Logical",
+      "difficulty": 4,
+      "text": "Two sides of a triangle are 7cm and 10cm. Which side length is IMPOSSIBLE?",
+      "correct_answer": "18",
+      "distractors": [
+        {
+          "option": "4",
+          "diagnostic_tag": "INEQUALITY_LOGIC",
+          "engagement_framing": "Check the Triangle Inequality: sum of two sides > third side.",
+          "follow_up": {
+            "text": "Can a triangle have sides 2, 2, and 10?",
+            "options": ["Yes", "No"],
+            "correct": "No",
+            "type": "VISUAL_CHECK",
+            "intervention_strategy": "VISUAL"
+          }
+        },
+        {
+          "option": "15",
+          "diagnostic_tag": "BOUNDARY_ERROR",
+          "engagement_framing": "Is 7 + 10 > 15? Yes! So 15 is possible."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M7_01",
+      "module": "M7: Ratios",
+      "atom": "A22",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "If $3:5 = x:20$, find x.",
+      "correct_answer": "12",
+      "distractors": [
+        {
+          "option": "15",
+          "diagnostic_tag": "SCALING_ERROR",
+          "engagement_framing": "Check the multiplier! $5 \\times ? = 20$."
+        },
+        {
+          "option": "3",
+          "diagnostic_tag": "CROSS_MULTIPLICATION_ERROR",
+          "engagement_framing": "Cross multiply: 3 × 20 ÷ 5 = ?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_L2_01",
+      "module": "L_GEN: Logic",
+      "atom": "L2",
+      "type": "Verbal",
+      "difficulty": 3,
+      "text": "APPLE is written as EPPLE. How is ORANGE written?",
+      "correct_answer": "URANGE",
+      "influences_math_atoms": {
+        "A13": "DIRECT_DEPENDENCE"
+      },
+      "distractors": [
+        {
+          "option": "PRANGE",
+          "diagnostic_tag": "VOWEL_LOGIC_GAP",
+          "engagement_framing": "A→E is the pattern. What vowel comes after O?"
+        },
+        {
+          "option": "ORNGE",
+          "diagnostic_tag": "PATTERN_MISIDENTIFIED",
+          "engagement_framing": "The vowels are replaced, but consonants stay the same."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M10_01",
+      "module": "M10: Algebra",
+      "atom": "A31",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "Simplify: $5x + 3y - 2x + y$",
+      "correct_answer": "3x + 4y",
+      "distractors": [
+        {
+          "option": "7x + 4y",
+          "diagnostic_tag": "SIGN_ERROR",
+          "engagement_framing": "Watch the signs! Is it +5x - 2x or +5x + 2x?"
+        },
+        {
+          "option": "3x + 2y",
+          "diagnostic_tag": "LIKE_TERM_CONFUSION",
+          "engagement_framing": "Combine like terms: y + 3y = ?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M9_01",
+      "module": "M9: Geometry",
+      "atom": "A29",
+      "type": "Logical",
+      "difficulty": 5,
+      "text": "Find the area of a path 2m wide around a square park of side 10m.",
+      "correct_answer": "96",
+      "distractors": [
+        {
+          "option": "144",
+          "diagnostic_tag": "INNER_OUTER_CONFUSION",
+          "engagement_framing": "Is the new side length $10+2$ or $10+2+2$?",
+          "follow_up": {
+            "text": "Is the new side length 12 or 14?",
+            "options": ["12", "14"],
+            "correct": "14",
+            "type": "VISUAL_CHECK",
+            "intervention_strategy": "VISUAL"
+          }
+        },
+        {
+          "option": "100",
+          "diagnostic_tag": "MISSING_PATH_SUBTRACTION",
+          "engagement_framing": "Remember: Area of path = Outer area - Inner area."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M4_03",
+      "module": "M4: Simple Equations",
+      "atom": "A12",
+      "type": "Procedural",
+      "difficulty": 4,
+      "text": "Solve for $x$: $3(x - 4) + 2 = 11$",
+      "correct_answer": "7",
+      "distractors": [
+        {
+          "option": "13/3",
+          "diagnostic_tag": "BODMAS_TRANSPOSE_ERROR",
+          "engagement_framing": "You're getting the hang of it! Let's check the order of operations.",
+          "follow_up": {
+            "text": "Which should you move across the '=' sign first?",
+            "options": ["The 3 (multiplication)", "The 2 (addition)"],
+            "correct": "The 2 (addition)",
+            "type": "PROCEDURAL_SCAFFOLD",
+            "intervention_strategy": "SCAFFOLD",
+            "recovery_tracking": {
+              "measure_time": true,
+              "latent_knowledge_threshold": 0.6
+            }
+          }
+        },
+        {
+          "option": "5",
+          "diagnostic_tag": "DISTRIBUTION_SIGN_ERROR",
+          "engagement_framing": "So close! Did the 3 multiply both parts inside the bracket?",
+          "follow_up": {
+            "text": "What is $3 \\times (x - 4)$?",
+            "options": ["3x - 4", "3x - 12"],
+            "correct": "3x - 12",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M9_02",
+      "module": "M9: Perimeter & Area",
+      "atom": "A28",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "The circumference of a circle is $44$ cm. Find its radius. (Use $\\pi = \\frac{22}{7}$)",
+      "correct_answer": "7",
+      "distractors": [
+        {
+          "option": "14",
+          "diagnostic_tag": "DIAMETER_RADIUS_CONFUSION",
+          "engagement_framing": "Great math! But wait—did you find the radius or the diameter?",
+          "follow_up": {
+            "text": "If the diameter is 14, the radius is __________.",
+            "options": ["7", "28"],
+            "correct": "7",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        },
+        {
+          "option": "22",
+          "diagnostic_tag": "FORMULA_MISUSE",
+          "engagement_framing": "Check: Is the given value the circumference or half the circumference?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M7_02",
+      "module": "M7: Comparing Quantities",
+      "atom": "A23",
+      "type": "Verbal",
+      "difficulty": 4,
+      "text": "A dress originally cost $500. It is now on sale for $400. What is the percentage decrease?",
+      "correct_answer": "20%",
+      "distractors": [
+        {
+          "option": "25%",
+          "diagnostic_tag": "PERCENT_BASE_ERROR",
+          "engagement_framing": "You found the ratio! But which number was the 'original' price?",
+          "follow_up": {
+            "text": "To find % change, do we divide the change by the 'Original' or 'New' price?",
+            "options": ["Original ($500)", "New ($400)"],
+            "correct": "Original ($500)",
+            "type": "TRANSLATOR_BRIDGE",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        },
+        {
+          "option": "20.83%",
+          "diagnostic_tag": "CALCULATION_ERROR",
+          "engagement_framing": "Close! Double-check: (500-400)/500 × 100 = ?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_L3_01",
+      "module": "L_GEN: Logic",
+      "atom": "L3",
+      "type": "Logical",
+      "difficulty": 3,
+      "text": "A person walks 5 km North, then turns Right and walks 5 km. In which direction are they from the starting point?",
+      "correct_answer": "North-East",
+      "influences_math_atoms": {
+        "A15": "SCAFFOLDING_BOOST",
+        "A29": "SCAFFOLDING_BOOST"
+      },
+      "distractors": [
+        {
+          "option": "East",
+          "diagnostic_tag": "SPATIAL_ORIENTATION_GAP",
+          "engagement_framing": "Think about the diagonal path!",
+          "follow_up": {
+            "text": "If you are North of your house and move East, what direction are you now?",
+            "options": ["Still North", "North-East"],
+            "correct": "North-East",
+            "type": "VISUAL_CHECK"
+          }
+        },
+        {
+          "option": "South-East",
+          "diagnostic_tag": "DIRECTION_CONFUSION",
+          "engagement_framing": "Right turn from North goes to East, not South."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M2_02",
+      "module": "M2: Fractions & Decimals",
+      "atom": "A7",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "Which is greater: $0.07$ or $0.009$?",
+      "correct_answer": "0.07",
+      "distractors": [
+        {
+          "option": "0.009",
+          "diagnostic_tag": "DIGIT_COUNT_BIAS",
+          "engagement_framing": "Common trap! Does having 'more digits' make a decimal bigger?",
+          "follow_up": {
+            "text": "Which is more: 7 cents or 0.9 cents?",
+            "options": ["7 cents", "0.9 cents"],
+            "correct": "7 cents",
+            "type": "VISUAL_CHECK",
+            "intervention_strategy": "VISUAL"
+          }
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M11_01",
+      "module": "M11: Exponents",
+      "atom": "A33",
+      "type": "Procedural",
+      "difficulty": 4,
+      "text": "Simplify: $5^3 \\times 5^4$",
+      "correct_answer": "5^7",
+      "distractors": [
+        {
+          "option": "5^12",
+          "diagnostic_tag": "EXPONENT_LAW_CONFUSION",
+          "engagement_framing": "You multiplied the powers! But what does the 'Law of Exponents' say?",
+          "follow_up": {
+            "text": "When multiplying same bases, do we ADD or MULTIPLY the powers?",
+            "options": ["Add them", "Multiply them"],
+            "correct": "Add them",
+            "type": "CONCEPT_CHECK"
+          }
+        },
+        {
+          "option": "25^7",
+          "diagnostic_tag": "BASE_MULTIPLICATION_ERROR",
+          "engagement_framing": "The base stays the same! Just the powers change."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M4_04",
+      "module": "M4: Simple Equations",
+      "atom": "A14",
+      "type": "Verbal",
+      "difficulty": 5,
+      "text": "The sum of three consecutive integers is 51. Find the middle integer.",
+      "correct_answer": "17",
+      "influences_math_atoms": {
+        "A13": "SCAFFOLDING_BOOST",
+        "A12": "SCAFFOLDING_BOOST"
+      },
+      "distractors": [
+        {
+          "option": "16",
+          "diagnostic_tag": "TARGET_VALUE_ERROR",
+          "engagement_framing": "You found the first number! The mission asks for the 'middle' one."
+        },
+        {
+          "option": "15",
+          "diagnostic_tag": "CONSECUTIVE_LOGIC_ERROR",
+          "engagement_framing": "If the first is x, the middle is x+1, and the last is x+2.",
+          "follow_up": {
+            "text": "If the first number is 'x', the middle is __________.",
+            "options": ["x", "x+1"],
+            "correct": "x+1",
+            "type": "TRANSLATOR_BRIDGE"
+          }
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M1_02",
+      "module": "M1: Integers",
+      "atom": "A4",
+      "type": "Logical",
+      "difficulty": 4,
+      "text": "The product of 10 negative integers and 1 positive integer is __________.",
+      "correct_answer": "Positive",
+      "distractors": [
+        {
+          "option": "Negative",
+          "diagnostic_tag": "PARITY_LOGIC_ERROR",
+          "engagement_framing": "Remember the 'Negative Pairs' rule!",
+          "follow_up": {
+            "text": "Does an EVEN number of negative signs result in a Positive or Negative product?",
+            "options": ["Positive", "Negative"],
+            "correct": "Positive",
+            "type": "CONCEPT_CHECK"
+          }
+        },
+        {
+          "option": "Zero",
+          "diagnostic_tag": "IDENTITY_ELEMENT_CONFUSION",
+          "engagement_framing": "There are no zeros in the list, so the product can't be zero."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M6_02",
+      "module": "M6: Triangles",
+      "atom": "A19",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "In a triangle, an exterior angle is $110^\\circ$. If one interior opposite angle is $40^\\circ$, find the other.",
+      "correct_answer": "70",
+      "distractors": [
+        {
+          "option": "150",
+          "diagnostic_tag": "EXTERIOR_ANGLE_SUM_ERROR",
+          "engagement_framing": "Wait! Is the exterior angle the SUM or the DIFFERENCE?",
+          "follow_up": {
+            "text": "Exterior Angle = (Sum of interior opposites) or 180?",
+            "options": ["Sum of interior opposites", "180 - Interior"],
+            "correct": "Sum of interior opposites",
+            "type": "CONCEPT_CHECK"
+          }
+        },
+        {
+          "option": "70",
+          "diagnostic_tag": "CORRECT_BUT_COINCIDENCE",
+          "engagement_framing": "Correct! Exterior = 40 + other angle."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_L4_01",
+      "module": "L_GEN: Logic",
+      "atom": "L4",
+      "type": "Verbal",
+      "difficulty": 4,
+      "text": "Pointing to a photograph, a girl says, 'He is the only son of my grandfather's only son.' How is the man in the photo related to the girl?",
+      "correct_answer": "Brother",
+      "influences_math_atoms": {
+        "A13": "DIRECT_DEPENDENCE",
+        "A14": "DIRECT_DEPENDENCE"
+      },
+      "distractors": [
+        {
+          "option": "Father",
+          "diagnostic_tag": "BLOOD_RELATION_DECODING_GAP",
+          "engagement_framing": "Let's trace the family tree back!",
+          "follow_up": {
+            "text": "Who is 'Your grandfather's only son'?",
+            "options": ["Your Father", "Your Uncle"],
+            "correct": "Your Father",
+            "type": "TRANSLATOR_BRIDGE"
+          }
+        },
+        {
+          "option": "Uncle",
+          "diagnostic_tag": "FAMILY_TREE_ERROR",
+          "engagement_framing": "If he's the grandfather's only son, that's the girl's parent."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M3_01",
+      "module": "M3: Data Handling",
+      "atom": "A9",
+      "type": "Procedural",
+      "difficulty": 4,
+      "text": "The mean of five numbers is 20. If four of the numbers are 18, 22, 15, and 25, find the fifth number.",
+      "correct_answer": "20",
+      "distractors": [
+        {
+          "option": "80",
+          "diagnostic_tag": "MEAN_CONCEPT_ERROR",
+          "engagement_framing": "You found the total sum! Now let's find that missing number.",
+          "follow_up": {
+            "text": "If the mean of 5 numbers is 20, what is their total sum?",
+            "options": ["20", "100"],
+            "correct": "100",
+            "type": "CONCEPT_CHECK",
+            "intervention_strategy": "SCAFFOLD",
+            "recovery_tracking": {
+              "measure_time": true,
+              "latent_knowledge_threshold": 0.6
+            }
+          }
+        },
+        {
+          "option": "10",
+          "diagnostic_tag": "SUBTRACTION_ERROR",
+          "engagement_framing": "Check: 100 - 18 - 22 - 15 - 25 = ?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M5_02",
+      "module": "M5: Lines & Angles",
+      "atom": "A17",
+      "type": "Logical",
+      "difficulty": 4,
+      "text": "Two parallel lines are cut by a transversal. If one interior angle is $75^\\circ$, find the measure of its co-interior angle.",
+      "correct_answer": "105",
+      "distractors": [
+        {
+          "option": "75",
+          "diagnostic_tag": "ALTERNATE_INTERIOR_CONFUSION",
+          "engagement_framing": "Wait! Are co-interior angles equal, or do they add up to something special?",
+          "follow_up": {
+            "text": "Co-interior angles (C-shape) add up to __________ degrees.",
+            "options": ["90", "180"],
+            "correct": "180",
+            "type": "VISUAL_CHECK",
+            "intervention_strategy": "VISUAL"
+          }
+        },
+        {
+          "option": "15",
+          "diagnostic_tag": "COMPLEMENT_ERROR",
+          "engagement_framing": "Complementary angles = 90°. Co-interior = 180°."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M8_01",
+      "module": "M8: Rational Numbers",
+      "atom": "A26",
+      "type": "Logical",
+      "difficulty": 5,
+      "text": "How many rational numbers exist between $\\frac{1}{4}$ and $\\frac{1}{2}$?",
+      "correct_answer": "Infinitely many",
+      "distractors": [
+        {
+          "option": "1",
+          "diagnostic_tag": "DENSITY_PROPERTY_GAP",
+          "engagement_framing": "Think smaller! Can we always find a number exactly in the middle?",
+          "follow_up": {
+            "text": "Is there a number between 0.25 and 0.26?",
+            "options": ["Yes (like 0.255)", "No"],
+            "correct": "Yes (like 0.255)",
+            "type": "CONCEPT_CHECK"
+          }
+        },
+        {
+          "option": "2",
+          "diagnostic_tag": "FINITE_ASSUMPTION",
+          "engagement_framing": "Between any two numbers, you can always find one more!"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M12_01",
+      "module": "M12: Symmetry",
+      "atom": "A37",
+      "type": "Logical",
+      "difficulty": 3,
+      "text": "What is the order of rotational symmetry for an equilateral triangle?",
+      "correct_answer": "3",
+      "distractors": [
+        {
+          "option": "1",
+          "diagnostic_tag": "ROTATION_LOGIC_LOW",
+          "engagement_framing": "Imagine spinning the triangle. How many times does it look exactly the same in one full turn?",
+          "follow_up": {
+            "text": "An equilateral triangle looks the same after a rotation of __________ degrees.",
+            "options": ["90", "120"],
+            "correct": "120",
+            "type": "VISUAL_CHECK"
+          }
+        },
+        {
+          "option": "6",
+          "diagnostic_tag": "SYMMETRY_DOUBLING_ERROR",
+          "engagement_framing": "That's the combined symmetries (rotation + reflection). We want rotation only."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M4_05",
+      "module": "M4: Simple Equations",
+      "atom": "A13",
+      "type": "Logical",
+      "difficulty": 4,
+      "text": "I think of a number, multiply it by 3, and subtract 5 to get 16. What was the number?",
+      "correct_answer": "7",
+      "distractors": [
+        {
+          "option": "3.66",
+          "diagnostic_tag": "INVERSE_OP_ORDER_ERROR",
+          "engagement_framing": "Let's reverse the steps! If the last step was 'subtract 5', what's the first thing to undo?",
+          "follow_up": {
+            "text": "To undo 'subtract 5', we should __________.",
+            "options": ["Add 5", "Subtract 5"],
+            "correct": "Add 5",
+            "type": "PROCEDURAL_SCAFFOLD",
+            "intervention_strategy": "SCAFFOLD"
+          }
+        },
+        {
+          "option": "7.33",
+          "diagnostic_tag": "DIVISION_ORDER_ERROR",
+          "engagement_framing": "Should you add 5 first, then divide by 3?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M6_03",
+      "module": "M6: Triangles",
+      "atom": "A21",
+      "type": "Procedural",
+      "difficulty": 5,
+      "text": "A ladder 13m long reaches a window 12m high. How far is the foot of the ladder from the wall?",
+      "correct_answer": "5",
+      "influences_math_atoms": {
+        "A29": "SCAFFOLDING_BOOST"
+      },
+      "distractors": [
+        {
+          "option": "1",
+          "diagnostic_tag": "PYTHAGOREAN_MISUSE",
+          "engagement_framing": "Time to use the Ninja triangle secret: $a^2 + b^2 = c^2$.",
+          "follow_up": {
+            "text": "In the formula $a^2 + b^2 = c^2$, is the ladder (13m) the 'c' side?",
+            "options": ["Yes (Hypotenuse)", "No"],
+            "correct": "Yes (Hypotenuse)",
+            "type": "CONCEPT_CHECK"
+          }
+        },
+        {
+          "option": "25",
+          "diagnostic_tag": "CALCULATION_ERROR",
+          "engagement_framing": "Check: $5^2 + 12^2 = 25 + 144 = 169 = 13^2$"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_L5_01",
+      "module": "L_GEN: Logic",
+      "atom": "L5",
+      "type": "Logical",
+      "difficulty": 5,
+      "text": "If $A + A + A = 12$ and $A \\times B = 20$, find $B - A$.",
+      "correct_answer": "1",
+      "influences_math_atoms": {
+        "A32": "DIRECT_DEPENDENCE",
+        "A12": "SCAFFOLDING_BOOST"
+      },
+      "distractors": [
+        {
+          "option": "5",
+          "diagnostic_tag": "SUBSTITUTION_INCOMPLETE",
+          "engagement_framing": "You found B! Now finish the mission: $B - A$."
+        },
+        {
+          "option": "-1",
+          "diagnostic_tag": "SUBTRACTION_ORDER_ERROR",
+          "engagement_framing": "Is it B - A or A - B? Check which is larger."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M7_03",
+      "module": "M7: Comparing Quantities",
+      "atom": "A24",
+      "type": "Verbal",
+      "difficulty": 4,
+      "text": "A shopkeeper buys a book for $200 and sells it for $250. Find the profit percentage.",
+      "correct_answer": "25%",
+      "distractors": [
+        {
+          "option": "20%",
+          "diagnostic_tag": "PROFIT_BASE_ERROR",
+          "engagement_framing": "Almost! Did you divide the profit by the Cost Price or the Selling Price?",
+          "follow_up": {
+            "text": "Profit % is always calculated on the __________ price.",
+            "options": ["Cost (Buying)", "Selling"],
+            "correct": "Cost (Buying)",
+            "type": "TRANSLATOR_BRIDGE"
+          }
+        },
+        {
+          "option": "16.67%",
+          "diagnostic_tag": "PERCENTAGE_CALCULATION_ERROR",
+          "engagement_framing": "Profit = 250 - 200 = 50. Profit % = (50/200) × 100 = ?"
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M13_01",
+      "module": "M13: Solid Shapes",
+      "atom": "A38",
+      "type": "Procedural",
+      "difficulty": 3,
+      "text": "A solid has 6 faces and 8 vertices. How many edges does it have?",
+      "correct_answer": "12",
+      "distractors": [
+        {
+          "option": "14",
+          "diagnostic_tag": "EULER_FORMULA_ERROR",
+          "engagement_framing": "Let's use the Ninja Code: $F + V - E = 2$.",
+          "follow_up": {
+            "text": "If $6 + 8 - E = 2$, what is $14 - E = 2$?",
+            "options": ["12", "16"],
+            "correct": "12",
+            "type": "PROCEDURAL_SCAFFOLD"
+          }
+        },
+        {
+          "option": "10",
+          "diagnostic_tag": "FORMULA_INVERSION_ERROR",
+          "engagement_framing": "Check: 6 + 8 - 10 = 4, not 2."
+        }
+      ]
+    },
+    {
+      "id": "DIAG_M1_03",
+      "module": "M1: Integers",
+      "atom": "A1",
+      "type": "Verbal",
+      "difficulty": 3,
+      "text": "A submarine is 300m below sea level. It ascends 100m. What is its new position?",
+      "correct_answer": "-200m",
+      "distractors": [
+        {
+          "option": "-400m",
+          "diagnostic_tag": "DIRECTIONAL_VOCAB_ERROR",
+          "engagement_framing": "Check the word 'ascends'. Does that mean moving up (+) or down (-)?",
+          "follow_up": {
+            "text": "If you are at -300 and you ADD 100, do you get -200 or -400?",
+            "options": ["-200", "-400"],
+            "correct": "-200",
+            "type": "TRANSLATOR_BRIDGE",
+            "intervention_strategy": "TRANSLATOR_BRIDGE"
+          }
+        },
+        {
+          "option": "-200m",
+          "diagnostic_tag": "CORRECT_ANSWER",
+          "engagement_framing": "Correct! She's rising, so the number gets less negative."
+        }
+      ]
+    }
+  ]
+}

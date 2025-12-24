@@ -1,138 +1,105 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { NinjaProvider, useNinja } from './context/NinjaContext';
+import { useDiagnostic } from './hooks/useDiagnostic';
+import Login from './components/auth/Login';
+import MissionCard from './components/diagnostic/MissionCard'; // Import Step 6 component
+import DataSeeder from './components/admin/DataSeeder';
 
-/**
- * Blue Ninja Theme Configuration
- * Inspired by the airy, youthful aesthetic of "When I Fly Towards You".
- * This object manages the "Skin" of the application.
- */
-const BlueNinjaTheme = {
-  id: 'blue-ninja',
-  displayName: 'Blue Ninja',
-  colors: {
-    primary: '#1e40af',    // Deep Sky Blue
-    secondary: '#60a5fa',  // Light Sky Blue
-    accent: '#facc15',     // Sun Gold
-    surface: '#f8fafc',    // Light slate background
-    card: 'rgba(255, 255, 255, 0.9)',
-    text: '#0f172a'        // Slate 900
-  },
-  labels: {
-    testTitle: "The Blue Ninja Entrance Quest",
-    powerUnit: "Flow",
-    levelPrefix: "Cloud Level",
-    bossLabel: "Storm Cloud",
-    cta: "Unlock Flow ➤"
-  }
-};
+function BlueNinjaContent() {
+  const { user, ninjaStats, updatePower, loading } = useNinja();
+  const {
+    currentQuestion,
+    currentIndex,
+    totalQuestions,
+    submitAnswer,
+    isComplete
+  } = useDiagnostic();
 
-/**
- * Main App Component
- * Implements a dynamic theme engine using CSS variables.
- * Fixed the 'm is not defined' error by ensuring all text is properly string-wrapped.
- */
-function BlueNinjaApp() {
-  const { ninjaStats, updatePower } = useNinja();
-  const [gameState, setGameState] = useState('DIAGNOSTIC');
-  const [powerPoints, setPowerPoints] = useState(245);
+  if (loading) return (
+    <div className="min-h-screen flex items-center justify-center bg-blue-50">
+      <div className="animate-pulse text-4xl">🌊</div>
+    </div>
+  );
 
-  // Phase 1: Inject Theme Variables
-  // This allows us to swap the theme object later without changing component logic.
-  useEffect(() => {
-    const root = document.documentElement;
-    root.style.setProperty('--color-primary', BlueNinjaTheme.colors.primary);
-    root.style.setProperty('--color-secondary', BlueNinjaTheme.colors.secondary);
-    root.style.setProperty('--color-accent', BlueNinjaTheme.colors.accent);
-    root.style.setProperty('--color-surface', BlueNinjaTheme.colors.surface);
-    root.style.setProperty('--color-text', BlueNinjaTheme.colors.text);
-    root.style.setProperty('--color-card', BlueNinjaTheme.colors.card);
-  }, []);
+  if (!user) return <Login />;
+
+  // Test End Screen (Dashboard preview)
+  if (isComplete) return (
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="ninja-card text-center max-w-md">
+        <span className="text-6xl mb-6 block">🏆</span>
+        <h2 className="text-3xl font-black text-blue-800 uppercase italic">Quest Complete!</h2>
+        <p className="text-slate-500 mt-4 font-medium">
+          You've navigated the Blue Sky. Your power levels are being synchronized.
+        </p>
+        <div className="mt-8 p-6 bg-blue-50 rounded-3xl border-2 border-blue-100">
+          <div className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Total Flow Gained</div>
+          <div className="text-4xl font-black text-blue-800">{ninjaStats.powerPoints} ⚡</div>
+        </div>
+        <button
+          className="btn-primary w-full mt-8"
+          onClick={() => window.location.reload()}
+        >
+          View My Journey ➤
+        </button>
+      </div>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-[var(--color-surface)] text-[var(--color-text)] transition-colors duration-500 font-sans selection:bg-blue-200">
-      {/* Test Header: Represents the "Blue Ninja" progress bar and Power levels */}
-      <header className="w-full max-w-4xl mx-auto p-6 flex justify-between items-center">
+    <div className="min-h-screen pb-20">
+      {/* Header with Power Points and Level */}
+      <header className="max-w-4xl mx-auto p-6 flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-black tracking-tight text-[var(--color-primary)] uppercase italic">
-            Blue Ninja
-          </h1>
-          <p className="text-sm font-medium opacity-60">
-            {BlueNinjaTheme.labels.testTitle}
-          </p>
-        </div>
-
-        <div className="flex flex-col items-end">
-          <div className="flex items-center gap-2">
-            <span className="text-xl">⚡</span>
-            <span className="text-2xl font-mono font-bold text-[var(--color-primary)]">
-              {powerPoints} <span className="text-sm uppercase">{BlueNinjaTheme.labels.powerUnit}</span>
-            </span>
-          </div>
-          {/* Progress bar towards next level */}
-          <div className="w-32 h-1.5 bg-blue-200 rounded-full mt-1 overflow-hidden">
+          <h1 className="text-2xl font-black italic text-blue-800 tracking-tighter">BLUE NINJA</h1>
+          <div className="w-full h-1 bg-blue-100 rounded-full mt-1 overflow-hidden">
             <div
-              className="h-full bg-[var(--color-accent)] transition-all duration-1000 shadow-[0_0_8px_var(--color-accent)]"
-              style={{ width: '35%' }}
+              className="h-full bg-[var(--color-accent)] transition-all duration-700"
+              style={{ width: `${(currentIndex / totalQuestions) * 100}%` }}
             ></div>
           </div>
         </div>
+        <div className="flex flex-col items-end">
+          <span className="font-bold text-blue-900 leading-none">
+            {ninjaStats.powerPoints} ⚡ FLOW
+          </span>
+          <span className="text-[10px] font-black text-yellow-500 uppercase tracking-widest mt-1">
+            Mission {currentIndex + 1} / {totalQuestions}
+          </span>
+        </div>
       </header>
 
-      <main className="w-full max-w-2xl mx-auto px-4 mt-8">
-        {gameState === 'DIAGNOSTIC' && (
-          <div className="space-y-6">
-            {/* Question Card: Styled to feel like a floating summer cloud */}
-            <div className="bg-[var(--color-card)] backdrop-blur-sm border-4 border-white rounded-[2.5rem] p-8 shadow-2xl shadow-blue-100 relative overflow-hidden">
-              {/* Badge for Atomic Concept */}
-              <div className="inline-block px-4 py-1 rounded-full bg-blue-50 text-[var(--color-primary)] text-xs font-bold tracking-widest uppercase mb-6 border border-blue-100">
-                {BlueNinjaTheme.labels.levelPrefix} 1 • Integers
-              </div>
-
-              {/* Question Text with placeholder for MathJax rendering */}
-              <div className="space-y-4">
-                <h2 className="text-3xl font-bold leading-tight">
-                  A submarine is 300m below sea level. It ascends 100m.
-                </h2>
-                <p className="text-lg text-slate-500 italic">
-                  "Fly towards the new position... where is the submarine now?"
-                </p>
-              </div>
-
-              {/* Answer Interaction Area */}
-              <div className="mt-10 space-y-4">
-                <input
-                  type="text"
-                  placeholder="Enter your answer (e.g. -200m)"
-                  className="w-full p-5 rounded-2xl bg-slate-50 border-2 border-slate-100 focus:border-[var(--color-secondary)] focus:ring-0 outline-none text-xl font-medium transition-all"
-                />
-
-                <button
-                  className="w-full bg-[var(--color-primary)] text-white py-5 rounded-2xl font-bold text-lg hover:shadow-lg hover:shadow-blue-200 active:scale-95 transition-all flex justify-center items-center gap-2"
-                  onClick={() => setPowerPoints(prev => prev + 5)}
-                >
-                  {BlueNinjaTheme.labels.cta}
-                </button>
-              </div>
-
-              {/* Decorative "Blue Ninja" Element */}
-              <div className="absolute -bottom-4 -right-4 text-8xl opacity-5 grayscale">
-                🌊
-              </div>
-            </div>
-
-            {/* Engagement Framing: Hidden until an answer is submitted */}
-            <div className="text-center p-4">
-              <p className="text-sm font-medium text-slate-400">
-                Missions are adaptive. The Blue Ninja flies faster when you're focused!
-              </p>
-            </div>
+      <main className="max-w-2xl mx-auto mt-8 px-4">
+        {currentQuestion ? (
+          <MissionCard
+            question={currentQuestion}
+            onStartRecovery={startRecoveryTimer} // Step 10 integration
+            onAnswer={(isCorrect, choice, isRecovered = false) => {
+              submitAnswer(currentQuestion.id, isCorrect, currentQuestion.atom, isRecovered);
+              if (isCorrect) updatePower(10);
+              else if (isRecovered) updatePower(5); // Partial power for recovery
+            }}
+          />
+        ) : (
+          <div className="ninja-card flex flex-col items-center justify-center py-20">
+            <div className="animate-spin text-4xl mb-4">🌊</div>
+            <p className="font-bold text-blue-800">Setting up the next mission...</p>
           </div>
         )}
       </main>
 
-      <footer className="fixed bottom-6 w-full text-center text-[var(--color-primary)] opacity-30 text-xs font-bold tracking-widest uppercase">
-        Blue Ninja v4.0 • Inspired by Youth & Flow
-      </footer>
+      {/* Footer Branding */}
+      <p className="text-center mt-10 text-[10px] font-black text-blue-300 uppercase tracking-widest">
+        "When I fly towards you, the whole world turns blue."
+      </p>
+
+      {/* Floating Sign Out */}
+      <button
+        onClick={() => auth.signOut()}
+        className="fixed bottom-6 right-6 p-3 bg-white/80 backdrop-blur-sm rounded-full text-[10px] font-black text-blue-400 hover:text-blue-600 shadow-sm border border-blue-50 uppercase tracking-tighter"
+      >
+        Sign Out 🚪
+      </button>
     </div>
   );
 }
@@ -140,7 +107,7 @@ function BlueNinjaApp() {
 export default function App() {
   return (
     <NinjaProvider>
-      <BlueNinjaApp />
+      <BlueNinjaContent />
     </NinjaProvider>
   );
 }
