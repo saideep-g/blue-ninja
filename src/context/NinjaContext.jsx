@@ -58,10 +58,34 @@ export function NinjaProvider({ children }) {
     };
 
     // Update the setNinjaStats logic to automatically recalculate Level
-    const updatePower = async (gain) => {
+    /**
+     * Enhanced updatePower to check for specific Blue Ninja milestones.
+     * Triggers achievements based on v4.0 engagement criteria.
+     */
+    const updatePower = async (gain, reason = "") => {
         setNinjaStats(prev => {
             const newPoints = prev.powerPoints + gain;
             const newLevel = calculateHeroLevel(newPoints);
+
+            // Check for Level-Up Achievement
+            if (newLevel > prev.heroLevel) {
+                triggerAchievement({
+                    id: 'level_up',
+                    name: `Level ${newLevel} Reached!`,
+                    icon: '🚀',
+                    description: "Your Blue Ninja spirit is soaring higher!"
+                });
+            }
+
+            // Check for "First Flow" milestone
+            if (prev.powerPoints < 100 && newPoints >= 100) {
+                triggerAchievement({
+                    id: 'first_100',
+                    name: "Flow Initiate",
+                    icon: '🌊',
+                    description: "You've successfully tapped into the Blue Flow."
+                });
+            }
 
             // In a real scenario, you'd also sync this to Firestore here
             return {
@@ -72,8 +96,18 @@ export function NinjaProvider({ children }) {
         });
     };
 
+    // State for active achievement notifications
+    const [activeAchievement, setActiveAchievement] = useState(null);
+
+    const triggerAchievement = (achievement) => {
+        setActiveAchievement(achievement);
+        // Auto-hide after 5 seconds
+        setTimeout(() => setActiveAchievement(null), 5000);
+    };
+
+    // Add activeAchievement to the context provider value
     return (
-        <NinjaContext.Provider value={{ user, ninjaStats, updatePower, loading }}>
+        <NinjaContext.Provider value={{ user, ninjaStats, updatePower, loading, activeAchievement, triggerAchievement }}>
             {!loading && children}
         </NinjaContext.Provider>
     );

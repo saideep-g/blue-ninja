@@ -8,9 +8,10 @@ import { auth } from './firebase/config';
 import PowerMap from './components/dashboard/PowerMap';
 import BossTracker from './components/dashboard/BossTracker';
 import Achievements from './components/dashboard/Achievements';
+import AchievementUnlock from './components/dashboard/AchievementUnlock';
 
 function BlueNinjaContent() {
-  const { user, ninjaStats, updatePower, loading } = useNinja();
+  const { user, ninjaStats, updatePower, loading, activeAchievement, triggerAchievement } = useNinja();
   const {
     currentQuestion,
     currentIndex,
@@ -60,6 +61,9 @@ function BlueNinjaContent() {
 
   return (
     <div className="min-h-screen pb-20">
+      {/* Global Achievement Overlay */}
+      <AchievementUnlock achievement={activeAchievement} />
+
       {/* Header with Power Points and Level */}
       <header className="max-w-4xl mx-auto p-6 flex justify-between items-center">
         <div>
