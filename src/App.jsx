@@ -17,7 +17,12 @@ import { auth } from './firebase/config';
  */
 function BlueNinjaContent() {
   const { user, ninjaStats, updatePower, loading, activeAchievement } = useNinja();
-  const [currentView, setCurrentView] = useState('QUEST'); // 'QUEST' or 'DASHBOARD'
+
+  // Set initial view based on database status
+  const [currentView, setCurrentView] = useState(
+    ninjaStats.currentQuest === 'COMPLETED' ? 'DASHBOARD' : 'QUEST'
+  );
+
 
   const {
     currentQuestion,

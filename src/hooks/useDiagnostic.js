@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { db } from '../firebase/config';
-import { collection, query, getDocs } from 'firebase/firestore';
+import { db, auth } from '../firebase/config';
+import { collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 /**
  * useDiagnostic Hook
@@ -32,13 +32,36 @@ export function useDiagnostic() {
         loadQuestions();
     }, []);
 
-    // Starts the timer for the recovery branch
+    /**
+     * PERSISTENCE LOGIC:
+     * When the diagnostic is complete, we save the status to Firestore.
+     * This prevents the app from resetting to the Quest view on refresh.
+     */
+    useEffect(() => {
+        const saveCompletion = async () => {
+            if (isComplete && auth.currentUser) {
+                const userRef = doc(db, "students", auth.currentUser.uid);
+                try {
+                    await updateDoc(userRef, {
+                        currentQuest: 'COMPLETED',
+                        lastUpdated: new Date().toISOString()
+                    });
+                } catch (error) {
+                    console.error("Failed to save quest completion:", error);
+                }
+            }
+        };
+        saveCompletion();
+    }, [isComplete]);
+
+    // Starts the high-precision timer for the "Bonus Mission" branch
     const startRecoveryTimer = () => {
         branchStartTime.current = Date.now();
     };
 
     /**
-     * Submits an answer and updates analytics.
+     * Submits an answer and calculates Bayesian Mastery.
+     * Rewards Latent Knowledge if the student recovers quickly after a hint.
      * @param {string} questionId 
      * @param {boolean} isCorrect 
      * @param {string} atomId 
@@ -49,7 +72,7 @@ export function useDiagnostic() {
         const endTime = Date.now();
         // Implement Bayesian Update Logic
         const currentScore = masteryData[atomId] || 0.5; // Default prior
-        // Analytics: Calculate Recovery Velocity
+        // Analytics: Calculate Recovery Velocity (how fast they understood the hint)
         let recoveryVelocity = null;
         if (isRecovered && branchStartTime.current) {
             const initialTime = branchStartTime.current - questionStartTime.current;
@@ -58,7 +81,7 @@ export function useDiagnostic() {
             recoveryVelocity = (initialTime - branchTime) / initialTime;
         }
 
-        // Step 12: Track Hurdles if incorrect
+        // Step 12: Track Hurdles/ specific misconceptions if the answer was wrong
         if (!isCorrect && diagnosticTag) {
             setHurdles(prev => ({
                 ...prev,
@@ -66,7 +89,7 @@ export function useDiagnostic() {
             }));
         }
 
-        /* Bayesian weighting based on Specification:
+        /* Apply Bayesian weighting based on Specification:
      - Correct first try: +0.1
      - Recovered (High Velocity > 0.5): +0.08 (Latent Knowledge)
      - Recovered (Low Velocity): +0.03 (Slow recovery)
@@ -74,18 +97,20 @@ export function useDiagnostic() {
     */
         let updateAmount = -0.1;
         if (isCorrect) updateAmount = 0.1;
-        else if (isRecovered) updateAmount = recoveryVelocity > 0.5 ? 0.08 : 0.03;
+        else if (isRecovered)
+            // Reward "Latent Knowledge" based on velocity 
+            updateAmount = recoveryVelocity > 0.5 ? 0.08 : 0.03;
 
         const updatedScore = Math.min(0.99, Math.max(0.1, currentScore + updateAmount));
         const newMastery = { ...masteryData, [atomId]: updatedScore };
 
         setMasteryData(newMastery);
 
-        // Reset timers for next question
+        // Reset timers for the next mission
         questionStartTime.current = Date.now();
         branchStartTime.current = null;
 
-        // Adaptive Stopping Logic (v4.0 Spec)
+        // Adaptive Stopping Logic: Stop if 85% confidence reached
         const avgMastery = Object.values(newMastery).reduce((a, b) => a + b, 0) / (Object.keys(newMastery).length || 1);
 
         if (avgMastery > 0.85 || currentIndex >= questions.length - 1) {

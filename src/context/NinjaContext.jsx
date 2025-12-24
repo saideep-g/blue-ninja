@@ -22,7 +22,9 @@ export function NinjaProvider({ children }) {
                 // Fetch or Initialize Ninja Profile in Firestore
                 const userDoc = await getDoc(doc(db, "students", user.uid));
                 if (userDoc.exists()) {
+                    // Ensure the app knows if they've already finished the diagnostic
                     setNinjaStats(userDoc.data());
+
                 } else {
                     // New Ninja! Initialize their profile
                     const initialStats = {
