@@ -4,6 +4,8 @@ import React, { useEffect, useState, useMemo } from 'react';
  * MissionCard: Step 12 & 13 Final Implementation
  * Fully handles LaTeX rendering, engagement framing, and hurdle tracking.
  * Detailed comments explain the logic flow for VS Code diffing.
+ * Ensures the 'Bonus Mission' (Follow-Up) is visible and interactable 
+ * after an incorrect answer is submitted.
  */
 function MissionCard({ question, onAnswer, onStartRecovery }) {
     // Local state to track the ninja's current selection before submission
@@ -108,6 +110,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                 </>
             ) : (
                 /* Engagement Framing UI (Ninja Insight) */
+                /* The Recovery Flow */
                 <div className="space-y-6 animate-in zoom-in duration-300">
                     <div className="p-6 bg-yellow-50 border-2 border-yellow-200 rounded-3xl">
                         <h3 className="text-xl font-black text-yellow-700 uppercase italic mb-2">
@@ -119,8 +122,9 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                     </div>
 
                     {/* Follow-up Bonus Mission for Recovery Velocity Tracking */}
-                    {feedbackData?.follow_up && (
+                    {feedbackData?.follow_up ? (
                         <div className="p-6 bg-blue-50 border-2 border-blue-100 rounded-3xl">
+                            <h4 className="text-sm font-black text-blue-400 uppercase tracking-widest mb-3">Bonus Mission</h4>
                             <p className="font-bold text-blue-800 mb-4">{feedbackData.follow_up.text}</p>
                             <div className="grid grid-cols-1 gap-2">
                                 {feedbackData.follow_up.options?.map((opt, i) => (
@@ -134,13 +138,26 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                             setFeedbackData(null);
                                             setSelectedOption(null);
                                         }}
-                                        className="p-3 bg-white border border-blue-200 rounded-xl text-sm font-bold text-blue-700 hover:bg-blue-100 transition-all"
+                                        className="p-4 bg-white border-2 border-blue-100 rounded-xl text-left font-bold text-blue-700 hover:border-blue-400 transition-all"
                                     >
                                         {opt}
                                     </button>
                                 ))}
                             </div>
                         </div>
+                    ) : (
+                        /* If no follow-up is defined in the JSON, provide a way to continue */
+                        <button
+                            onClick={() => {
+                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag);
+                                setShowFeedback(false);
+                                setFeedbackData(null);
+                                setSelectedOption(null);
+                            }}
+                            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest"
+                        >
+                            Next Mission ➤
+                        </button>
                     )}
                 </div>
             )}
