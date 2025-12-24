@@ -7,6 +7,7 @@ import DataSeeder from './components/admin/DataSeeder';
 import { auth } from './firebase/config';
 import PowerMap from './components/dashboard/PowerMap';
 import BossTracker from './components/dashboard/BossTracker';
+import Achievements from './components/dashboard/Achievements';
 
 function BlueNinjaContent() {
   const { user, ninjaStats, updatePower, loading } = useNinja();
@@ -39,6 +40,7 @@ function BlueNinjaContent() {
       {/* NEW: Display the Bosses identified during the test */}
       <div className="w-full max-w-md">
         <BossTracker hurdles={hurdles} />
+        <Achievements ninjaStats={ninjaStats} />
       </div>
 
       <div className="ninja-card text-center max-w-md bg-white">
