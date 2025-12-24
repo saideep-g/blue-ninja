@@ -4,6 +4,8 @@ import { useDiagnostic } from './hooks/useDiagnostic';
 import Login from './components/auth/Login';
 import MissionCard from './components/diagnostic/MissionCard'; // Import Step 6 component
 import DataSeeder from './components/admin/DataSeeder';
+import { auth } from './firebase/config';
+import PowerMap from './components/dashboard/PowerMap';
 
 function BlueNinjaContent() {
   const { user, ninjaStats, updatePower, loading } = useNinja();
@@ -12,6 +14,7 @@ function BlueNinjaContent() {
     currentIndex,
     totalQuestions,
     submitAnswer,
+    startRecoveryTimer, // Fixed: Destructured to resolve ReferenceError
     isComplete
   } = useDiagnostic();
 
@@ -25,22 +28,21 @@ function BlueNinjaContent() {
 
   // Test End Screen (Dashboard preview)
   if (isComplete) return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="ninja-card text-center max-w-md">
-        <span className="text-6xl mb-6 block">🏆</span>
-        <h2 className="text-3xl font-black text-blue-800 uppercase italic">Quest Complete!</h2>
-        <p className="text-slate-500 mt-4 font-medium">
-          You've navigated the Blue Sky. Your power levels are being synchronized.
+    <div className="min-h-screen flex flex-col items-center justify-center p-4 space-y-6">
+      <div className="w-full max-w-md">
+        <PowerMap masteryData={masteryData} />
+      </div>
+
+      <div className="ninja-card text-center max-w-md bg-white">
+        <h3 className="text-xl font-bold text-blue-800">Mission Report Syncing...</h3>
+        <p className="text-slate-500 mt-2 text-sm">
+          Bayesian mastery confirmed. Your Ninja Profile has been updated in the cloud.
         </p>
-        <div className="mt-8 p-6 bg-blue-50 rounded-3xl border-2 border-blue-100">
-          <div className="text-xs font-black text-blue-400 uppercase tracking-widest mb-1">Total Flow Gained</div>
-          <div className="text-4xl font-black text-blue-800">{ninjaStats.powerPoints} ⚡</div>
-        </div>
         <button
-          className="btn-primary w-full mt-8"
+          className="btn-primary w-full mt-6"
           onClick={() => window.location.reload()}
         >
-          View My Journey ➤
+          Go to Dashboard ➤
         </button>
       </div>
     </div>

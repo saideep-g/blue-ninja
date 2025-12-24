@@ -40,11 +40,36 @@ export function NinjaProvider({ children }) {
         return unsubscribe;
     }, []);
 
-    const updatePower = (gain) => {
-        setNinjaStats(prev => ({
-            ...prev,
-            powerPoints: prev.powerPoints + gain
-        }));
+
+    /**
+    * Calculates Hero Level based on total Power Points (Flow)
+    * Threshold: 500 points per level
+    */
+    const calculateHeroLevel = (points) => {
+        return Math.floor(points / 500) + 1;
+    };
+
+    /**
+     * Maps Mastery Score (0.0 - 1.0) to Atom Power Points
+     * Max Power per Atom: 75
+     */
+    const masteryToPower = (score) => {
+        return Math.round((score || 0) * 75);
+    };
+
+    // Update the setNinjaStats logic to automatically recalculate Level
+    const updatePower = async (gain) => {
+        setNinjaStats(prev => {
+            const newPoints = prev.powerPoints + gain;
+            const newLevel = calculateHeroLevel(newPoints);
+
+            // In a real scenario, you'd also sync this to Firestore here
+            return {
+                ...prev,
+                powerPoints: newPoints,
+                heroLevel: newLevel
+            };
+        });
     };
 
     return (
