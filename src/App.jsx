@@ -171,14 +171,28 @@ function BlueNinjaContent() {
           </button>
         </header>
 
+        {/* Phase 2.4 UX Update: Prominent Hero Quest Action at the Top */}
+        <div className="ninja-card bg-blue-600 text-white border-none flex flex-col md:flex-row items-center justify-between p-8 md:p-12 mb-8 gap-6 shadow-2xl">
+          <div className="text-center md:text-left">
+            <h2 className="text-3xl font-black uppercase italic mb-2">The Sky Is Calling</h2>
+            <p className="text-blue-100 font-medium">Ready for today's 10-mission flight? Clear the Storm Clouds.</p>
+          </div>
+          <button
+            onClick={() => setCurrentView('DAILY_MISSION')}
+            className="bg-yellow-400 text-blue-900 px-12 py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all text-lg whitespace-nowrap"
+          >
+            Start Daily Flight ➤
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Hero Column */}
           <div className="lg:col-span-2 space-y-8">
             {/* Now using activeMastery (Persisted or Session) */}
             <PowerMap masteryData={activeMastery} />
-            {/* Phase 2.2: Detailed Mission History added to primary column */}
-            <MissionHistory logs={sessionHistory} />
             <ConceptPowerMap masteryData={activeMastery} />
+
+
           </div>
         </div>
 
@@ -186,17 +200,9 @@ function BlueNinjaContent() {
         <div className="space-y-8">
           <BossTracker hurdles={activeHurdles} />
           <Achievements ninjaStats={ninjaStats} />
+          {/* Phase 2.2: Detailed Mission History added to primary column */}
+          <MissionHistory logs={sessionHistory} />
 
-          {/* Action Card */}
-          <div className="ninja-card bg-blue-600 text-white border-none text-center py-10">
-            <h3 className="text-xl font-black uppercase italic mb-4">Sky Is Calling</h3>
-            <button
-              onClick={() => setCurrentView('DAILY_MISSION')}
-              className="bg-yellow-400 text-blue-900 px-8 py-3 rounded-2xl font-black uppercase tracking-widest shadow-xl active:scale-95 transition-all"
-            >
-              Start Daily Flight ➤
-            </button>
-          </div>
         </div>
       </div>
 

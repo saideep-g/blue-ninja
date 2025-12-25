@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 /**
  * MissionCard: Step 12 & 13 Final Implementation
@@ -224,7 +224,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                             const timeSpent = Date.now() - startTimeRef.current;
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
                                             // Submits the outcome with the original choice and misconception tag
-                                            onAnswer(false, selectedOption, opt === feedbackData.follow_up.correct, feedbackData.diagnostic_tag, timeSpent);
+                                            onAnswer(false, selectedOption, recoveryCorrect, opt === feedbackData.follow_up.correct, feedbackData.diagnostic_tag, timeSpent);
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
