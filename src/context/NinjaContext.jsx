@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy } from 'firebase/firestore';
 
 const NinjaContext = createContext();
 
