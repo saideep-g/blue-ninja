@@ -7,11 +7,13 @@ const NinjaContext = createContext();
 /**
  * NinjaProvider: Central state for Blue Ninja Platform.
  * Manages Auth, Ninja Stats, Daily Streaks, and Transactional Logging.
+ * Adds historical data hydration to support the Analytics Foundation.
  */
 export function NinjaProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [activeAchievement, setActiveAchievement] = useState(null);
+    const [sessionHistory, setSessionHistory] = useState([]); // Phase 2.2: Store recent logs
 
     const [ninjaStats, setNinjaStats] = useState({
         powerPoints: 0,
@@ -34,7 +36,8 @@ export function NinjaProvider({ children }) {
                 if (userDoc.exists()) {
                     // Sync database status (including COMPLETED status) to local state
                     setNinjaStats(userDoc.data());
-
+                    // Phase 2.2: Fetch the latest 50 logs for analytics
+                    fetchSessionLogs(user.uid);
                 } else {
                     // Initialize a new student profile if it doesn't exist
                     const initialStats = {
@@ -57,6 +60,22 @@ export function NinjaProvider({ children }) {
     }, []);
 
     /**
+     * fetchSessionLogs (Phase 2.2)
+     * Retrieves the transactional log for the student to power dashboard charts.
+     */
+    const fetchSessionLogs = async (uid) => {
+        try {
+            const logRef = collection(db, "students", uid, "session_logs");
+            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
+            const querySnapshot = await getDocs(q);
+            const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSessionHistory(logs);
+        } catch (error) {
+            console.error("Failed to fetch session logs:", error);
+        }
+    };
+
+    /**
      * logQuestionResult (Phase 2.0 Critical Addition)
      * Creates a transactional log of every answer for deep analytics.
      * Stores every interaction in a sub-collection for downstream analytics.
@@ -70,6 +89,8 @@ export function NinjaProvider({ children }) {
                 ...logData,
                 timestamp: serverTimestamp()
             });
+            // Refresh history after logging new data
+            fetchSessionLogs(auth.currentUser.uid);
         } catch (error) {
             console.error("Failed to log session event:", error);
         }
@@ -162,6 +183,8 @@ export function NinjaProvider({ children }) {
         }));
 
         const userRef = doc(db, "students", auth.currentUser.uid);
+
+        setNinjaStats(prev => ({ ...prev, streakCount: newStreak, lastMissionDate: today }));
         await updateDoc(userRef, {
             streakCount: newStreak,
             lastMissionDate: today
@@ -172,6 +195,7 @@ export function NinjaProvider({ children }) {
         <NinjaContext.Provider value={{
             user,
             ninjaStats,
+            sessionHistory, // Exposed for Analytics components
             updatePower,
             logQuestionResult,
             updateStreak,

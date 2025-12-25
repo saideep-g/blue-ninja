@@ -9,6 +9,7 @@ import BossTracker from './components/dashboard/BossTracker';
 import Achievements from './components/dashboard/Achievements';
 import AchievementUnlock from './components/dashboard/AchievementUnlock';
 import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
+import MissionHistory from './components/dashboard/MissionHistory'; // Phase 2.2 New Component
 import { auth } from './firebase/config';
 import { BlueNinjaTheme } from './theme/themeConfig';
 
@@ -17,7 +18,7 @@ import { BlueNinjaTheme } from './theme/themeConfig';
  * Updated in to support Dashboard, Daily Mission loop, Quest views and Victory Screens.
  */
 function BlueNinjaContent() {
-  const { user, ninjaStats, updatePower, loading, activeAchievement } = useNinja();
+  const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement } = useNinja();
 
   /// Standard views: QUEST (Diagnostic), DASHBOARD, or DAILY_MISSION
   const [currentView, setCurrentView] = useState('QUEST');
@@ -175,6 +176,8 @@ function BlueNinjaContent() {
           <div className="lg:col-span-2 space-y-8">
             {/* Now using activeMastery (Persisted or Session) */}
             <PowerMap masteryData={activeMastery} />
+            {/* Phase 2.2: Detailed Mission History added to primary column */}
+            <MissionHistory logs={sessionHistory} />
             <ConceptPowerMap masteryData={activeMastery} />
           </div>
         </div>
