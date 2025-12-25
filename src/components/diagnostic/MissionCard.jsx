@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react';
+import { motion } from 'framer-motion';
 
 /**
  * MissionCard: Step 12 & 13 Final Implementation
@@ -18,7 +19,10 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
 
     // Add a local loading state for typeset
     const [isTypesetting, setIsTypesetting] = useState(false);
+
+    // Performance State
     const [isCorrectPulse, setIsCorrectPulse] = useState(false);
+    const [speedRating, setSpeedRating] = useState(null); // 'SPRINT', 'STEADY', 'DEEP'
 
     // Phase 2: High-precision timer for "Thinking Time"
     const startTimeRef = useRef(Date.now());
@@ -29,6 +33,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
         setSelectedOption(null);
         setShowFeedback(false);
         setIsCorrectPulse(false);
+        setSpeedRating(null);
     }, [question?.id]);
 
     /**
@@ -58,19 +63,38 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     }, [question]);
 
     /**
+     * calculatePerformance
+     * Determines the Speed Factor based on Difficulty.
+     * Baseline: 8 seconds per difficulty level.
+     */
+    const calculatePerformance = (timeSpent) => {
+        const expectedTime = (question.difficulty || 3) * 8000;
+        const speedFactor = timeSpent / expectedTime;
+
+        if (speedFactor < 0.6) return 'SPRINT';
+        if (speedFactor < 1.2) return 'STEADY';
+        return 'DEEP';
+    };
+
+    /**
      * handleCheck - Logic to check the primary answer.
      * If correct: Triggers success animation and auto-advances after 1.2s.
+     * Correct Answer: Triggers "Speed Up" animations and auto-advances.
      * If wrong: Shows Ninja Insight and starts recovery timer.
+     * Wrong Answer: Triggers "Slow Down" feedback and Ninja Insight.
      */
     const handleCheck = () => {
         const timeSpent = Date.now() - startTimeRef.current;
         const isCorrect = selectedOption === question.correct_answer;
 
         if (isCorrect) {
+            const rating = calculatePerformance(timeSpent);
+            setSpeedRating(rating);
             setIsCorrectPulse(true);
             // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
+            // Asymmetrical feedback: Auto-advance after 1.2s
             setTimeout(() => {
-                onAnswer(true, selectedOption, false, null, timeSpent);
+                onAnswer(true, selectedOption, false, null, timeSpent, rating);
             }, 1200);
         } else {
             // Step 12: Extract the diagnostic_tag to track misconceptions (Hurdles)
@@ -86,12 +110,41 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     if (!question) return null;
 
     return (
-        <div className="ninja-card animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <motion.div
+            layout
+            className="ninja-card relative overflow-hidden"
+            animate={speedRating === 'SPRINT' ? { scale: [1, 1.02, 1] } : {}}
+            transition={{ duration: 0.5, repeat: isCorrectPulse ? 0 : Infinity }}
+        >
+            {/* Speed Animation Overlays (Sprinting Streaks) */}
+            <AnimatePresence>
+                {speedRating === 'SPRINT' && isCorrectPulse && (
+                    <motion.div
+                        initial={{ opacity: 0, x: -100 }}
+                        animate={{ opacity: 0.1, x: 500 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.8, repeat: Infinity }}
+                        className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-400 to-transparent pointer-events-none skew-x-12"
+                    />
+                )}
+            </AnimatePresence>
+
             {/* Module & Atom Badge */}
             <div className="flex justify-between items-center mb-6">
                 <span className="px-3 py-1 bg-blue-50 text-[var(--color-primary)] text-[10px] font-black uppercase tracking-widest rounded-full border border-blue-100">
                     {question.module} • {question.atom}
                 </span>
+
+                {/* Speed Tag */}
+                {speedRating && (
+                    <motion.span
+                        initial={{ scale: 0 }} animate={{ scale: 1 }}
+                        className={`text-[9px] font-black uppercase px-2 py-1 rounded ${speedRating === 'SPRINT' ? 'bg-yellow-400 text-blue-900' : 'bg-blue-100 text-blue-600'
+                            }`}
+                    >
+                        {speedRating} FLOW
+                    </motion.span>
+                )}
             </div>
 
             {/* Main Question Text */}
@@ -102,7 +155,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
             </div>
 
             {!showFeedback ? (
-                <>
+                <div className="space-y-3">
                     {/* Answer Selection Grid */}
                     <div className="grid grid-cols-1 gap-3">
                         {shuffledOptions.map((option, index) => {
@@ -120,7 +173,12 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                 >
                                     {option}
                                     {isCorrectPulse && isSelected && (
-                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl">✨</span>
+                                        <motion.span
+                                            initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl"
+                                        >
+                                            ✨
+                                        </motion.span>
                                     )}
                                 </button>
                             );
@@ -139,7 +197,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                             Check Answer ➤
                         </button>
                     )}
-                </>
+                </div>
             ) : (
                 /* Engagement Framing UI (Ninja Insight) */
                 /* The Recovery Flow */
@@ -166,7 +224,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                             const timeSpent = Date.now() - startTimeRef.current;
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
                                             // Submits the outcome with the original choice and misconception tag
-                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpent);
+                                            onAnswer(false, selectedOption, opt === feedbackData.follow_up.correct, feedbackData.diagnostic_tag, timeSpent);
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
@@ -195,7 +253,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                     )}
                 </div>
             )}
-        </div>
+        </motion.div>
     );
 }
 

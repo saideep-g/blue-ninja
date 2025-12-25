@@ -59,6 +59,8 @@ export function NinjaProvider({ children }) {
     /**
      * logQuestionResult (Phase 2.0 Critical Addition)
      * Creates a transactional log of every answer for deep analytics.
+     * Stores every interaction in a sub-collection for downstream analytics.
+     * Records: questionId, answer, timing, velocity, and mastery changes.
      */
     const logQuestionResult = async (logData) => {
         if (!auth.currentUser) return;
@@ -72,15 +74,6 @@ export function NinjaProvider({ children }) {
             console.error("Failed to log session event:", error);
         }
     };
-
-    /**
-     * Triggers an achievement notification overlay.
-     */
-    const triggerAchievement = (achievement) => {
-        setActiveAchievement(achievement);
-        setTimeout(() => setActiveAchievement(null), 5000);
-    };
-
 
     /**
     * Calculates Hero Level based on total Power Points (Flow)
@@ -137,12 +130,13 @@ export function NinjaProvider({ children }) {
 
             // Trigger achievement logic if the ninja leveled up
             if (newLevel > currentLevel) {
-                triggerAchievement({
+                setActiveAchievement({
                     id: 'level_up',
                     name: `Level ${newLevel} Reached!`,
                     icon: '🚀',
                     description: "Your Blue Ninja spirit is soaring higher!"
                 });
+                setTimeout(() => setActiveAchievement(null), 5000);
             }
         } catch (error) {
             console.error("Error persisting power points:", error);
