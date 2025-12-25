@@ -11,6 +11,7 @@ import AchievementUnlock from './components/dashboard/AchievementUnlock';
 import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
 import { auth } from './firebase/config';
 import { BlueNinjaTheme } from './theme/themeConfig';
+import { useDailyMission } from './hooks/useDailyMission';
 
 /**
  * Blue Ninja Content Component
@@ -19,10 +20,8 @@ import { BlueNinjaTheme } from './theme/themeConfig';
 function BlueNinjaContent() {
   const { user, ninjaStats, updatePower, loading, activeAchievement } = useNinja();
 
-  // Set initial view based on database status
-  const [currentView, setCurrentView] = useState(
-    ninjaStats.currentQuest === 'COMPLETED' ? 'DASHBOARD' : 'QUEST'
-  );
+  /// Standard views: QUEST (Diagnostic), DASHBOARD, or DAILY_MISSION
+  const [currentView, setCurrentView] = useState('QUEST');
 
 
   const {
@@ -36,6 +35,15 @@ function BlueNinjaContent() {
     hurdles: sessionHurdles
   } = useDiagnostic();
 
+  const {
+    currentQuestion: dailyQ,
+    currentIndex: dailyIdx,
+    totalQuestions: dailyTotal,
+    submitDailyAnswer,
+    isComplete: dailyComplete,
+    sessionResults
+  } = useDailyMission();
+
   // Determine Source of Truth: Use DB data if quest is complete, otherwise use session data
   /**
    * DATA SOURCE LOGIC:
@@ -47,10 +55,10 @@ function BlueNinjaContent() {
 
   // Sync view state based on database profile
   useEffect(() => {
-    if (ninjaStats?.currentQuest === 'COMPLETED') {
+    if (ninjaStats?.currentQuest === 'COMPLETED' && currentView === 'QUEST') {
       setCurrentView('DASHBOARD');
     }
-  }, [ninjaStats?.currentQuest]);
+  }, [ninjaStats?.currentQuest, currentView]);
 
   // Set CSS Variables for Theme
   useEffect(() => {
@@ -69,6 +77,57 @@ function BlueNinjaContent() {
   );
 
   if (!user) return <Login />;
+
+  // --- VICTORY SCREEN (Phase 2.0) ---
+  if (dailyComplete) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="ninja-card max-w-md w-full text-center space-y-6">
+          <h1 className="text-4xl font-black italic text-blue-800 uppercase">Mission Complete!</h1>
+          <div className="text-6xl">🏆</div>
+          <div className="grid grid-cols-2 gap-4 py-6">
+            <div className="bg-blue-50 p-4 rounded-2xl">
+              <span className="block text-[10px] font-black text-blue-400 uppercase">Correct</span>
+              <span className="text-2xl font-bold text-blue-800">{sessionResults.correctCount}/10</span>
+            </div>
+            <div className="bg-yellow-50 p-4 rounded-2xl">
+              <span className="block text-[10px] font-black text-yellow-600 uppercase">Flow Gained</span>
+              <span className="text-2xl font-bold text-yellow-700">+{sessionResults.flowGained}</span>
+            </div>
+          </div>
+          <button
+            onClick={() => window.location.reload()}
+            className="btn-primary w-full"
+          >
+            Return to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // --- DAILY MISSION VIEW ---
+  if (currentView === 'DAILY_MISSION') {
+    return (
+      <div className="min-h-screen pb-20">
+        <header className="max-w-4xl mx-auto p-6 flex justify-between items-center">
+          <h1 className="text-2xl font-black italic text-blue-800 tracking-tighter uppercase">Daily Flight</h1>
+          <div className="text-right">
+            <span className="block font-bold text-blue-900">{dailyIdx + 1} / {dailyTotal}</span>
+            <div className="w-32 h-1 bg-blue-100 rounded-full mt-1">
+              <div className="h-full bg-blue-600" style={{ width: `${((dailyIdx + 1) / dailyTotal) * 100}%` }}></div>
+            </div>
+          </div>
+        </header>
+        <main className="max-w-2xl mx-auto mt-8 px-4">
+          <MissionCard
+            question={dailyQ}
+            onAnswer={submitDailyAnswer}
+          />
+        </main>
+      </div>
+    );
+  }
 
   // --- DASHBOARD VIEW ---
   if (currentView === 'DASHBOARD' || isComplete) {
