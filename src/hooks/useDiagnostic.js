@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { db, auth } from '../firebase/config';
-import { collection, query, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 /**
  * useDiagnostic Hook
  * Manages the "Ninja Entrance Exam" logic flow.
  * Tracks adaptive progress and Bayesian mastery thresholds.
  * Now tracks "Hurdles" (misconceptions) to identify Boss Levels.
+ * Now optimized to persist final analytical data atomically.
  */
 export function useDiagnostic() {
     const [questions, setQuestions] = useState([]);
@@ -37,10 +38,12 @@ export function useDiagnostic() {
    * PERSISTENCE FIX:
    * When the diagnostic is complete, we save the status AND the results to Firestore.
    * This ensures the Mastery and Hurdles are available after a page refresh.
+   * Only save completion if we have actual session data to save.
      */
     useEffect(() => {
         const saveCompletion = async () => {
-            if (isComplete && auth.currentUser) {
+            // Logic: Only save if isComplete is true AND we have actually generated mastery data
+            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
                 try {
                     await updateDoc(userRef, {

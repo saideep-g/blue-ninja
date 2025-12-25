@@ -37,15 +37,22 @@ function BlueNinjaContent() {
   } = useDiagnostic();
 
   // Determine Source of Truth: Use DB data if quest is complete, otherwise use session data
+  /**
+   * DATA SOURCE LOGIC:
+   * Favors persisted ninjaStats (Cloud) once the quest is COMPLETED.
+   * This prevents the dashboard from appearing empty on page refresh.
+   */
   const activeMastery = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.mastery || {}) : sessionMastery;
   const activeHurdles = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.hurdles || {}) : sessionHurdles;
 
+  // Sync view state based on database profile
   useEffect(() => {
     if (ninjaStats?.currentQuest === 'COMPLETED') {
       setCurrentView('DASHBOARD');
     }
   }, [ninjaStats?.currentQuest]);
 
+  // Set CSS Variables for Theme
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty('--color-primary', BlueNinjaTheme.colors.primary);
@@ -111,7 +118,7 @@ function BlueNinjaContent() {
     );
   }
 
-  // --- QUEST VIEW (Diagnostic) ---
+  // --- QUEST VIEW ---
   return (
     <div className="min-h-screen pb-20">
       {/* Global Achievement Overlay */}
