@@ -6,7 +6,8 @@ import { useNinja } from '../context/NinjaContext';
 /**
  * useDailyMission Hook
  * Implements the Phase 2.0 "3-4-3" Selection Algorithm.
- * Manages the daily 10-question loop and handles session-level persistence.
+ * Manages the personalized 10-question Daily Mission loop and handles session-level persistence.
+ * Implements the 3-4-3 selection logic: 3 Warm-ups, 4 Hurdle-Killers, 3 Cool-downs.
  */
 export function useDailyMission() {
     const { ninjaStats, logQuestionResult, updatePower, updateStreak } = useNinja();
@@ -19,24 +20,28 @@ export function useDailyMission() {
     const [sessionResults, setSessionResults] = useState({
         correctCount: 0,
         flowGained: 0,
-        hurdlesTargeted: []
+        hurdlesTargeted: [],
+        sprintCount: 0 // Tracks how many 'SPRINT' ratings were achieved
     });
 
     /**
-     * The 3-4-3 Selection Algorithm
-     * Scans the mission bank and filters questions based on student mastery and hurdles.
+     * generateMission
+     * The Selection Algorithm:
+     * - 3 Warm-ups (Mastery > 0.7)
+     * - 4 Hurdle-Killers (Matches active hurdles)
+     * - 3 Cool-downs (New or Mastery < 0.4)
      */
     const generateMission = useCallback(async () => {
         setIsLoading(true);
         try {
-            // Fetch the unified Mission Bank
-            const qSnap = await getDocs(collection(db, 'mission_bank'));
+            // Fetching from the unified mission bank
+            const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
             const allQuestions = qSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             const mastery = ninjaStats.mastery || {};
             const hurdles = ninjaStats.hurdles || {};
 
-            // Category 1: Warm-ups (3 Questions) - Mastery > 0.7
+            // Category 1: Warm-ups (3 Questions)
             const warmUps = allQuestions
                 .filter(q => (mastery[q.atom] || 0) > 0.7)
                 .sort(() => Math.random() - 0.5)
@@ -51,7 +56,7 @@ export function useDailyMission() {
 
             // Category 3: Cool-downs/Frontier (3 Questions) - Mastery < 0.4 or New
             const coolDowns = allQuestions
-                .filter(q => (mastery[q.atom] || 0) < 0.4)
+                .filter(q => !mastery[q.atom] || mastery[q.atom] < 0.4)
                 .sort(() => Math.random() - 0.5)
                 .slice(0, 3);
 
@@ -78,19 +83,19 @@ export function useDailyMission() {
 
     // Generate mission on mount
     useEffect(() => {
-        if (!isComplete && missionQuestions.length === 0) {
+        if (ninjaStats.currentQuest === 'COMPLETED' && missionQuestions.length === 0) {
             generateMission();
         }
-    }, [generateMission, isComplete, missionQuestions.length]);
+    }, [generateMission, ninjaStats.currentQuest, missionQuestions.length]);
 
     /**
      * submitDailyAnswer
-     * Handles result processing and transactional logging for the Daily Mission.
+     * Processes results, logs transactions, and handles progression.
      */
-    const submitDailyAnswer = async (isCorrect, choice, isRecovered, tag, timeSpent) => {
+    const submitDailyAnswer = async (isCorrect, choice, isRecovered, tag, timeSpent, speedRating) => {
         const currentQuestion = missionQuestions[currentIndex];
 
-        // 1. Log the result for deep analytics (Phase 2.0 Critical Requirement)
+        // Phase 2.1: Logging the 6 critical data points
         await logQuestionResult({
             questionId: currentQuestion.id,
             studentAnswer: choice,
@@ -98,11 +103,12 @@ export function useDailyMission() {
             isRecovered,
             diagnosticTag: tag,
             timeSpent,
+            speedRating,
             atomId: currentQuestion.atom,
             mode: 'DAILY'
         });
 
-        // 2. Update Performance Stats
+        // Calculate gains (Daily mode has higher stakes than diagnostic) and Update Performance Stats
         const gain = isCorrect ? 15 : (isRecovered ? 7 : 0); // Higher stakes for Daily mode
         updatePower(gain);
 
@@ -110,10 +116,11 @@ export function useDailyMission() {
             ...prev,
             correctCount: isCorrect ? prev.correctCount + 1 : prev.correctCount,
             flowGained: prev.flowGained + gain,
-            hurdlesTargeted: tag ? [...new Set([...prev.hurdlesTargeted, tag])] : prev.hurdlesTargeted
+            hurdlesTargeted: tag ? [...new Set([...prev.hurdlesTargeted, tag])] : prev.hurdlesTargeted,
+            sprintCount: speedRating === 'SPRINT' ? prev.sprintCount + 1 : prev.sprintCount
         }));
 
-        // 3. Handle Progression
+        // Handle Session Progression
         if (currentIndex >= missionQuestions.length - 1) {
             setIsComplete(true);
             updateStreak(); // Reward the daily habit
