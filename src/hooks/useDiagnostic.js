@@ -8,8 +8,10 @@ import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
  * Tracks adaptive progress and Bayesian mastery thresholds.
  * Now tracks "Hurdles" (misconceptions) to identify Boss Levels.
  * Now optimized to persist final analytical data atomically.
+ * Updated for Phase 3: Supports Scenario Injection for 1Q testing.
+ * @param {Array} devQuestions - Optional array to override global question bank.
  */
-export function useDiagnostic() {
+export function useDiagnostic(devQuestions = []) { // Added devQuestions as a parameter with a default empty array
     const [questions, setQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [masteryData, setMasteryData] = useState({}); // { A1: 0.65, A3: 0.85 }
@@ -25,25 +27,39 @@ export function useDiagnostic() {
     // Initial load: Fetch all diagnostic missions from Firestore
     useEffect(() => {
         const loadQuestions = async () => {
-            const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
-            const sortedQs = qSnap.docs.map(doc => doc.data())
-                .sort((a, b) => a.difficulty - b.difficulty);
-            setQuestions(sortedQs);
+            // SCENARIO INJECTION LOGIC: Use local test questions if in Dev Mode
+            if (devQuestions && devQuestions.length > 0) {
+                // High-Velocity Logic: Use the injected scenario questions
+                setQuestions(devQuestions);
+            } else {
+                try {
+                    const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
+                    const sortedQs = qSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                        .sort((a, b) => a.difficulty - b.difficulty);
+                    setQuestions(sortedQs);
+                } catch (error) {
+                    console.error("Error loading diagnostic questions:", error);
+                }
+            }
             questionStartTime.current = Date.now();
         };
         loadQuestions();
-    }, []);
+    }, [devQuestions]); // Now properly tracks the injected questions
 
     /**
-   * PERSISTENCE FIX:
-   * When the diagnostic is complete, we save the status AND the results to Firestore.
-   * This ensures the Mastery and Hurdles are available after a page refresh.
-   * Only save completion if we have actual session data to save.
+    * PERSISTENCE FIX:
+    * When the diagnostic is complete, we save the status AND the results to Firestore.
+    * This ensures the Mastery and Hurdles are available after a page refresh.
+    * Only save completion if we have actual session data to save.
      */
     useEffect(() => {
         const saveCompletion = async () => {
             // Logic: Only save if isComplete is true AND we have actually generated mastery data
-            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0) {
+            // SAFETY GATE: Do not save completion if using the test user in Dev Mode
+            // This prevents test data from polluting your real analytical trends.
+            const isTestUser = auth.currentUser?.uid.includes('test_user');
+
+            if (isComplete && auth.currentUser && !isTestUser && Object.keys(masteryData).length > 0) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
                 try {
                     await updateDoc(userRef, {

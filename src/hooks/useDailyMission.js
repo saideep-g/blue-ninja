@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { db, auth } from '../firebase/config';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useNinja } from '../context/NinjaContext';
 
 /**
@@ -9,9 +9,11 @@ import { useNinja } from '../context/NinjaContext';
  * Manages the personalized 10-question Daily Mission loop and handles session-level persistence.
  * Implements the 3-4-3 selection logic: 3 Warm-ups, 4 Hurdle-Killers, 3 Cool-downs.
  * Implements Phase 3 Intelligence: Velocity tracking, Mastery Deltas, and 3-day Boss rules.
+ * Updated for Phase 3: Supports Scenario Injection.
+ * Allows testing the Daily 10 loop with 1-2 questions.
  */
-export function useDailyMission() {
-    const { ninjaStats, setNinjaStats, logQuestionResultLocal, updatePower, updateStreak } = useNinja();
+export function useDailyMission(devQuestions = null) {
+    const { ninjaStats, setNinjaStats, logQuestionResultLocal, updatePower, updateStreak, syncToCloud } = useNinja();
     const [missionQuestions, setMissionQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +37,14 @@ export function useDailyMission() {
      * - 3 Cool-downs (New or Mastery < 0.4)
      */
     const generateMission = useCallback(async () => {
+
+        // SCENARIO INJECTION LOGIC
+        if (devQuestions && devQuestions.length > 0) {
+            setMissionQuestions(devQuestions);
+            setIsLoading(false);
+            return;
+        }
+
         setIsLoading(true);
         try {
             // Fetching from the unified mission bank
@@ -83,7 +93,7 @@ export function useDailyMission() {
             console.error("Failed to generate Daily 10:", error);
             setIsLoading(false);
         }
-    }, [ninjaStats.mastery, ninjaStats.hurdles]);
+    }, [ninjaStats.mastery, ninjaStats.hurdles, devQuestions]);
 
     // Generate mission on mount
     useEffect(() => {
@@ -101,6 +111,11 @@ export function useDailyMission() {
         if (!auth.currentUser) return;
         const currentQuestion = missionQuestions[currentIndex];
         const studentRef = doc(db, "students", auth.currentUser.uid);
+        const isTestUser = auth.currentUser?.uid.includes('test_user');
+
+        // FIX: Define cappedThinkingTime based on timeSpent (in seconds)
+        // We cap it at 60s to prevent outliers from skewing analytics.
+        const cappedThinkingTime = Math.min(timeSpent, 60);
 
         // 1. Mastery Delta Logic
         const masteryBefore = ninjaStats.mastery[currentQuestion.atom] || 0.5;
@@ -111,9 +126,12 @@ export function useDailyMission() {
         // Velocity = (Primary Thinking Time - Recovery Time) / Primary Thinking Time
         let recoveryVelocity = 0;
         if (isRecovered) {
-            const primaryTime = timeSpent; // The time spent on the initial wrong attempt
-            const recoveryTime = Date.now() - questionStartTime - primaryTime;
-            recoveryVelocity = Math.max(0, (primaryTime - recoveryTime) / primaryTime);
+            // timeSpent is the initial thinking time before the first (wrong) click.
+            // (Date.now() - questionStartTime) is the total time for the mission.
+            const totalMissionTime = (Date.now() - questionStartTime) / 1000;
+            const recoveryTime = totalMissionTime - timeSpent;
+            // Velocity = (Initial Thinking Time - Recovery Time) / Initial Thinking Time
+            recoveryVelocity = Math.max(0, (timeSpent - recoveryTime) / timeSpent);
         }
 
         // 3. Boss Clearing Logic: The 3-Consecutive Success Rule (Gap #7 Fix)
@@ -172,11 +190,15 @@ export function useDailyMission() {
         const gain = isCorrect ? 15 : (isRecovered ? 7 : 0); // Higher stakes for Daily mode
         updatePower(gain);
 
-        // Sync Mastery and Hurdle health updates back to the Cloud
-        await updateDoc(studentRef, {
-            [`mastery.${currentQuestion.atom}`]: newAtomMastery,
-            hurdles: updatedHurdles
-        });
+        // SYNC STRATEGY: Only persist Mastery/Hurdles to Firestore if NOT a test user.
+        // For real users, this is an immediate write to ensure state persistence across refreshes.
+        if (!isTestUser) {
+            await updateDoc(studentRef, {
+                [`mastery.${currentQuestion.atom}`]: newAtomMastery,
+                hurdles: updatedHurdles,
+                consecutiveBossSuccesses: updatedConsecutive
+            });
+        }
 
         setSessionResults(prev => ({
             ...prev,
@@ -189,7 +211,12 @@ export function useDailyMission() {
         // Handle Session Progression
         if (currentIndex >= missionQuestions.length - 1) {
             setIsComplete(true);
-            updateStreak(); // Reward the daily habit
+            if (!isTestUser) {
+                updateStreak();
+            } else {
+                // For test users, we force a sync now to verify the final payload
+                syncToCloud(true);
+            }
         } else {
             setCurrentIndex(prev => prev + 1);
             setQuestionStartTime(Date.now()); // Reset timer for the next question
