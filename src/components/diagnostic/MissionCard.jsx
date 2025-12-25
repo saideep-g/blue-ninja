@@ -39,6 +39,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
         setShowFeedback(false);
         setIsCorrectPulse(false);
         setSpeedRating(null);
+        setThinkingTime(0);
     }, [question?.id]);
 
     /**
@@ -251,10 +252,11 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                     <button
                                         key={i}
                                         onClick={() => {
+                                            const cappedTime = Math.min(thinkingTime, 300000);
                                             const timeSpent = Date.now() - startTimeRef.current;
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
-                                            // Submits the outcome with the original choice and misconception tag
-                                            onAnswer(false, selectedOption, recoveryCorrect, opt === feedbackData.follow_up.correct, feedbackData.diagnostic_tag, timeSpent);
+                                            // Fixed: Signature corrected to pass isRecovered and tag correctly
+                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpent, null, cappedTime);
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
@@ -270,8 +272,9 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         /* If no follow-up is defined in the JSON, provide a way to continue */
                         <button
                             onClick={() => {
+                                const cappedTime = Math.min(thinkingTime, 300000);
                                 const timeSpent = Date.now() - startTimeRef.current;
-                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpent);
+                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpent, null, cappedTime);
                                 setShowFeedback(false);
                                 setFeedbackData(null);
                                 setSelectedOption(null);

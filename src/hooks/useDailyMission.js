@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { db, auth } from '../firebase/config';
-// Added doc and updateDoc to support real-time mastery and hurdle persistence
-import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { collection, getDocs } from 'firebase/firestore';
 import { useNinja } from '../context/NinjaContext';
 
 /**
@@ -9,15 +8,18 @@ import { useNinja } from '../context/NinjaContext';
  * Implements the Phase 2.0 "3-4-3" Selection Algorithm.
  * Manages the personalized 10-question Daily Mission loop and handles session-level persistence.
  * Implements the 3-4-3 selection logic: 3 Warm-ups, 4 Hurdle-Killers, 3 Cool-downs.
+ * Implements Phase 3 Intelligence: Velocity tracking, Mastery Deltas, and 3-day Boss rules.
  */
 export function useDailyMission() {
-    const { ninjaStats, logQuestionResult, updatePower, updateStreak } = useNinja();
+    const { ninjaStats, setNinjaStats, logQuestionResultLocal, updatePower, updateStreak } = useNinja();
     const [missionQuestions, setMissionQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isComplete, setIsComplete] = useState(false);
 
-    // Tracks current session performance for the Victory Screen
+    // Initial Start Time for the first question
+    const [questionStartTime, setQuestionStartTime] = useState(Date.now());
+
     const [sessionResults, setSessionResults] = useState({
         correctCount: 0,
         flowGained: 0,
@@ -27,7 +29,7 @@ export function useDailyMission() {
 
     /**
      * generateMission
-     * The Selection Algorithm:
+     * The Selection Algorithm - 3-4-3 Selection Algorithm
      * - 3 Warm-ups (Mastery > 0.7)
      * - 4 Hurdle-Killers (Matches active hurdles)
      * - 3 Cool-downs (New or Mastery < 0.4)
@@ -75,6 +77,7 @@ export function useDailyMission() {
             }
 
             setMissionQuestions(final10.sort(() => Math.random() - 0.5));
+            setQuestionStartTime(Date.now());
             setIsLoading(false);
         } catch (error) {
             console.error("Failed to generate Daily 10:", error);
@@ -99,31 +102,71 @@ export function useDailyMission() {
         const currentQuestion = missionQuestions[currentIndex];
         const studentRef = doc(db, "students", auth.currentUser.uid);
 
-        // Phase 2.1: Logging the 6 critical data points
-        await logQuestionResult({
+        // 1. Mastery Delta Logic
+        const masteryBefore = ninjaStats.mastery[currentQuestion.atom] || 0.5;
+        let masteryChange = isCorrect ? 0.05 : (isRecovered ? 0.02 : -0.05);
+        const masteryAfter = Math.min(0.99, Math.max(0.1, masteryBefore + masteryChange));
+
+        // 2. Recovery Velocity Logic (Gap #1 Fix)
+        // Velocity = (Primary Thinking Time - Recovery Time) / Primary Thinking Time
+        let recoveryVelocity = 0;
+        if (isRecovered) {
+            const primaryTime = timeSpent; // The time spent on the initial wrong attempt
+            const recoveryTime = Date.now() - questionStartTime - primaryTime;
+            recoveryVelocity = Math.max(0, (primaryTime - recoveryTime) / primaryTime);
+        }
+
+        // 3. Boss Clearing Logic: The 3-Consecutive Success Rule (Gap #7 Fix)
+        const updatedHurdles = { ...ninjaStats.hurdles };
+        const updatedConsecutive = { ...ninjaStats.consecutiveBossSuccesses };
+
+        if (tag) {
+            if (isCorrect) {
+                // Increment streak for this specific misconception
+                const newStreak = (updatedConsecutive[tag] || 0) + 1;
+                updatedConsecutive[tag] = newStreak;
+
+                // If 3 in a row achieved, the Boss is Defeated (Cloud vanishes)
+                if (newStreak >= 3) {
+                    updatedHurdles[tag] = 0;
+                    updatedConsecutive[tag] = 0; // Reset for next time it might appear
+                }
+            } else {
+                // Reset streak on any mistake for this hurdle
+                updatedConsecutive[tag] = 0;
+            }
+        }
+
+        // 4. Persistence: Update local state via NinjaContext
+        setNinjaStats(prev => ({
+            ...prev,
+            mastery: { ...prev.mastery, [currentQuestion.atom]: masteryAfter },
+            hurdles: updatedHurdles,
+            consecutiveBossSuccesses: updatedConsecutive
+        }));
+
+        // 5. Transactional Log: Capture the 6 critical data points (Gap #2 Fix)
+        logQuestionResultLocal({
             questionId: currentQuestion.id,
             studentAnswer: choice,
             isCorrect,
             isRecovered,
+            recoveryVelocity, // Fix Gap #1
             diagnosticTag: tag,
             timeSpent,
+            cappedThinkingTime,
             speedRating,
+            masteryBefore, // Fix Gap #2
+            masteryAfter,  // Fix Gap #2
             atomId: currentQuestion.atom,
             mode: 'DAILY'
-        });
+        }, currentIndex);
 
         // Bayesian Mastery Update Logic (Phase 2.3)
         // Daily practice moves mastery by 0.05 per success to ensure steady growth
         const currentAtomMastery = ninjaStats.mastery[currentQuestion.atom] || 0.5;
-        let masteryChange = isCorrect ? 0.05 : (isRecovered ? 0.02 : -0.05);
-        const newAtomMastery = Math.min(0.99, Math.max(0.1, currentAtomMastery + masteryChange));
 
-        // Boss Clearing (Hurdle Reduction) Logic
-        // If correct, we reduce the "intensity" of the specific misconception (Hurdle)
-        const updatedHurdles = { ...ninjaStats.hurdles };
-        if (isCorrect && tag && updatedHurdles[tag] > 0) {
-            updatedHurdles[tag] = Math.max(0, updatedHurdles[tag] - 1);
-        }
+        const newAtomMastery = Math.min(0.99, Math.max(0.1, currentAtomMastery + masteryChange));
 
         // Calculate gains (Daily mode has higher stakes than diagnostic) and Update Performance Stats
         const gain = isCorrect ? 15 : (isRecovered ? 7 : 0); // Higher stakes for Daily mode
@@ -149,6 +192,7 @@ export function useDailyMission() {
             updateStreak(); // Reward the daily habit
         } else {
             setCurrentIndex(prev => prev + 1);
+            setQuestionStartTime(Date.now()); // Reset timer for the next question
         }
     };
 

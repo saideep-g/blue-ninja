@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy } from 'firebase/firestore';
+import { doc, getDoc, getDocs, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy, limit, addDoc } from 'firebase/firestore';
 
 const NinjaContext = createContext();
 
@@ -23,7 +23,8 @@ export function NinjaProvider({ children }) {
         powerPoints: 0,
         heroLevel: 1,
         mastery: {}, // Tracked by Atom ID (A1, A13, etc.)
-        hurdles: {},
+        hurdles: {}, // Tracks misconception counts { SIGN_IGNORANCE: count }
+        consecutiveBossSuccesses: {}, // NEW: Tracks the 3-day rule for boss clearing
         completedMissions: 0,
         currentQuest: 'DIAGNOSTIC',
         streakCount: 0, // Phase 2: Track consecutive daily missions
@@ -60,6 +61,7 @@ export function NinjaProvider({ children }) {
                             heroLevel: 1,
                             mastery: {},
                             hurdles: {},
+                            consecutiveBossSuccesses: {},
                             completedMissions: 0,
                             currentQuest: 'DIAGNOSTIC',
                             streakCount: 0,
@@ -74,6 +76,22 @@ export function NinjaProvider({ children }) {
         });
         return unsubscribe;
     }, []);
+
+    /**
+     * fetchSessionLogs (Phase 2.2)
+     * Retrieves the transactional log for the student to power dashboard charts.
+     */
+    const fetchSessionLogs = async (uid) => {
+        try {
+            const logRef = collection(db, "students", uid, "session_logs");
+            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
+            const querySnapshot = await getDocs(q);
+            const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSessionHistory(logs);
+        } catch (error) {
+            console.error("Failed to fetch session logs:", error);
+        }
+    };
 
     /**
      * syncToCloud (The Batch Engine)
@@ -108,26 +126,14 @@ export function NinjaProvider({ children }) {
             if (isFinal) {
                 localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
             }
+            // Refresh history view after sync
+            fetchSessionLogs(auth.currentUser.uid);
         } catch (error) {
             console.error("Blue Ninja Sync Error:", error);
         }
     };
 
-    /**
-     * fetchSessionLogs (Phase 2.2)
-     * Retrieves the transactional log for the student to power dashboard charts.
-     */
-    const fetchSessionLogs = async (uid) => {
-        try {
-            const logRef = collection(db, "students", uid, "session_logs");
-            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
-            const querySnapshot = await getDocs(q);
-            const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setSessionHistory(logs);
-        } catch (error) {
-            console.error("Failed to fetch session logs:", error);
-        }
-    };
+
 
     /**
      * logQuestionResult (Phase 2.0 Critical Addition)
@@ -179,8 +185,8 @@ export function NinjaProvider({ children }) {
     * Converted to an async function to persist Flow points and Hero Level to Firestore in real-time.
     * This ensures student momentum is saved question-by-question.
     */
-    const updatePower = async (gain) => {
-        if (!auth.currentUser) return;
+    const updatePower = (gain) => {
+        if (!user) return;
 
         // Calculate new values based on current state
         const currentPoints = ninjaStats.powerPoints || 0;
@@ -192,30 +198,19 @@ export function NinjaProvider({ children }) {
         const updatedStats = { ...ninjaStats, powerPoints: newPoints, heroLevel: newLevel };
         setNinjaStats(updatedStats);
 
-        // Persist to Firestore (Persistence)
-        const userRef = doc(db, "students", auth.currentUser.uid);
-        try {
-            await updateDoc(userRef, {
-                powerPoints: newPoints,
-                heroLevel: newLevel
+        // Trigger achievement logic if the ninja leveled up
+        // Achievement logic: Level Up notification
+        if (newLevel > currentLevel) {
+            setActiveAchievement({
+                id: 'level_up',
+                name: `Level ${newLevel} Reached!`,
+                icon: '🚀',
+                description: "Your Blue Ninja spirit is soaring higher!"
             });
-
-            // Trigger achievement logic if the ninja leveled up
-            // Achievement logic: Level Up notification
-            if (newLevel > currentLevel) {
-                setActiveAchievement({
-                    id: 'level_up',
-                    name: `Level ${newLevel} Reached!`,
-                    icon: '🚀',
-                    description: "Your Blue Ninja spirit is soaring higher!"
-                });
-                setTimeout(() => setActiveAchievement(null), 5000);
-            }
-        } catch (error) {
-            console.error("Error persisting power points:", error);
+            setTimeout(() => setActiveAchievement(null), 5000);
         }
 
-        // Buffer the change locally
+        // Buffer the change locally for the next Cloud sync
         const updatedBuffer = {
             ...localBuffer,
             pointsGained: localBuffer.pointsGained + gain
@@ -263,6 +258,13 @@ export function NinjaProvider({ children }) {
             lastMissionDate: today
         }));
 
+        // Mirror to LocalStorage
+        localStorage.setItem(`ninja_session_${auth.currentUser.uid}`, JSON.stringify({
+            stats: updatedStats,
+            buffer: localBuffer
+        }));
+
+        // Streaks are high-importance, so we update cloud immediately
         const userRef = doc(db, "students", auth.currentUser.uid);
 
         setNinjaStats(prev => ({ ...prev, streakCount: newStreak, lastMissionDate: today }));
