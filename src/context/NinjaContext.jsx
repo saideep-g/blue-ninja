@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
 import { doc, getDoc, getDocs, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy, limit, addDoc } from 'firebase/firestore';
+import { nexusDB } from '../services/nexusSync'; //
+
 
 const NinjaContext = createContext();
 
@@ -78,22 +80,6 @@ export function NinjaProvider({ children }) {
     }, []);
 
     /**
-     * fetchSessionLogs (Phase 2.2)
-     * Retrieves the transactional log for the student to power dashboard charts.
-     */
-    const fetchSessionLogs = async (uid) => {
-        try {
-            const logRef = collection(db, "students", uid, "session_logs");
-            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
-            const querySnapshot = await getDocs(q);
-            const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setSessionHistory(logs);
-        } catch (error) {
-            console.error("Failed to fetch session logs:", error);
-        }
-    };
-
-    /**
      * syncToCloud (The Batch Engine)
      * Consolidates all buffered local changes into a single Firestore write transaction.
      * @param {boolean} isFinal - If true, clears the local storage buffer after sync.
@@ -133,6 +119,22 @@ export function NinjaProvider({ children }) {
         }
     };
 
+    /**
+ * fetchSessionLogs (Phase 2.2)
+ * Retrieves the transactional log for the student to power dashboard charts.
+ */
+
+    const fetchSessionLogs = async (uid) => {
+        try {
+            const logRef = collection(db, "students", uid, "session_logs");
+            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
+            const querySnapshot = await getDocs(q);
+            const logs = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setSessionHistory(logs);
+        } catch (error) {
+            console.error("Failed to fetch session logs:", error);
+        }
+    };
 
 
     /**
@@ -142,19 +144,33 @@ export function NinjaProvider({ children }) {
      * Records: questionId, answer, timing, velocity, and mastery changes.
      */
     const logQuestionResult = async (logData) => {
+        // 1. Standard Cloud Logging
         if (!auth.currentUser) return;
-        try {
-            const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
-            await addDoc(logRef, {
+        if (auth.currentUser) {
+            try {
+                const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
+                await addDoc(logRef, {
+                    ...logData,
+                    timestamp: serverTimestamp()
+                });
+                // Refresh history after logging new data
+                fetchSessionLogs(auth.currentUser.uid);
+            } catch (error) {
+                console.error("Failed to log session event:", error);
+            }
+        }
+
+        // 2. Nexus Local Logging (For Dev Validation)
+        // If in development mode, we duplicate the log to IndexedDB so the script can find it
+        if (import.meta.env.DEV) {
+            await nexusDB.logs.add({
                 ...logData,
-                timestamp: serverTimestamp()
+                timestamp: new Date().toISOString(),
+                isLocalDev: true
             });
-            // Refresh history after logging new data
-            fetchSessionLogs(auth.currentUser.uid);
-        } catch (error) {
-            console.error("Failed to log session event:", error);
         }
     };
+
 
     /**
     * Calculates Hero Level based on total Power Points (Flow)
@@ -185,8 +201,8 @@ export function NinjaProvider({ children }) {
     * Converted to an async function to persist Flow points and Hero Level to Firestore in real-time.
     * This ensures student momentum is saved question-by-question.
     */
-    const updatePower = (gain) => {
-        if (!user) return;
+    const updatePower = async (gain) => {
+        if (!auth.currentUser) return;
 
         // Calculate new values based on current state
         const currentPoints = ninjaStats.powerPoints || 0;
@@ -198,16 +214,26 @@ export function NinjaProvider({ children }) {
         const updatedStats = { ...ninjaStats, powerPoints: newPoints, heroLevel: newLevel };
         setNinjaStats(updatedStats);
 
-        // Trigger achievement logic if the ninja leveled up
-        // Achievement logic: Level Up notification
-        if (newLevel > currentLevel) {
-            setActiveAchievement({
-                id: 'level_up',
-                name: `Level ${newLevel} Reached!`,
-                icon: '🚀',
-                description: "Your Blue Ninja spirit is soaring higher!"
+        const userRef = doc(db, "students", auth.currentUser.uid);
+        try {
+            await updateDoc(userRef, {
+                powerPoints: newPoints,
+                heroLevel: newLevel
             });
-            setTimeout(() => setActiveAchievement(null), 5000);
+
+            // Trigger achievement logic if the ninja leveled up
+            // Achievement logic: Level Up notification
+            if (newLevel > currentLevel) {
+                setActiveAchievement({
+                    id: 'level_up',
+                    name: `Level ${newLevel} Reached!`,
+                    icon: '🚀',
+                    description: "Your Blue Ninja spirit is soaring higher!"
+                });
+                setTimeout(() => setActiveAchievement(null), 5000);
+            }
+        } catch (error) {
+            console.error("Error persisting power points:", error);
         }
 
         // Buffer the change locally for the next Cloud sync

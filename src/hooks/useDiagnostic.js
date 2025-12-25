@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { db, auth } from '../firebase/config';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useNinja } from '../context/NinjaContext'; // FIX: Imported Ninja Context
 
 /**
  * useDiagnostic Hook
@@ -11,7 +12,12 @@ import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
  * Updated for Phase 3: Supports Scenario Injection for 1Q testing.
  * @param {Array} devQuestions - Optional array to override global question bank.
  */
-export function useDiagnostic(devQuestions = []) { // Added devQuestions as a parameter with a default empty array
+/**
+ * submitAnswer
+ * REFINED: Explicitly captures studentAnswer and correctAnswer for the Inquiry on Learning.
+ */
+export function useDiagnostic(injectedQuestions = null) {
+    const { logQuestionResult } = useNinja(); //
     const [questions, setQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [masteryData, setMasteryData] = useState({}); // { A1: 0.65, A3: 0.85 }
@@ -27,14 +33,12 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
     // Initial load: Fetch all diagnostic missions from Firestore
     useEffect(() => {
         const loadQuestions = async () => {
-            // SCENARIO INJECTION LOGIC: Use local test questions if in Dev Mode
-            if (devQuestions && devQuestions.length > 0) {
-                // High-Velocity Logic: Use the injected scenario questions
-                setQuestions(devQuestions);
+            if (injectedQuestions && injectedQuestions.length > 0) {
+                setQuestions(injectedQuestions);
             } else {
                 try {
                     const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
-                    const sortedQs = qSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+                    const sortedQs = qSnap.docs.map(doc => doc.data())
                         .sort((a, b) => a.difficulty - b.difficulty);
                     setQuestions(sortedQs);
                 } catch (error) {
@@ -44,7 +48,7 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
             questionStartTime.current = Date.now();
         };
         loadQuestions();
-    }, [devQuestions]); // Now properly tracks the injected questions
+    }, [injectedQuestions]); // Now properly tracks the injected questions
 
     /**
     * PERSISTENCE FIX:
@@ -59,7 +63,7 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
             // This prevents test data from polluting your real analytical trends.
             const isTestUser = auth.currentUser?.uid.includes('test_user');
 
-            if (isComplete && auth.currentUser && !isTestUser && Object.keys(masteryData).length > 0) {
+            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0 && !injectedQuestions) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
                 try {
                     await updateDoc(userRef, {
@@ -74,7 +78,7 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
             }
         };
         saveCompletion();
-    }, [isComplete, masteryData, hurdles]); // Added dependencies to ensure final data is caught
+    }, [isComplete, masteryData, hurdles, injectedQuestions]); // Added dependencies to ensure final data is caught
 
     // Starts the high-precision timer for the "Bonus Mission" branch
     const startRecoveryTimer = () => {
@@ -90,10 +94,15 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
      * @param {boolean} isRecovered - True if follow-up was correct
      * @param {string} diagnosticTag - The tag from the selected distractor
      */
-    const submitAnswer = (questionId, isCorrect, atomId, isRecovered = false, diagnosticTag = null) => {
+    const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer) => {
         const endTime = Date.now();
         // Implement Bayesian Update Logic
         const currentScore = masteryData[atomId] || 0.5; // Default prior
+
+        // High-precision timing analytics
+        const timeSpent = endTime - questionStartTime.current;
+        const speedRating = timeSpent < 15000 ? 'SPRINT' : (timeSpent < 45000 ? 'STEADY' : 'DEEP');
+
         // Analytics: Calculate Recovery Velocity (how fast they understood the hint)
         let recoveryVelocity = null;
         if (isRecovered && branchStartTime.current) {
@@ -125,6 +134,23 @@ export function useDiagnostic(devQuestions = []) { // Added devQuestions as a pa
 
         const updatedScore = Math.min(0.99, Math.max(0.1, currentScore + updateAmount));
         const newMastery = { ...masteryData, [atomId]: updatedScore };
+
+        // CORE FIX: Log to Ninja Engine (which now mirrors to IndexedDB)
+        // CORE FIX: Logging the full 12-field dataset
+        await logQuestionResult({
+            questionId,
+            studentAnswer,   // ✅ Now captured
+            correctAnswer,   // ✅ Now captured
+            isCorrect,
+            isRecovered,
+            diagnosticTag,   // ✅ Now captured correctly
+            timeSpent,
+            speedRating,
+            atomId,
+            masteryBefore: currentScore,
+            masteryAfter: updatedScore,
+            mode: injectedQuestions ? 'DEV_TEST' : 'DIAGNOSTIC'
+        });
 
         setMasteryData(newMastery);
 

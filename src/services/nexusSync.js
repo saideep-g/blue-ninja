@@ -10,7 +10,8 @@ import Dexie from 'dexie';
 export const nexusDB = new Dexie('NexusDB');
 nexusDB.version(1).stores({
     questions: 'id, atom, module, difficulty, [module+atom]',
-    audit_logs: '++id, questionId, timestamp, type'
+    // This MUST be named 'logs' to match nexusValidator.js and NinjaContext.jsx
+    logs: '++id, questionId, timestamp, type'
 });
 
 /**
