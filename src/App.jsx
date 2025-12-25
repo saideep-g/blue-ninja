@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NinjaProvider, useNinja } from './context/NinjaContext';
 import { useDiagnostic } from './hooks/useDiagnostic';
 import Login from './components/auth/Login';
 import MissionCard from './components/diagnostic/MissionCard'; // Import Step 6 component
-import DataSeeder from './components/admin/DataSeeder';
+// import DataSeeder from './components/admin/DataSeeder';
 import PowerMap from './components/dashboard/PowerMap';
 import BossTracker from './components/dashboard/BossTracker';
 import Achievements from './components/dashboard/Achievements';
 import AchievementUnlock from './components/dashboard/AchievementUnlock';
 import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
 import { auth } from './firebase/config';
+import { BlueNinjaTheme } from './theme/themeConfig';
 
 /**
  * Blue Ninja Content Component
@@ -31,9 +32,28 @@ function BlueNinjaContent() {
     submitAnswer,
     startRecoveryTimer, // Fixed: Destructured to resolve ReferenceError
     isComplete,
-    masteryData,
-    hurdles // Step 12 integration
+    masteryData: sessionMastery, // Renamed to distinguish from persisted data
+    hurdles: sessionHurdles
   } = useDiagnostic();
+
+  // Determine Source of Truth: Use DB data if quest is complete, otherwise use session data
+  const activeMastery = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.mastery || {}) : sessionMastery;
+  const activeHurdles = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.hurdles || {}) : sessionHurdles;
+
+  useEffect(() => {
+    if (ninjaStats?.currentQuest === 'COMPLETED') {
+      setCurrentView('DASHBOARD');
+    }
+  }, [ninjaStats?.currentQuest]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.style.setProperty('--color-primary', BlueNinjaTheme.colors.primary);
+    root.style.setProperty('--color-accent', BlueNinjaTheme.colors.accent);
+    root.style.setProperty('--color-surface', BlueNinjaTheme.colors.surface);
+    root.style.setProperty('--color-text', BlueNinjaTheme.colors.text);
+    root.style.setProperty('--color-card', BlueNinjaTheme.colors.card);
+  }, []);
 
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-blue-50">
@@ -65,14 +85,15 @@ function BlueNinjaContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Hero Column */}
           <div className="lg:col-span-2 space-y-8">
-            <PowerMap masteryData={masteryData} />
-            <ConceptPowerMap masteryData={masteryData} />
+            {/* Now using activeMastery (Persisted or Session) */}
+            <PowerMap masteryData={activeMastery} />
+            <ConceptPowerMap masteryData={activeMastery} />
           </div>
         </div>
 
         {/* Intel Column */}
         <div className="space-y-8">
-          <BossTracker hurdles={hurdles} />
+          <BossTracker hurdles={activeHurdles} />
           <Achievements ninjaStats={ninjaStats} />
 
           {/* Action Card */}

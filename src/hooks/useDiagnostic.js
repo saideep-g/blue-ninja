@@ -14,13 +14,14 @@ export function useDiagnostic() {
     const [masteryData, setMasteryData] = useState({}); // { A1: 0.65, A3: 0.85 }
     const [isComplete, setIsComplete] = useState(false);
 
-    // NEW: Track specific misconceptions (Hurdles)
+    // Track specific misconceptions (Hurdles) for the Boss Level tracker
     const [hurdles, setHurdles] = useState({}); // { SIGN_IGNORANCE: count }
 
-    // High-precision timing refs for Recovery Velocity
+    // High-precision timing refs for Recovery Velocity analytics
     const questionStartTime = useRef(Date.now());
     const branchStartTime = useRef(null);
 
+    // Initial load: Fetch all diagnostic missions from Firestore
     useEffect(() => {
         const loadQuestions = async () => {
             const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
@@ -33,9 +34,9 @@ export function useDiagnostic() {
     }, []);
 
     /**
-     * PERSISTENCE LOGIC:
-     * When the diagnostic is complete, we save the status to Firestore.
-     * This prevents the app from resetting to the Quest view on refresh.
+   * PERSISTENCE FIX:
+   * When the diagnostic is complete, we save the status AND the results to Firestore.
+   * This ensures the Mastery and Hurdles are available after a page refresh.
      */
     useEffect(() => {
         const saveCompletion = async () => {
@@ -44,6 +45,8 @@ export function useDiagnostic() {
                 try {
                     await updateDoc(userRef, {
                         currentQuest: 'COMPLETED',
+                        mastery: masteryData, // Save the actual mastery scores
+                        hurdles: hurdles,     // Save the identified misconceptions
                         lastUpdated: new Date().toISOString()
                     });
                 } catch (error) {
@@ -52,7 +55,7 @@ export function useDiagnostic() {
             }
         };
         saveCompletion();
-    }, [isComplete]);
+    }, [isComplete, masteryData, hurdles]); // Added dependencies to ensure final data is caught
 
     // Starts the high-precision timer for the "Bonus Mission" branch
     const startRecoveryTimer = () => {
@@ -81,7 +84,7 @@ export function useDiagnostic() {
             recoveryVelocity = (initialTime - branchTime) / initialTime;
         }
 
-        // Step 12: Track Hurdles/ specific misconceptions if the answer was wrong
+        // Track Hurdles/ specific misconceptions if the answer was wrong
         if (!isCorrect && diagnosticTag) {
             setHurdles(prev => ({
                 ...prev,
