@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { db, auth } from '../firebase/config';
-import { collection, getDocs } from 'firebase/firestore';
+// Added doc and updateDoc to support real-time mastery and hurdle persistence
+import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useNinja } from '../context/NinjaContext';
 
 /**
@@ -91,9 +92,12 @@ export function useDailyMission() {
     /**
      * submitDailyAnswer
      * Processes results, logs transactions, and handles progression.
+     * Now includes Phase 2.3 logic for Mastery updates and Hurdle reduction (Boss Clearing).
      */
     const submitDailyAnswer = async (isCorrect, choice, isRecovered, tag, timeSpent, speedRating) => {
+        if (!auth.currentUser) return;
         const currentQuestion = missionQuestions[currentIndex];
+        const studentRef = doc(db, "students", auth.currentUser.uid);
 
         // Phase 2.1: Logging the 6 critical data points
         await logQuestionResult({
@@ -108,9 +112,28 @@ export function useDailyMission() {
             mode: 'DAILY'
         });
 
+        // Bayesian Mastery Update Logic (Phase 2.3)
+        // Daily practice moves mastery by 0.05 per success to ensure steady growth
+        const currentAtomMastery = ninjaStats.mastery[currentQuestion.atom] || 0.5;
+        let masteryChange = isCorrect ? 0.05 : (isRecovered ? 0.02 : -0.05);
+        const newAtomMastery = Math.min(0.99, Math.max(0.1, currentAtomMastery + masteryChange));
+
+        // Boss Clearing (Hurdle Reduction) Logic
+        // If correct, we reduce the "intensity" of the specific misconception (Hurdle)
+        const updatedHurdles = { ...ninjaStats.hurdles };
+        if (isCorrect && tag && updatedHurdles[tag] > 0) {
+            updatedHurdles[tag] = Math.max(0, updatedHurdles[tag] - 1);
+        }
+
         // Calculate gains (Daily mode has higher stakes than diagnostic) and Update Performance Stats
         const gain = isCorrect ? 15 : (isRecovered ? 7 : 0); // Higher stakes for Daily mode
         updatePower(gain);
+
+        // Sync Mastery and Hurdle health updates back to the Cloud
+        await updateDoc(studentRef, {
+            [`mastery.${currentQuestion.atom}`]: newAtomMastery,
+            hurdles: updatedHurdles
+        });
 
         setSessionResults(prev => ({
             ...prev,

@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import {
+    doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp
+} from 'firebase/firestore';
 
 const NinjaContext = createContext();
 
@@ -25,6 +27,7 @@ export function NinjaProvider({ children }) {
         streakCount: 0, // Phase 2: Track consecutive daily missions
         lastMissionDate: null // Phase 2: For daily reset logic
     });
+
 
     // Handle Authentication & Firestore Sync
     useEffect(() => {

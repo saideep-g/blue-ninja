@@ -1,8 +1,9 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 /**
- * BossTracker: Step 12 Implementation
- * Visualizes student hurdles as "Storm Clouds" to be cleared.
+ * BossTracker: Phase 2.3 Polish
+ * Visualizes hurdles as "Storm Clouds" with active health bars.
  * Maps raw diagnostic_tags to student-friendly Boss names.
  */
 function BossTracker({ hurdles }) {
@@ -15,16 +16,26 @@ function BossTracker({ hurdles }) {
         PERCENT_BASE_ERROR: "The Ratio Wraith"
     };
 
-    // Convert hurdle counts to "Active Bosses"
-    const activeBosses = Object.entries(hurdles)
+    // Only display active hurdles that still have an intensity count > 0
+    const activeBosses = Object.entries(hurdles || {})
         .filter(([_, count]) => count > 0)
         .map(([tag, count]) => ({
+            tag,
             name: bossMap[tag] || `The ${tag.split('_')[0]} Spectre`,
-            health: Math.max(10, 100 - (count * 20)), // Health drops as they see more questions
-            intensity: count > 1 ? 'CRITICAL' : 'HIGH'
+            // Normalize health based on intensity (Assume max intensity of 5 for 100% health bar)
+            health: Math.min(100, (count / 5) * 100),
+            intensity: count > 3 ? 'CRITICAL' : 'HIGH'
         }));
 
-    if (activeBosses.length === 0) return null;
+    if (activeBosses.length === 0) {
+        return (
+            <div className="ninja-card bg-blue-50/50 border-dashed border-blue-200 flex flex-col items-center justify-center py-10 text-center">
+                <span className="text-4xl mb-2">☀️</span>
+                <p className="text-blue-400 font-black uppercase text-[10px] tracking-widest">Sky is Clear</p>
+                <p className="text-slate-400 text-xs px-6 mt-1">No Storm Clouds detected. Your Ninja spirit has cleared the horizon!</p>
+            </div>
+        );
+    }
 
     return (
         <div className="ninja-card bg-white border-2 border-blue-50">
@@ -43,10 +54,12 @@ function BossTracker({ hurdles }) {
                                 </span>
                                 <h4 className="text-lg font-bold text-slate-800 mt-1">{boss.name}</h4>
                             </div>
-                            <span className="text-xs font-bold text-slate-400">Health: {boss.health}%</span>
+                            <span className="text-[10px] font-bold text-blue-400 uppercase">
+                                Intensity: {hurdles[boss.tag]}
+                            </span>
                         </div>
 
-                        {/* Boss Health Bar */}
+                        {/* Boss Health Bar: Visualizes misconception intensity */}
                         <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                             <div
                                 className={`h-full transition-all duration-1000 ${boss.intensity === 'CRITICAL' ? 'bg-red-400' : 'bg-orange-400'
