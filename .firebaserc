@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "number-ninja25"
+  },
+  "targets": {
+    "number-ninja25": {
+      "hosting": {
+        "blue-ninja": [
+          "blue-ninja"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

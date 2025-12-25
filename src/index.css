@@ -12,6 +12,7 @@
 }
 
 @layer components {
+
   /* The "Summer Cloud" card style */
   .ninja-card {
     background-color: var(--color-card);
@@ -21,13 +22,38 @@
   /* Interactive Blue Ninja buttons */
   .btn-primary {
     background-color: var(--color-primary);
-    @apply text-white py-4 px-8 rounded-2xl font-bold text-lg 
-           hover:shadow-lg hover:shadow-blue-200 active:scale-95 transition-all 
-           flex justify-center items-center gap-2;
+    @apply text-white py-4 px-8 rounded-2xl font-bold text-lg hover:shadow-lg hover:shadow-blue-200 active:scale-95 transition-all flex justify-center items-center gap-2;
   }
 
   .input-field {
-    @apply w-full p-4 rounded-2xl bg-white/50 border-2 border-blue-100 
-           focus:border-blue-400 focus:ring-0 outline-none text-lg transition-all;
+    @apply w-full p-4 rounded-2xl bg-white/50 border-2 border-blue-100 focus:border-blue-400 focus:ring-0 outline-none text-lg transition-all;
+  }
+}
+
+/* Add to the bottom of index.css */
+@layer utilities {
+  .touch-none {
+    touch-action: none;
+  }
+
+  /* Smooth scrolling for the Dashboard Power Map */
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* Ensure cards don't feel too cramped on small screens */
+@media (max-width: 640px) {
+  .ninja-card {
+    @apply p-5 rounded-[1.5rem] border-2;
+  }
+
+  .btn-primary {
+    @apply py-3 text-base;
   }
 }

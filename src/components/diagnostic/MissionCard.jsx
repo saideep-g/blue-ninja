@@ -15,13 +15,19 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     // Stores the specific distractor data for the selected wrong answer
     const [feedbackData, setFeedbackData] = useState(null);
 
+    // Add a local loading state for typeset
+    const [isTypesetting, setIsTypesetting] = useState(false);
+
     /**
      * Effect to trigger MathJax typeset whenever the content changes.
      * This ensures formulas like $a^m \times a^n$ render correctly after every mission update.
      */
     useEffect(() => {
         if (window.MathJax) {
-            window.MathJax.typesetPromise();
+            setIsTypesetting(true);
+            window.MathJax.typesetPromise().then(() => {
+                setIsTypesetting(false);
+            });
         }
     }, [question, showFeedback]);
 
@@ -73,7 +79,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
             </div>
 
             {/* Main Question Text */}
-            <div className="mb-10">
+            <div className={`mb-10 transition-opacity duration-300 ${isTypesetting ? 'opacity-0' : 'opacity-100'}`}>
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800 leading-tight">
                     {question.text}
                 </h2>
