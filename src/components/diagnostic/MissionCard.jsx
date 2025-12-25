@@ -24,6 +24,11 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     const [isCorrectPulse, setIsCorrectPulse] = useState(false);
     const [speedRating, setSpeedRating] = useState(null); // 'SPRINT', 'STEADY', 'DEEP'
 
+    const [thinkingTime, setThinkingTime] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+
+    const timerRef = useRef(null);
+
     // Phase 2: High-precision timer for "Thinking Time"
     const startTimeRef = useRef(Date.now());
 
@@ -76,6 +81,27 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
         return 'DEEP';
     };
 
+    // Phase 3: Pause timer when tab is hidden or student is idle
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            setIsPaused(document.hidden);
+        };
+
+        document.addEventListener("visibilitychange", handleVisibilityChange);
+
+        // Start active thinking timer
+        timerRef.current = setInterval(() => {
+            if (!isPaused) {
+                setThinkingTime(prev => prev + 1000);
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(timerRef.current);
+            document.removeEventListener("visibilitychange", handleVisibilityChange);
+        };
+    }, [isPaused]);
+
     /**
      * handleCheck - Logic to check the primary answer.
      * If correct: Triggers success animation and auto-advances after 1.2s.
@@ -84,6 +110,8 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
      * Wrong Answer: Triggers "Slow Down" feedback and Ninja Insight.
      */
     const handleCheck = () => {
+        // Cap thinking time at 5 minutes to prevent skewed data from extreme idle
+        const cappedTime = Math.min(thinkingTime, 300000);
         const timeSpent = Date.now() - startTimeRef.current;
         const isCorrect = selectedOption === question.correct_answer;
 
@@ -94,7 +122,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
             // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
             // Asymmetrical feedback: Auto-advance after 1.2s to preserve momentum
             setTimeout(() => {
-                onAnswer(true, selectedOption, false, null, timeSpent, rating);
+                onAnswer(true, selectedOption, false, null, timeSpent, rating, cappedTime);
             }, 1200);
         } else {
             // Step 12: Extract the diagnostic_tag to track misconceptions (Hurdles)
@@ -105,6 +133,8 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
             // Step 10: Signal the high-precision recovery timer to start
             if (onStartRecovery) onStartRecovery();
         }
+
+        setThinkingTime(0); // Reset for next mission
     };
 
     if (!question) return null;

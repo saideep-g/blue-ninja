@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import {
-    doc, getDoc, setDoc, updateDoc, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp
-} from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query } from 'firebase/firestore';
 
 const NinjaContext = createContext();
 
@@ -10,6 +8,9 @@ const NinjaContext = createContext();
  * NinjaProvider: Central state for Blue Ninja Platform.
  * Manages Auth, Ninja Stats, Daily Streaks, and Transactional Logging.
  * Adds historical data hydration to support the Analytics Foundation.
+ * NinjaProvider: Phase 3 Stability Upgrade
+ * Implements the Hybrid Sync Engine: Local-First with Batched Firestore Writes.
+ * Protects quotas while ensuring data integrity for high-precision analytics.
  */
 export function NinjaProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -17,6 +18,7 @@ export function NinjaProvider({ children }) {
     const [activeAchievement, setActiveAchievement] = useState(null);
     const [sessionHistory, setSessionHistory] = useState([]); // Phase 2.2: Store recent logs
 
+    // Main stats state, hydrated from LocalStorage or Firestore
     const [ninjaStats, setNinjaStats] = useState({
         powerPoints: 0,
         heroLevel: 1,
@@ -28,39 +30,88 @@ export function NinjaProvider({ children }) {
         lastMissionDate: null // Phase 2: For daily reset logic
     });
 
+    // Local Buffer for Question Logs and Mastery Deltas to minimize DB writes
+    const [localBuffer, setLocalBuffer] = useState({ logs: [], pointsGained: 0 });
 
-    // Handle Authentication & Firestore Sync
+    // Handle Authentication & Initial Hydration
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             setUser(user);
             if (user) {
-                // Fetch or Initialize Ninja Profile in Firestore
-                const userDoc = await getDoc(doc(db, "students", user.uid));
-                if (userDoc.exists()) {
-                    // Sync database status (including COMPLETED status) to local state
-                    setNinjaStats(userDoc.data());
-                    // Phase 2.2: Fetch the latest 50 logs for analytics
-                    fetchSessionLogs(user.uid);
+                // Priority 1: Check Local Storage for interrupted session (Zero Cost Read)
+                const localSession = localStorage.getItem(`ninja_session_${user.uid}`);
+
+                if (localSession) {
+                    const data = JSON.parse(localSession);
+                    setNinjaStats(data.stats);
+                    setLocalBuffer(data.buffer);
                 } else {
-                    // Initialize a new student profile if it doesn't exist
-                    const initialStats = {
-                        powerPoints: 0,
-                        heroLevel: 1,
-                        mastery: {},
-                        hurdles: {},
-                        completedMissions: 0,
-                        currentQuest: 'DIAGNOSTIC',
-                        streakCount: 0,
-                        lastMissionDate: null
-                    };
-                    await setDoc(doc(db, "students", user.uid), initialStats);
-                    setNinjaStats(initialStats);
+                    // Priority 2: Fetch from Firestore only if no local scratchpad exists
+                    const userDoc = await getDoc(doc(db, "students", user.uid));
+                    if (userDoc.exists()) {
+                        // Sync database status (including COMPLETED status) to local state
+                        setNinjaStats(userDoc.data());
+                        // Phase 2.2: Fetch the latest 50 logs for analytics
+                        fetchSessionLogs(user.uid);
+                    } else {
+                        // Initialize a new student profile if it doesn't exist
+                        const initialStats = {
+                            powerPoints: 0,
+                            heroLevel: 1,
+                            mastery: {},
+                            hurdles: {},
+                            completedMissions: 0,
+                            currentQuest: 'DIAGNOSTIC',
+                            streakCount: 0,
+                            lastMissionDate: null
+                        };
+                        await setDoc(doc(db, "students", user.uid), initialStats);
+                        setNinjaStats(initialStats);
+                    }
                 }
             }
             setLoading(false);
         });
         return unsubscribe;
     }, []);
+
+    /**
+     * syncToCloud (The Batch Engine)
+     * Consolidates all buffered local changes into a single Firestore write transaction.
+     * @param {boolean} isFinal - If true, clears the local storage buffer after sync.
+     */
+    const syncToCloud = async (isFinal = false) => {
+        if (!auth.currentUser || localBuffer.logs.length === 0) return;
+
+        const batch = writeBatch(db);
+        const userRef = doc(db, "students", auth.currentUser.uid);
+        const logsRef = collection(db, "students", auth.currentUser.uid, "session_logs");
+
+        // Add all buffered question logs in a single transaction
+        localBuffer.logs.forEach(log => {
+            const newLogRef = doc(logsRef);
+            batch.set(newLogRef, { ...log, timestamp: serverTimestamp() });
+        });
+
+        // Update global student profile
+        batch.update(userRef, {
+            ...ninjaStats,
+            powerPoints: ninjaStats.powerPoints,
+            lastUpdated: serverTimestamp()
+        });
+
+        try {
+            await batch.commit();
+            // Reset buffer after successful cloud persistence
+            setLocalBuffer({ logs: [], pointsGained: 0 });
+
+            if (isFinal) {
+                localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
+            }
+        } catch (error) {
+            console.error("Blue Ninja Sync Error:", error);
+        }
+    };
 
     /**
      * fetchSessionLogs (Phase 2.2)
@@ -138,11 +189,8 @@ export function NinjaProvider({ children }) {
         const newLevel = calculateHeroLevel(newPoints);
 
         // Update local state for immediate UI feedback (Agility)
-        setNinjaStats(prevStats => ({
-            ...prevStats,
-            powerPoints: newPoints,
-            heroLevel: newLevel
-        }));
+        const updatedStats = { ...ninjaStats, powerPoints: newPoints, heroLevel: newLevel };
+        setNinjaStats(updatedStats);
 
         // Persist to Firestore (Persistence)
         const userRef = doc(db, "students", auth.currentUser.uid);
@@ -153,6 +201,7 @@ export function NinjaProvider({ children }) {
             });
 
             // Trigger achievement logic if the ninja leveled up
+            // Achievement logic: Level Up notification
             if (newLevel > currentLevel) {
                 setActiveAchievement({
                     id: 'level_up',
@@ -164,6 +213,35 @@ export function NinjaProvider({ children }) {
             }
         } catch (error) {
             console.error("Error persisting power points:", error);
+        }
+
+        // Buffer the change locally
+        const updatedBuffer = {
+            ...localBuffer,
+            pointsGained: localBuffer.pointsGained + gain
+        };
+        setLocalBuffer(updatedBuffer);
+
+        // Mirror to LocalStorage to protect against page refreshes
+        localStorage.setItem(`ninja_session_${auth.currentUser.uid}`, JSON.stringify({
+            stats: updatedStats,
+            buffer: updatedBuffer
+        }));
+    };
+
+    /**
+     * logQuestionResultLocal
+     * Buffers detailed analytics (recovery velocity, timing, mastery deltas) locally.
+     * Triggers syncToCloud at Question 5 (Midpoint) and Question 10 (Completion).
+     */
+    const logQuestionResultLocal = (logData, currentQuestionIndex) => {
+        const updatedLogs = [...localBuffer.logs, logData];
+        const newBuffer = { ...localBuffer, logs: updatedLogs };
+        setLocalBuffer(newBuffer);
+
+        // Milestone Batching: Sync at Question 5 and Question 10 to save quota
+        if (currentQuestionIndex === 4 || currentQuestionIndex === 9) {
+            syncToCloud(currentQuestionIndex === 9);
         }
     };
 
@@ -198,10 +276,13 @@ export function NinjaProvider({ children }) {
         <NinjaContext.Provider value={{
             user,
             ninjaStats,
-            sessionHistory, // Exposed for Analytics components
+            sessionHistory,
+            setNinjaStats, // Exposed for Analytics components
             updatePower,
             logQuestionResult,
+            logQuestionResultLocal,
             updateStreak,
+            syncToCloud,
             loading,
             activeAchievement
         }}>
