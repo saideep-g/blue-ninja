@@ -16,6 +16,7 @@ import { BlueNinjaTheme } from './theme/themeConfig';
 /**
  * Blue Ninja Content Component
  * Updated in to support Dashboard, Daily Mission loop, Quest views and Victory Screens.
+ * Optimized Dashboard UX and Hero Quest placement.
  */
 function BlueNinjaContent() {
   const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement } = useNinja();
@@ -173,8 +174,8 @@ function BlueNinjaContent() {
 
         {/* Phase 2.4 UX Update: Prominent Hero Quest Action at the Top */}
         <div className="ninja-card bg-blue-600 text-white border-none flex flex-col md:flex-row items-center justify-between p-8 md:p-12 mb-8 gap-6 shadow-2xl">
-          <div className="text-center md:text-left">
-            <h2 className="text-3xl font-black uppercase italic mb-2">The Sky Is Calling</h2>
+          <div className="text-center md:text-left z-10">
+            <h2 className="text-3xl font-black uppercase italic mb-2 tracking-tighter">The Sky Is Calling</h2>
             <p className="text-blue-100 font-medium">Ready for today's 10-mission flight? Clear the Storm Clouds.</p>
           </div>
           <button
@@ -183,6 +184,7 @@ function BlueNinjaContent() {
           >
             Start Daily Flight ➤
           </button>
+
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -238,7 +240,7 @@ function BlueNinjaContent() {
           <MissionCard
             question={diagQ}
             onStartRecovery={startRecoveryTimer} // Step 10 integration
-            onAnswer={(isCorrect, choice, isRecovered = false) => {
+            onAnswer={(isCorrect, choice, isRecovered = false, timeSpent = 0) => {
               // Find the diagnostic tag of the chosen distractor to track hurdles
               const chosenDistractor = diagQ.distractors.find(d => d.option === choice);
               const tag = chosenDistractor?.diagnostic_tag || null;

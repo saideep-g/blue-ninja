@@ -92,7 +92,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
             setSpeedRating(rating);
             setIsCorrectPulse(true);
             // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
-            // Asymmetrical feedback: Auto-advance after 1.2s
+            // Asymmetrical feedback: Auto-advance after 1.2s to preserve momentum
             setTimeout(() => {
                 onAnswer(true, selectedOption, false, null, timeSpent, rating);
             }, 1200);
