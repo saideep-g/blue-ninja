@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 
 /**
  * MissionCard: Step 12 & 13 Final Implementation
@@ -6,6 +6,7 @@ import React, { useEffect, useState, useMemo } from 'react';
  * Detailed comments explain the logic flow for VS Code diffing.
  * Ensures the 'Bonus Mission' (Follow-Up) is visible and interactable 
  * after an incorrect answer is submitted.
+ * Implements Auto-Advance, Success Animations, and Thinking-Time Tracking.
  */
 function MissionCard({ question, onAnswer, onStartRecovery }) {
     // Local state to track the ninja's current selection before submission
@@ -17,6 +18,18 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
 
     // Add a local loading state for typeset
     const [isTypesetting, setIsTypesetting] = useState(false);
+    const [isCorrectPulse, setIsCorrectPulse] = useState(false);
+
+    // Phase 2: High-precision timer for "Thinking Time"
+    const startTimeRef = useRef(Date.now());
+
+    useEffect(() => {
+        // Reset timer when a new question loads
+        startTimeRef.current = Date.now();
+        setSelectedOption(null);
+        setShowFeedback(false);
+        setIsCorrectPulse(false);
+    }, [question?.id]);
 
     /**
      * Effect to trigger MathJax typeset whenever the content changes.
@@ -45,17 +58,20 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     }, [question]);
 
     /**
-     * Logic to check the primary answer.
-     * If correct: Proceeds immediately to next mission.
-     * If wrong: Displays "Ninja Insight" and triggers the recovery timer.
+     * handleCheck - Logic to check the primary answer.
+     * If correct: Triggers success animation and auto-advances after 1.2s.
+     * If wrong: Shows Ninja Insight and starts recovery timer.
      */
     const handleCheck = () => {
+        const timeSpent = Date.now() - startTimeRef.current;
         const isCorrect = selectedOption === question.correct_answer;
 
         if (isCorrect) {
-            // Pass null for tag as it's a correct answer
-            onAnswer(true, selectedOption, false, null);
-            setSelectedOption(null);
+            setIsCorrectPulse(true);
+            // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
+            setTimeout(() => {
+                onAnswer(true, selectedOption, false, null, timeSpent);
+            }, 1200);
         } else {
             // Step 12: Extract the diagnostic_tag to track misconceptions (Hurdles)
             const distractor = question.distractors.find(d => d.option === selectedOption);
@@ -89,30 +105,40 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                 <>
                     {/* Answer Selection Grid */}
                     <div className="grid grid-cols-1 gap-3">
-                        {shuffledOptions.map((option, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setSelectedOption(option)}
-                                className={`p-5 rounded-2xl text-left font-bold transition-all border-2 ${selectedOption === option
-                                    ? 'bg-blue-600 border-blue-600 text-white shadow-lg'
-                                    : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
-                                    }`}
-                            >
-                                {option}
-                            </button>
-                        ))}
+                        {shuffledOptions.map((option, index) => {
+                            const isSelected = selectedOption === option;
+                            return (
+                                <button
+                                    key={index}
+                                    onClick={() => !isCorrectPulse && setSelectedOption(option)}
+                                    className={`p-5 rounded-2xl text-left font-bold transition-all border-2 relative overflow-hidden ${isSelected
+                                        ? isCorrectPulse
+                                            ? 'bg-green-500 border-green-500 text-white shadow-xl'
+                                            : 'bg-blue-600 border-blue-600 text-white shadow-lg'
+                                        : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                                        } ${isCorrectPulse && isSelected ? 'animate-bounce' : ''}`}
+                                >
+                                    {option}
+                                    {isCorrectPulse && isSelected && (
+                                        <span className="absolute right-4 top-1/2 -translate-y-1/2 text-2xl">✨</span>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
 
-                    <button
-                        disabled={!selectedOption}
-                        onClick={handleCheck}
-                        className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${selectedOption
-                            ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
-                            : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            }`}
-                    >
-                        Check Answer ➤
-                    </button>
+                    {!isCorrectPulse && (
+                        <button
+                            disabled={!selectedOption}
+                            onClick={handleCheck}
+                            className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${selectedOption
+                                ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                }`}
+                        >
+                            Check Answer ➤
+                        </button>
+                    )}
                 </>
             ) : (
                 /* Engagement Framing UI (Ninja Insight) */
@@ -137,9 +163,10 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                     <button
                                         key={i}
                                         onClick={() => {
+                                            const timeSpent = Date.now() - startTimeRef.current;
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
                                             // Submits the outcome with the original choice and misconception tag
-                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag);
+                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpent);
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
@@ -155,7 +182,8 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         /* If no follow-up is defined in the JSON, provide a way to continue */
                         <button
                             onClick={() => {
-                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag);
+                                const timeSpent = Date.now() - startTimeRef.current;
+                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpent);
                                 setShowFeedback(false);
                                 setFeedbackData(null);
                                 setSelectedOption(null);

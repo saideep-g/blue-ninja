@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 const NinjaContext = createContext();
 
 /**
  * NinjaProvider: Central state for Blue Ninja Platform.
- * Manages Auth, Ninja Stats, and Real-time Power Persistence.
+ * Manages Auth, Ninja Stats, Daily Streaks, and Transactional Logging.
  */
 export function NinjaProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -17,8 +17,11 @@ export function NinjaProvider({ children }) {
         powerPoints: 0,
         heroLevel: 1,
         mastery: {}, // Tracked by Atom ID (A1, A13, etc.)
+        hurdles: {},
         completedMissions: 0,
-        currentQuest: 'DIAGNOSTIC'
+        currentQuest: 'DIAGNOSTIC',
+        streakCount: 0, // Phase 2: Track consecutive daily missions
+        lastMissionDate: null // Phase 2: For daily reset logic
     });
 
     // Handle Authentication & Firestore Sync
@@ -38,7 +41,11 @@ export function NinjaProvider({ children }) {
                         powerPoints: 0,
                         heroLevel: 1,
                         mastery: {},
-                        currentQuest: 'DIAGNOSTIC'
+                        hurdles: {},
+                        completedMissions: 0,
+                        currentQuest: 'DIAGNOSTIC',
+                        streakCount: 0,
+                        lastMissionDate: null
                     };
                     await setDoc(doc(db, "students", user.uid), initialStats);
                     setNinjaStats(initialStats);
@@ -48,6 +55,23 @@ export function NinjaProvider({ children }) {
         });
         return unsubscribe;
     }, []);
+
+    /**
+     * logQuestionResult (Phase 2.0 Critical Addition)
+     * Creates a transactional log of every answer for deep analytics.
+     */
+    const logQuestionResult = async (logData) => {
+        if (!auth.currentUser) return;
+        try {
+            const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
+            await addDoc(logRef, {
+                ...logData,
+                timestamp: serverTimestamp()
+            });
+        } catch (error) {
+            console.error("Failed to log session event:", error);
+        }
+    };
 
     /**
      * Triggers an achievement notification overlay.
@@ -112,7 +136,7 @@ export function NinjaProvider({ children }) {
             });
 
             // Trigger achievement logic if the ninja leveled up
-            if (newLevel > ninjaStats.heroLevel) {
+            if (newLevel > currentLevel) {
                 triggerAchievement({
                     id: 'level_up',
                     name: `Level ${newLevel} Reached!`,
@@ -125,10 +149,41 @@ export function NinjaProvider({ children }) {
         }
     };
 
+    /**
+     * updateStreak (Phase 2.0)
+     * Increments the daily streak if a mission is completed.
+     */
+    const updateStreak = async () => {
+        if (!auth.currentUser) return;
+        const today = new Date().toISOString().split('T')[0];
 
-    // Add activeAchievement to the context provider value
+        if (ninjaStats.lastMissionDate === today) return; // Already updated today
+
+        const newStreak = (ninjaStats.streakCount || 0) + 1;
+
+        setNinjaStats(prev => ({
+            ...prev,
+            streakCount: newStreak,
+            lastMissionDate: today
+        }));
+
+        const userRef = doc(db, "students", auth.currentUser.uid);
+        await updateDoc(userRef, {
+            streakCount: newStreak,
+            lastMissionDate: today
+        });
+    };
+
     return (
-        <NinjaContext.Provider value={{ user, ninjaStats, updatePower, loading, activeAchievement }}>
+        <NinjaContext.Provider value={{
+            user,
+            ninjaStats,
+            updatePower,
+            logQuestionResult,
+            updateStreak,
+            loading,
+            activeAchievement
+        }}>
             {!loading && children}
         </NinjaContext.Provider>
     );
