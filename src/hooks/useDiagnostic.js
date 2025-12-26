@@ -110,16 +110,22 @@ export function useDiagnostic(injectedQuestions = null) {
         const currentScore = masteryData[atomId] || 0.5; // Default prior
 
         // High-precision timing analytics
-        const timeSpent = endTime - questionStartTime.current;
-        const speedRating = timeSpent < 3000 ? 'SPRINT' : (timeSpent < 15000 ? 'STEADY' : 'DEEP');
+        const timeSpentMs = endTime - questionStartTime.current;
+        const timeSpent = Math.round(timeSpentMs / 1000); // ✅ CONVERT TO SECONDS
+        const speedRating = timeSpent < 3 ? 'SPRINT' : (timeSpent < 15 ? 'STEADY' : 'DEEP');
 
         // Analytics: Calculate Recovery Velocity (how fast they understood the hint)
-        let recoveryVelocity = null;
+        // ✅ FIXED: Make sure this is properly calculated and passed
+        let recoveryVelocity = 0; // Default to 0
         if (isRecovered && branchStartTime.current) {
-            const initialTime = branchStartTime.current - questionStartTime.current;
-            const branchTime = endTime - branchStartTime.current;
+            const initialTimeMs = branchStartTime.current - questionStartTime.current;
+            const branchTimeMs = endTime - branchStartTime.current;
             // Velocity = (Initial Thinking Time - Recovery Time) / Initial Thinking Time
-            recoveryVelocity = (initialTime - branchTime) / initialTime;
+            if (initialTimeMs > 0) {
+                recoveryVelocity = (initialTimeMs - branchTimeMs) / initialTimeMs;
+                // Clamp between 0 and 1
+                recoveryVelocity = Math.max(0, Math.min(1, recoveryVelocity));
+            }
         }
 
         // Track Hurdles/ specific misconceptions if the answer was wrong
@@ -145,21 +151,22 @@ export function useDiagnostic(injectedQuestions = null) {
         const updatedScore = Math.min(0.99, Math.max(0.1, currentScore + updateAmount));
         const newMastery = { ...masteryData, [atomId]: updatedScore };
 
-        // CORE FIX: Log to Ninja Engine (which now mirrors to IndexedDB)
-        // CORE FIX: Logging the full 12-field dataset
+        // ✅ FIXED: PASS ALL REQUIRED FIELDS to logQuestionResult
+        // The context will ensure they're all properly saved
         await logQuestionResult({
             questionId,
-            studentAnswer,   // ✅ Now captured
-            correctAnswer,   // ✅ Now captured
+            studentAnswer,        // ✅ Captured
             isCorrect,
             isRecovered,
-            diagnosticTag,   // ✅ Now captured correctly
-            timeSpent,
+            recoveryVelocity,     // ✅ FIXED: Now explicitly passed
+            diagnosticTag,        // ✅ Captured
+            timeSpent,            // ✅ FIXED: Now in SECONDS (not milliseconds)
             speedRating,
             atomId,
             masteryBefore: currentScore,
             masteryAfter: updatedScore,
             mode: injectedQuestions ? 'DEV_TEST' : 'DIAGNOSTIC'
+            // Note: timestamp will be added by Firestore
         });
 
         setMasteryData(newMastery);
