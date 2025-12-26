@@ -15,6 +15,8 @@ import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
 import MissionHistory from './components/dashboard/MissionHistory'; // Phase 2.2 New Component
 import { auth } from './firebase/config';
 import { BlueNinjaTheme } from './theme/themeConfig';
+import StudentInsightsReport from './components/dashboard/StudentInsightsReport';
+import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
 
 /**
  * Blue Ninja Content Component
@@ -29,6 +31,8 @@ function BlueNinjaContent() {
 
   /// Standard views: QUEST (Diagnostic), DASHBOARD, or DAILY_MISSION
   const [currentView, setCurrentView] = useState('QUEST');
+
+  const [userRole, setUserRole] = useState('STUDENT');
 
   /**
    * INJECTION LOGIC:
@@ -130,6 +134,10 @@ function BlueNinjaContent() {
       <div className="animate-pulse text-4xl">🌊</div>
     </div>
   );
+
+  if (userRole === 'TEACHER') {
+    return <TeacherAnalyticsDashboard />;
+  }
 
   if (!user) return <Login />;
 
@@ -269,6 +277,8 @@ function BlueNinjaContent() {
               {/* Now using activeMastery (Persisted or Session) */}
               <PowerMap masteryData={activeMastery} />
               <ConceptPowerMap masteryData={activeMastery} />
+              <StudentInsightsReport logs={sessionHistory} />
+
 
 
             </div>

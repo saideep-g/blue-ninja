@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { db, auth } from '../firebase/config';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
 import { useNinja } from '../context/NinjaContext'; // FIX: Imported Ninja Context
+import { SAMPLE_DIAGNOSTIC_QUESTIONS } from '../data/sampleDiagnosticQuestions.js';
 
 /**
  * useDiagnostic Hook
