@@ -111,7 +111,7 @@ export function useDiagnostic(injectedQuestions = null) {
 
         // High-precision timing analytics
         const timeSpent = endTime - questionStartTime.current;
-        const speedRating = timeSpent < 15000 ? 'SPRINT' : (timeSpent < 45000 ? 'STEADY' : 'DEEP');
+        const speedRating = timeSpent < 3000 ? 'SPRINT' : (timeSpent < 15000 ? 'STEADY' : 'DEEP');
 
         // Analytics: Calculate Recovery Velocity (how fast they understood the hint)
         let recoveryVelocity = null;

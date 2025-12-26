@@ -168,7 +168,7 @@ export function NinjaProvider({ children }) {
         if (import.meta.env.DEV) {
             await nexusDB.logs.add({
                 ...logData,
-                timestamp: new Date().toISOString(),
+                timestamp: Date.now(),
                 isLocalDev: true
             });
         }
