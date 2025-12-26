@@ -89,7 +89,7 @@ function DevMenu() {
                                 </div>
                             </div>
 
-                            {report.status === 'FAIL' && (
+                            {report.status === 'FAIL' && report.missingFields && report.missingFields.length > 0 && (
                                 <div className="mt-4">
                                     <div className="text-[10px] font-bold text-red-400 uppercase mb-2">Missing Fields:</div>
                                     <div className="flex flex-wrap gap-2">
