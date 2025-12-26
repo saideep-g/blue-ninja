@@ -141,26 +141,71 @@ export function NinjaProvider({ children }) {
 
 
     /**
-     * logQuestionResult (Phase 2.0 Critical Addition)
+     * logQuestionResult (Phase 2.0 Critical Addition - UPDATED FOR COMPLETE FIELDS)
      * Creates a transactional log of every answer for deep analytics.
      * Stores every interaction in a sub-collection for downstream analytics.
      * Records: questionId, answer, timing, velocity, and mastery changes.
+     * 
+     * ✅ FIXED: Now ensures all 14 required fields are present:
+     * questionId, studentAnswer, isCorrect, isRecovered, recoveryVelocity,
+     * diagnosticTag, timeSpent, cappedThinkingTime, speedRating,
+     * masteryBefore, masteryAfter, atomId, mode, timestamp
      */
     const logQuestionResult = async (logData) => {
-        // 1. Standard Cloud Logging
         if (!auth.currentUser) return;
-        if (auth.currentUser) {
-            try {
-                const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
-                await addDoc(logRef, {
-                    ...logData,
-                    timestamp: serverTimestamp()
-                });
-                // Refresh history after logging new data
-                fetchSessionLogs(auth.currentUser.uid);
-            } catch (error) {
-                console.error("Failed to log session event:", error);
-            }
+
+        try {
+            // ✅ CRITICAL: Ensure all required fields are present with proper defaults
+            const completeLog = {
+                // Identity
+                questionId: logData.questionId || '',
+                studentAnswer: logData.studentAnswer || '',
+                
+                // Performance
+                isCorrect: logData.isCorrect !== undefined ? logData.isCorrect : false,
+                isRecovered: logData.isRecovered !== undefined ? logData.isRecovered : false,
+                
+                // ✅ FIXED: recoveryVelocity (was missing)
+                recoveryVelocity: logData.recoveryVelocity !== undefined ? logData.recoveryVelocity : 0,
+                
+                // Learning Target
+                diagnosticTag: logData.diagnosticTag || null,
+                
+                // Timing
+                timeSpent: logData.timeSpent || 0,
+                
+                // ✅ FIXED: cappedThinkingTime (was missing)
+                // Cap thinking time at 60 seconds to prevent outlier skewing
+                cappedThinkingTime: logData.timeSpent ? Math.min(logData.timeSpent, 60) : 0,
+                
+                // Speed Analysis
+                speedRating: logData.speedRating || 'NORMAL',
+                
+                // Mastery Tracking
+                masteryBefore: logData.masteryBefore !== undefined ? logData.masteryBefore : 0,
+                masteryAfter: logData.masteryAfter !== undefined ? logData.masteryAfter : 0,
+                
+                // Curriculum
+                atomId: logData.atomId || '',
+                
+                // Context
+                mode: logData.mode || 'DAILY',
+                
+                // Server timestamp will be added by Firestore
+            };
+
+            // Log to Cloud Firestore
+            const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
+            await addDoc(logRef, {
+                ...completeLog,
+                timestamp: serverTimestamp()
+            });
+
+            // Refresh history after logging new data
+            fetchSessionLogs(auth.currentUser.uid);
+
+        } catch (error) {
+            console.error("Failed to log session event:", error);
         }
 
         // 2. Nexus Local Logging (For Dev Validation)
@@ -287,20 +332,17 @@ export function NinjaProvider({ children }) {
             lastMissionDate: today
         }));
 
-        // Mirror to LocalStorage
-        localStorage.setItem(`ninja_session_${auth.currentUser.uid}`, JSON.stringify({
-            stats: updatedStats,
-            buffer: localBuffer
-        }));
-
         // Streaks are high-importance, so we update cloud immediately
         const userRef = doc(db, "students", auth.currentUser.uid);
 
-        setNinjaStats(prev => ({ ...prev, streakCount: newStreak, lastMissionDate: today }));
-        await updateDoc(userRef, {
-            streakCount: newStreak,
-            lastMissionDate: today
-        });
+        try {
+            await updateDoc(userRef, {
+                streakCount: newStreak,
+                lastMissionDate: today
+            });
+        } catch (error) {
+            console.error("Error updating streak:", error);
+        }
     };
 
     return (
