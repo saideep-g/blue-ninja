@@ -47,12 +47,13 @@ export const validateNexusLogs = async (options = {}) => {
                 status: 'EMPTY',
                 message: 'No local logs found in NexusDB',
                 timestamp: new Date().toISOString(),
-                executionTime: `${(performance.now() - startTime).toFixed(2)}ms`
+                executionTime: `${(performance.now() - startTime).toFixed(2)}ms`,
+                missingFields: []
             };
         }
 
         // Step 2: Identify latest and recent logs
-        const latestLog = allLogs;
+        const latestLog = allLogs[0];
         const recentLogs = allLogs.slice(0, sampleSize);
 
         // Step 3: Run all three tiers of validation
@@ -69,18 +70,24 @@ export const validateNexusLogs = async (options = {}) => {
             }
         }
 
-        // Step 5: Compile comprehensive report
+        // Step 5: Extract missing fields for UI display
+        const missingFields = schemaVal.issues
+            .filter(issue => issue.code === VALIDATION_CODES.FAIL_MISSING_REQUIRED)
+            .map(issue => issue.field);
+
+        // Step 6: Compile comprehensive report
         const report = {
             // Meta
             status: schemaVal.valid && semanticVal.valid ? 'PASS' : 'FAIL',
             timestamp: new Date().toISOString(),
             executionTime: `${(performance.now() - startTime).toFixed(2)}ms`,
+            latestLog: latestLog,
 
             // Log Metrics
             metrics: {
                 totalLogs: allLogs.length,
                 recentLogsSampled: recentLogs.length,
-                latestLogId: latestLog.id,
+                latestLogId: latestLog?.id,
                 oldestLogId: allLogs[allLogs.length - 1]?.id
             },
 
@@ -98,6 +105,9 @@ export const validateNexusLogs = async (options = {}) => {
                     issues: semanticVal.issues
                 }
             },
+
+            // Missing fields for UI display (CRITICAL FIX)
+            missingFields: missingFields,
 
             // Insights (if enabled)
             insights: insightsVal || null,
@@ -123,7 +133,8 @@ export const validateNexusLogs = async (options = {}) => {
             message: error.message,
             stack: error.stack,
             timestamp: new Date().toISOString(),
-            executionTime: `${(performance.now() - startTime).toFixed(2)}ms`
+            executionTime: `${(performance.now() - startTime).toFixed(2)}ms`,
+            missingFields: []
         };
     }
 };
