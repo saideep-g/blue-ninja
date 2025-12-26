@@ -20,6 +20,7 @@ import StudentInsightsReport from './components/dashboard/StudentInsightsReport'
 import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
 import ParentDashboard from './components/parent/ParentDashboard';
 import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
+import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
 
 /**
  * Blue Ninja Content Component
