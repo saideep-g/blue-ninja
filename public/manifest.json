@@ -1,0 +1,45 @@
+{
+    "name": "Blue Ninja - Math Learning",
+    "short_name": "Blue Ninja",
+    "description": "Master math through ninja missions and daily challenges",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#FAFAFA",
+    "theme_color": "#A855F7",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icon-maskable.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "categories": [
+        "education"
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-540.png",
+            "sizes": "540x720",
+            "type": "image/png"
+        },
+        {
+            "src": "/screenshot-1080.png",
+            "sizes": "1080x1920",
+            "type": "image/png"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Achievements: Step 13 Implementation
+ * Achievements
  * Visualizes unlocked milestones to drive motivation.
  */
 function Achievements({ ninjaStats }) {

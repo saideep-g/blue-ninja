@@ -1,0 +1,3466 @@
+[
+  {
+    "id": "DIAG_A1_001",
+    "module": "M1",
+    "atom": "A1",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "A mountain peak is at elevation 8,000m above sea level. A valley is 1,500m below sea level. What is the difference in elevation?",
+    "correct_answer": "9,500 meters",
+    "distractors": [
+      {
+        "option": "6,500 meters",
+        "diagnostic_tag": "SUBTRACTION_ONLY",
+        "engagement_framing": "You subtracted, but both are elevations. When one is below and one is above, we add the distances!",
+        "follow_up": {
+          "text": "If the peak is +8000 and the valley is -1500, what is the distance between them?",
+          "options": [
+            "Add them: 8000 + 1500 = 9500",
+            "Subtract them: 8000 - 1500 = 6500"
+          ],
+          "correct": "Add them: 8000 + 1500 = 9500",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "8,000 meters",
+        "diagnostic_tag": "IGNORE_CONTEXT",
+        "engagement_framing": "You picked the peak's height, but we need the difference from peak to valley.",
+        "follow_up": {
+          "text": "Does the valley's depth matter when finding the difference?",
+          "options": [
+            "Yes, we count it too",
+            "No, ignore it"
+          ],
+          "correct": "Yes, we count it too",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "1,500 meters",
+        "diagnostic_tag": "PARTIAL_ANSWER",
+        "engagement_framing": "The valley is 1,500m deep, but we also need to include the mountain's height!",
+        "follow_up": {
+          "text": "Is 1,500m the total difference, or just part of it?",
+          "options": [
+            "Just the valley's depth",
+            "Total difference"
+          ],
+          "correct": "Just the valley's depth",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A2_002",
+    "module": "M1",
+    "atom": "A2",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Which pair creates a Zero Pair? $-12 + 12 = ?$",
+    "correct_answer": "0",
+    "distractors": [
+      {
+        "option": "24",
+        "diagnostic_tag": "ADDITION_MAGNITUDE",
+        "engagement_framing": "You added the magnitudes, but opposites cancel! -12 and +12 are like opposites in tug-of-war.",
+        "follow_up": {
+          "text": "Do -12 and +12 pull in the same direction or opposite directions?",
+          "options": [
+            "Opposite directions",
+            "Same direction"
+          ],
+          "correct": "Opposite directions",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "-12",
+        "diagnostic_tag": "SIGN_RETENTION",
+        "engagement_framing": "The negative sign is special here. What happens when something positive exactly cancels something negative?",
+        "follow_up": {
+          "text": "If you owe $12 and gain $12, what's your net change?",
+          "options": [
+            "$0",
+            "$12 debt",
+            "$12 gain"
+          ],
+          "correct": "$0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "12",
+        "diagnostic_tag": "POSITIVE_ONLY",
+        "engagement_framing": "You took the absolute value, but -12 + 12 truly equals nothing\u2014zero!",
+        "follow_up": {
+          "text": "Does -12 + 12 equal 12 or 0?",
+          "options": [
+            "0",
+            "12"
+          ],
+          "correct": "0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A2_WHY_001",
+    "module": "M1",
+    "atom": "A2_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do -5 and +5 create a 'Blue Sky' (zero)? Which analogy fits best?",
+    "correct_answer": "Like two forces pulling equally in opposite directions",
+    "distractors": [
+      {
+        "option": "Like two identical positive numbers",
+        "diagnostic_tag": "OPPOSITE_MISUNDERSTANDING",
+        "engagement_framing": "Not quite! They're opposite in direction, not identical. Think of a seesaw or balance scale.",
+        "follow_up": {
+          "text": "Are -5 and +5 the same or opposite?",
+          "options": [
+            "Same",
+            "Opposite"
+          ],
+          "correct": "Opposite",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because 5 + 5 = 10",
+        "diagnostic_tag": "MAGNITUDE_CONFUSION",
+        "engagement_framing": "Adding magnitudes doesn't create zero. The sign difference is key!",
+        "follow_up": {
+          "text": "Does -5 + 5 give 0 or 10?",
+          "options": [
+            "0",
+            "10"
+          ],
+          "correct": "0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we're taught it",
+        "diagnostic_tag": "NO_REASONING",
+        "engagement_framing": "There's a reason! Think: what if you walk left 5 steps, then right 5 steps?",
+        "follow_up": {
+          "text": "After walking left 5 steps then right 5 steps, where are you?",
+          "options": [
+            "Back at start",
+            "10 steps away"
+          ],
+          "correct": "Back at start",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A3_002",
+    "module": "M1",
+    "atom": "A3",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Simplify: $-(-8) = ?$",
+    "correct_answer": "8",
+    "distractors": [
+      {
+        "option": "-8",
+        "diagnostic_tag": "DOUBLE_NEGATIVE_SKIPPED",
+        "engagement_framing": "The two negatives are special! What happens when you flip something twice?",
+        "follow_up": {
+          "text": "If you turn around twice (180\u00b0 + 180\u00b0), which way do you face?",
+          "options": [
+            "Original direction",
+            "Opposite direction"
+          ],
+          "correct": "Original direction",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "0",
+        "diagnostic_tag": "SIGN_ANNIHILATION",
+        "engagement_framing": "The signs don't cancel each other out to nothing. They transform the number!",
+        "follow_up": {
+          "text": "What's the opposite of -8?",
+          "options": [
+            "8",
+            "0"
+          ],
+          "correct": "8",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "-16",
+        "diagnostic_tag": "SIGN_ADDITION",
+        "engagement_framing": "You can't add the signs together. The first is an operation ('opposite'), the second is the number.",
+        "follow_up": {
+          "text": "In $-(-8)$, does the first '-' mean 'opposite of'?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A3_WHY_001",
+    "module": "M1",
+    "atom": "A3_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "A negative sign means 'opposite.' So $-(-5)$ is like saying __________.",
+    "correct_answer": "The opposite of the opposite, which is the original",
+    "distractors": [
+      {
+        "option": "Make it bigger",
+        "diagnostic_tag": "MAGNITUDE_BIAS",
+        "engagement_framing": "The size doesn't change, just the direction! -(-5) is 5, not something bigger.",
+        "follow_up": {
+          "text": "Is $-(-5)$ bigger or smaller than 5?",
+          "options": [
+            "Same size",
+            "Bigger",
+            "Smaller"
+          ],
+          "correct": "Same size",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Make it zero",
+        "diagnostic_tag": "CANCELLATION_ERROR",
+        "engagement_framing": "Opposites don't cancel here; they build on each other! Opposite of opposite = back to start.",
+        "follow_up": {
+          "text": "If you turn right (opposite of left), is that zero?",
+          "options": [
+            "No, you face right",
+            "Yes, zero"
+          ],
+          "correct": "No, you face right",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Just ignore the signs",
+        "diagnostic_tag": "SIGN_DISMISSAL",
+        "engagement_framing": "Signs matter! They tell us direction. Two opposites point us back home.",
+        "follow_up": {
+          "text": "Does $-(-5)$ equal 5 or -5?",
+          "options": [
+            "5",
+            "-5"
+          ],
+          "correct": "5",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A4_002",
+    "module": "M1",
+    "atom": "A4",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "What is the sign of: $(-1) \\\\times (-2) \\\\times (-3) \\\\times (-4) = ?$",
+    "correct_answer": "Positive (even count of negatives)",
+    "distractors": [
+      {
+        "option": "Negative (all are negative)",
+        "diagnostic_tag": "ALL_NEGATIVE_BIAS",
+        "engagement_framing": "Count the negatives carefully! Four negatives make two pairs. Each pair becomes positive.",
+        "follow_up": {
+          "text": "How many pairs of negatives are in $(-1) \\\\times (-2) \\\\times (-3) \\\\times (-4)$?",
+          "options": [
+            "2 pairs",
+            "4 pairs"
+          ],
+          "correct": "2 pairs",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Zero",
+        "diagnostic_tag": "ZERO_ASSUMPTION",
+        "engagement_framing": "Products are zero only if one factor is zero. None of these are zero!",
+        "follow_up": {
+          "text": "Is any of these numbers zero: -1, -2, -3, -4?",
+          "options": [
+            "No",
+            "Yes"
+          ],
+          "correct": "No",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Can't tell without calculating",
+        "diagnostic_tag": "PATTERN_AVOIDANCE",
+        "engagement_framing": "You don't need the exact value! Odd or even negatives tells you the sign!",
+        "follow_up": {
+          "text": "Is 4 negatives an even or odd count?",
+          "options": [
+            "Even",
+            "Odd"
+          ],
+          "correct": "Even",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A5_002",
+    "module": "M2",
+    "atom": "A5",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Calculate: $\\\\frac{3}{5} \\\\div \\\\frac{6}{7} = ?$",
+    "correct_answer": "$\\\\frac{7}{10}$",
+    "distractors": [
+      {
+        "option": "$\\\\frac{18}{35}$",
+        "diagnostic_tag": "NO_FLIP",
+        "engagement_framing": "You multiplied straight across! Division needs a flip. What's the flip of $\\\\frac{6}{7}$?",
+        "follow_up": {
+          "text": "To divide by a fraction, we flip it and __________.",
+          "options": [
+            "Multiply",
+            "Divide"
+          ],
+          "correct": "Multiply",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{2}{7}$",
+        "diagnostic_tag": "WRONG_NUMERATOR",
+        "engagement_framing": "Close structure, but check: $\\\\frac{3}{5} \\\\times \\\\frac{7}{6}$ = ?",
+        "follow_up": {
+          "text": "Is $3 \\\\times 7 = 21$?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{10}{7}$",
+        "diagnostic_tag": "INVERSION_ERROR",
+        "engagement_framing": "You flipped something, but not the right fraction! Flip the divisor, not the dividend.",
+        "follow_up": {
+          "text": "Which one do we flip: $\\\\frac{3}{5}$ or $\\\\frac{6}{7}$?",
+          "options": [
+            "The divisor ($\\\\frac{6}{7}$)",
+            "The dividend ($\\\\frac{3}{5}$)"
+          ],
+          "correct": "The divisor ($\\\\frac{6}{7}$)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A5_WHY_001",
+    "module": "M2",
+    "atom": "A5_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do we flip and multiply when dividing fractions? Which makes sense?",
+    "correct_answer": "Division asks 'How many of these fit inside that?'\u2014flipping rephrases it as a multiplication.",
+    "distractors": [
+      {
+        "option": "Flipping makes the answer smaller",
+        "diagnostic_tag": "MAGNITUDE_FOCUS",
+        "engagement_framing": "That's sometimes true, but the real reason is about what division *means*.",
+        "follow_up": {
+          "text": "Does '$\\\\frac{1}{2} \\\\div \\\\frac{1}{4}$' mean how many quarters fit in a half?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because that's the rule",
+        "diagnostic_tag": "ROTE_MEMORY",
+        "engagement_framing": "There's logic! Think: If I divide 10 by 2, I get 5. If I divide 10 by $\\\\frac{1}{2}$, I'm asking 'How many halves in 10?'",
+        "follow_up": {
+          "text": "How many halves are in 10?",
+          "options": [
+            "5",
+            "20"
+          ],
+          "correct": "20",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Flipping prevents division",
+        "diagnostic_tag": "OPERATION_CONFUSION",
+        "engagement_framing": "Flipping doesn't prevent division; it transforms it into multiplication, which is easier!",
+        "follow_up": {
+          "text": "Is $10 \\\\div 2$ the same as $10 \\\\times \\\\frac{1}{2}$?",
+          "options": [
+            "Yes, both equal 5",
+            "No"
+          ],
+          "correct": "Yes, both equal 5",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A6_001",
+    "module": "M2",
+    "atom": "A6",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "A recipe uses $\\\\frac{3}{4}$ cup of flour per serving. How much flour for 8 servings?",
+    "correct_answer": "6 cups",
+    "distractors": [
+      {
+        "option": "$\\\\frac{3}{32}$ cups",
+        "diagnostic_tag": "DIVISION_INSTEAD",
+        "engagement_framing": "More servings means more flour, not less! Should we multiply or divide?",
+        "follow_up": {
+          "text": "If one serving uses $\\\\frac{3}{4}$ cup, do 8 servings use more or less?",
+          "options": [
+            "More",
+            "Less"
+          ],
+          "correct": "More",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{3}{4}$ cups",
+        "diagnostic_tag": "IGNORE_MULTIPLIER",
+        "engagement_framing": "You gave the amount for *one* serving. We need it for 8!",
+        "follow_up": {
+          "text": "Is $\\\\frac{3}{4} \\\\times 8 = \\\\frac{3}{4}$ or something bigger?",
+          "options": [
+            "Something bigger (like 6)",
+            "$\\\\frac{3}{4}$"
+          ],
+          "correct": "Something bigger (like 6)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "8.75 cups",
+        "diagnostic_tag": "ARITHMETIC_ERROR",
+        "engagement_framing": "$\\\\frac{3}{4} \\\\times 8 = \\\\frac{24}{4} = 6$, not 8.75. Let's recalculate!",
+        "follow_up": {
+          "text": "What is $\\\\frac{3}{4} \\\\times 8$?",
+          "options": [
+            "6",
+            "8.75"
+          ],
+          "correct": "6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A7_002",
+    "module": "M2",
+    "atom": "A7",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "What is $5.678 \\\\div 10 = ?$",
+    "correct_answer": "0.5678",
+    "distractors": [
+      {
+        "option": "56.78",
+        "diagnostic_tag": "WRONG_DIRECTION",
+        "engagement_framing": "Dividing makes numbers *smaller*, so the decimal moves left, not right!",
+        "follow_up": {
+          "text": "Does dividing by 10 make a number bigger or smaller?",
+          "options": [
+            "Smaller",
+            "Bigger"
+          ],
+          "correct": "Smaller",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "5.678",
+        "diagnostic_tag": "NO_SHIFT",
+        "engagement_framing": "The decimal does move! Dividing by 10 means shift left by 1 place.",
+        "follow_up": {
+          "text": "When you divide by 10, how many places does the decimal move left?",
+          "options": [
+            "1 place",
+            "No movement"
+          ],
+          "correct": "1 place",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "0.05678",
+        "diagnostic_tag": "OVER_SHIFT",
+        "engagement_framing": "You shifted too far! Dividing by 10 is only 1 place to the left.",
+        "follow_up": {
+          "text": "Dividing by 10 shifts decimal 1 place. Dividing by 100 shifts ____ places.",
+          "options": [
+            "2 places",
+            "1 place"
+          ],
+          "correct": "2 places",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A7_WHY_001",
+    "module": "M2",
+    "atom": "A7_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why does multiplying by 100 shift the decimal right by 2 places? Which reason is best?",
+    "correct_answer": "Because 100 has 2 zeros, each zero shifts the decimal one place right",
+    "distractors": [
+      {
+        "option": "Because 100 is bigger than 10",
+        "diagnostic_tag": "MAGNITUDE_ONLY",
+        "engagement_framing": "Size matters, but the number of zeros in the power of 10 is the key!",
+        "follow_up": {
+          "text": "How many zeros does 100 have?",
+          "options": [
+            "2 zeros",
+            "1 zero"
+          ],
+          "correct": "2 zeros",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we're taught to",
+        "diagnostic_tag": "NO_LOGIC",
+        "engagement_framing": "There's a pattern! 10 has 1 zero \u2192 shift 1 place. 1000 has 3 zeros \u2192 shift 3 places!",
+        "follow_up": {
+          "text": "How many places do you shift for 1000?",
+          "options": [
+            "3 places",
+            "1 place"
+          ],
+          "correct": "3 places",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "The zeros replace decimal digits",
+        "diagnostic_tag": "MECHANISM_CONFUSION",
+        "engagement_framing": "Zeros don't replace; they expand the place value system! Each zero pushes the decimal right.",
+        "follow_up": {
+          "text": "If $2.5 \\\\times 10 = 25$, did the decimal move or did digits disappear?",
+          "options": [
+            "Decimal moved right",
+            "Digits disappeared"
+          ],
+          "correct": "Decimal moved right",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A8_002",
+    "module": "M2",
+    "atom": "A8",
+    "type": "Logical",
+    "difficulty": 3,
+    "text": "Which decimal is *recurring* (never ends)?",
+    "correct_answer": "$\\\\frac{1}{6} = 0.1\\\\overline{6}$",
+    "distractors": [
+      {
+        "option": "$\\\\frac{1}{2} = 0.5$",
+        "diagnostic_tag": "TERMINATING_CONFUSION",
+        "engagement_framing": "$\\\\frac{1}{2} = 0.5$ ends perfectly! Find one with a prime factor other than 2 or 5.",
+        "follow_up": {
+          "text": "Does 2 have factors other than 2 and 5?",
+          "options": [
+            "No",
+            "Yes"
+          ],
+          "correct": "No",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{1}{4} = 0.25$",
+        "diagnostic_tag": "TERMINATING_POWER",
+        "engagement_framing": "4 = $2^2$, which only has 2's. That terminates! Look for a 3 or 7 in the denominator.",
+        "follow_up": {
+          "text": "Can $\\\\frac{1}{4}$ be written with a denominator that's a power of 10?",
+          "options": [
+            "Yes ($\\\\frac{25}{100}$)",
+            "No"
+          ],
+          "correct": "Yes ($\\\\frac{25}{100}$)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{1}{8} = 0.125$",
+        "diagnostic_tag": "POWER_OF_TWO",
+        "engagement_framing": "8 = $2^3$. Powers of 2 and 5 always terminate! 6 has a 3, which breaks the pattern.",
+        "follow_up": {
+          "text": "Does 6 = 2 \u00d7 3, and does 3 make it terminate or repeat?",
+          "options": [
+            "Repeat",
+            "Terminate"
+          ],
+          "correct": "Repeat",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A9_002",
+    "module": "M3",
+    "atom": "A9",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "In the set {3, 7, 7, 9, 9, 9, 11}, which best describes the 'middle value'?",
+    "correct_answer": "Median = 9 (the actual middle)",
+    "distractors": [
+      {
+        "option": "Mean = 7.7 (average)",
+        "diagnostic_tag": "MEASURE_CONFUSION",
+        "engagement_framing": "The mean is the balance point, but 'middle value' usually means median!",
+        "follow_up": {
+          "text": "When looking for the middle value, do we find the *physical middle* or the *balance point*?",
+          "options": [
+            "Physical middle (median)",
+            "Balance point (mean)"
+          ],
+          "correct": "Physical middle (median)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Mode = 9 (most frequent)",
+        "diagnostic_tag": "MEASURE_OVERLAP",
+        "engagement_framing": "9 is the mode! But 'middle' refers to position, not frequency. What's in the middle position?",
+        "follow_up": {
+          "text": "Is 'middle value' about position or about how often it appears?",
+          "options": [
+            "Position (median)",
+            "Frequency (mode)"
+          ],
+          "correct": "Position (median)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Range = 8 (spread)",
+        "diagnostic_tag": "SPREAD_MISIDENTIFICATION",
+        "engagement_framing": "Range tells the gap between extremes, not the middle! Range is 11 - 3 = 8, but that's not a 'value.'",
+        "follow_up": {
+          "text": "Does 'middle value' mean the distance or an actual data point?",
+          "options": [
+            "An actual data point",
+            "The distance"
+          ],
+          "correct": "An actual data point",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A10_002",
+    "module": "M3",
+    "atom": "A10",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Find the range: {22, 5, 18, 11, 30}",
+    "correct_answer": "25",
+    "distractors": [
+      {
+        "option": "5",
+        "diagnostic_tag": "MINIMUM_ONLY",
+        "engagement_framing": "You found the smallest value. But range is the *difference* between largest and smallest.",
+        "follow_up": {
+          "text": "What's the largest value in the set?",
+          "options": [
+            "30",
+            "5"
+          ],
+          "correct": "30",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "30",
+        "diagnostic_tag": "MAXIMUM_ONLY",
+        "engagement_framing": "30 is the maximum! But we need the gap between max and min.",
+        "follow_up": {
+          "text": "Is range the highest value or the difference?",
+          "options": [
+            "The difference",
+            "The highest value"
+          ],
+          "correct": "The difference",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "17.2",
+        "diagnostic_tag": "MEAN_NOT_RANGE",
+        "engagement_framing": "That's the mean! Range is subtraction: max - min = 30 - 5 = 25.",
+        "follow_up": {
+          "text": "Is range about the average or the gap?",
+          "options": [
+            "The gap",
+            "The average"
+          ],
+          "correct": "The gap",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A10_WHY_001",
+    "module": "M3",
+    "atom": "A10_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why does 'range' tell us about data reliability? Which makes sense?",
+    "correct_answer": "A small range means values are clustered, so predictions are reliable. A big range means values scatter widely.",
+    "distractors": [
+      {
+        "option": "Because range is always positive",
+        "diagnostic_tag": "MATHEMATICAL_PROPERTY",
+        "engagement_framing": "Yes, range is positive, but that's not why it tells us about reliability!",
+        "follow_up": {
+          "text": "If prices range from \\$10 to \\$100, are they clustered or scattered?",
+          "options": [
+            "Scattered",
+            "Clustered"
+          ],
+          "correct": "Scattered",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because it includes all data points",
+        "diagnostic_tag": "COMPLETENESS_BIAS",
+        "engagement_framing": "Range only uses the extremes, not all points! But extremes show how spread out the data is.",
+        "follow_up": {
+          "text": "Does a narrow range or a wide range suggest more predictable data?",
+          "options": [
+            "Narrow range",
+            "Wide range"
+          ],
+          "correct": "Narrow range",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because mathematicians decided it",
+        "diagnostic_tag": "NO_LOGIC",
+        "engagement_framing": "There's real-world logic! Think about weather: Is a temperature range of 20-25\u00b0C or 0-40\u00b0C more predictable?",
+        "follow_up": {
+          "text": "Which is more predictable: temperatures 20-25\u00b0C or 0-40\u00b0C?",
+          "options": [
+            "20-25\u00b0C",
+            "0-40\u00b0C"
+          ],
+          "correct": "20-25\u00b0C",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A11_002",
+    "module": "M3",
+    "atom": "A11",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "Which probability is impossible?",
+    "correct_answer": "2.5",
+    "distractors": [
+      {
+        "option": "0.5",
+        "diagnostic_tag": "VALID_PROBABILITY",
+        "engagement_framing": "0.5 is valid! It means 50-50 chance. Valid probabilities live between 0 and 1.",
+        "follow_up": {
+          "text": "Is 0.5 between 0 and 1?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "0",
+        "diagnostic_tag": "IMPOSSIBLE_CONFUSION",
+        "engagement_framing": "0 means 'impossible'\u2014it's a valid probability! 2.5 is beyond the scale entirely.",
+        "follow_up": {
+          "text": "What does a probability of 0 mean?",
+          "options": [
+            "Impossible",
+            "Certain"
+          ],
+          "correct": "Impossible",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "1",
+        "diagnostic_tag": "CERTAINTY_POSITION",
+        "engagement_framing": "1 means 'certain'\u2014the maximum valid probability. 2.5 exceeds the limit!",
+        "follow_up": {
+          "text": "What's the highest valid probability?",
+          "options": [
+            "1",
+            "2.5"
+          ],
+          "correct": "1",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A12_002",
+    "module": "M4",
+    "atom": "A12",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Solve: $x - 6 = 14$",
+    "correct_answer": "x = 20",
+    "distractors": [
+      {
+        "option": "x = 8",
+        "diagnostic_tag": "WRONG_OPERATION",
+        "engagement_framing": "You subtracted 6 again, but we need to *undo* subtraction by adding!",
+        "follow_up": {
+          "text": "To undo 'subtract 6,' do we add 6 or subtract 6?",
+          "options": [
+            "Add 6",
+            "Subtract 6"
+          ],
+          "correct": "Add 6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "x = 14",
+        "diagnostic_tag": "IGNORING_CONSTANT",
+        "engagement_framing": "14 is on the right side of the equation, but x has a partner (- 6) that must go!",
+        "follow_up": {
+          "text": "Is x by itself or does it have '-6' attached?",
+          "options": [
+            "Has '-6' attached",
+            "By itself"
+          ],
+          "correct": "Has '-6' attached",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "x = 20",
+        "diagnostic_tag": "CORRECT_ANSWER",
+        "engagement_framing": "Perfect! 20 - 6 = 14 \u2713"
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A12_WHY_001",
+    "module": "M4",
+    "atom": "A12_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why is equation solving like balancing a scale? Which analogy fits?",
+    "correct_answer": "Whatever you do to one side, you must do to the other side to keep it balanced",
+    "distractors": [
+      {
+        "option": "Because equations have two sides",
+        "diagnostic_tag": "STRUCTURE_ONLY",
+        "engagement_framing": "True, but that's not the key reason! The key is *symmetry*\u2014operations must match.",
+        "follow_up": {
+          "text": "If you add 5 to the left side, must you add 5 to the right side?",
+          "options": [
+            "Yes, to stay balanced",
+            "No, it doesn't matter"
+          ],
+          "correct": "Yes, to stay balanced",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because balance scales exist in the real world",
+        "diagnostic_tag": "REAL_WORLD_CONFLATION",
+        "engagement_framing": "Balance scales are a good metaphor, but the principle is about *symmetry preserving truth*!",
+        "follow_up": {
+          "text": "Does adding the same number to both sides keep an equation true?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because the answer is always the same",
+        "diagnostic_tag": "RESULT_CONFUSION",
+        "engagement_framing": "The answer changes based on the equation! The principle is symmetry, not sameness.",
+        "follow_up": {
+          "text": "In x + 5 = 12 and x - 3 = 4, are the answers the same?",
+          "options": [
+            "Yes, x = 7 in both",
+            "No"
+          ],
+          "correct": "Yes, x = 7 in both",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A13_002",
+    "module": "M4",
+    "atom": "A13",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "Translate: 'Three times a number minus 2 equals 13.' Which equation matches?",
+    "correct_answer": "$3x - 2 = 13$",
+    "distractors": [
+      {
+        "option": "$3(x - 2) = 13$",
+        "diagnostic_tag": "PARENTHESES_ERROR",
+        "engagement_framing": "With parentheses, the -2 multiplies by 3, not just x! Check: 'minus 2' comes *after* multiplying.",
+        "follow_up": {
+          "text": "In 'three times a number minus 2,' does the 3 multiply the 2?",
+          "options": [
+            "No, only x",
+            "Yes"
+          ],
+          "correct": "No, only x",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$3x + 2 = 13$",
+        "diagnostic_tag": "SIGN_ERROR",
+        "engagement_framing": "'Minus 2' means subtract, not add!",
+        "follow_up": {
+          "text": "Does 'minus 2' mean +2 or -2?",
+          "options": [
+            "-2",
+            "+2"
+          ],
+          "correct": "-2",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$x - 2 = 13$",
+        "diagnostic_tag": "MISSING_MULTIPLIER",
+        "engagement_framing": "'Three times' is missing! The equation should start with 3x, not just x.",
+        "follow_up": {
+          "text": "Does 'three times' mean multiply by 3?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A14_002",
+    "module": "M4",
+    "atom": "A14",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "To solve $3x + 5 = 20$, which operation should you undo *first*?",
+    "correct_answer": "Add -5 (or subtract 5) to both sides",
+    "distractors": [
+      {
+        "option": "Divide both sides by 3",
+        "diagnostic_tag": "ORDER_REVERSED",
+        "engagement_framing": "Division is important, but which was applied to x last: multiply by 3 or add 5?",
+        "follow_up": {
+          "text": "In 3x + 5, which operation was done to x last?",
+          "options": [
+            "Add 5 (last)",
+            "Multiply by 3 (first)"
+          ],
+          "correct": "Add 5 (last)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Multiply both sides by 3",
+        "diagnostic_tag": "WRONG_INVERSE",
+        "engagement_framing": "We need to *undo* adding 5, not multiply! What's the opposite of adding?",
+        "follow_up": {
+          "text": "Is the opposite of '+5' equal to '\u00d73'?",
+          "options": [
+            "No, it's -5",
+            "Yes"
+          ],
+          "correct": "No, it's -5",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Divide by 8",
+        "diagnostic_tag": "RANDOM_OPERATION",
+        "engagement_framing": "8 comes from 3 + 5, but that's not a step we use! We undo operations in reverse order.",
+        "follow_up": {
+          "text": "Do we add 3 + 5 when solving, or do we undo them separately?",
+          "options": [
+            "Undo them separately",
+            "Add them first"
+          ],
+          "correct": "Undo them separately",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A15_002",
+    "module": "M5",
+    "atom": "A15",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Two angles are complementary. If one is 35\u00b0, what's the other?",
+    "correct_answer": "55\u00b0",
+    "distractors": [
+      {
+        "option": "145\u00b0",
+        "diagnostic_tag": "SUPPLEMENTARY_CONFUSION",
+        "engagement_framing": "That's supplementary (adds to 180\u00b0)! Complementary angles add to 90\u00b0.",
+        "follow_up": {
+          "text": "Do complementary angles add to 90\u00b0 or 180\u00b0?",
+          "options": [
+            "90\u00b0",
+            "180\u00b0"
+          ],
+          "correct": "90\u00b0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "35\u00b0",
+        "diagnostic_tag": "EQUAL_ANGLE_BIAS",
+        "engagement_framing": "Complementary angles aren't necessarily equal. We add them to get 90\u00b0.",
+        "follow_up": {
+          "text": "If one complementary angle is 35\u00b0, is the other also 35\u00b0?",
+          "options": [
+            "No, it's 55\u00b0",
+            "Yes"
+          ],
+          "correct": "No, it's 55\u00b0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "90\u00b0",
+        "diagnostic_tag": "SUM_AS_ANSWER",
+        "engagement_framing": "90\u00b0 is their *sum*, not the answer! We need the *other* angle.",
+        "follow_up": {
+          "text": "Is 90\u00b0 the other angle or the sum?",
+          "options": [
+            "The sum",
+            "The other angle"
+          ],
+          "correct": "The sum",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A15_WHY_001",
+    "module": "M5",
+    "atom": "A15_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do complementary angles add to 90\u00b0? What's the best reason?",
+    "correct_answer": "Because 90\u00b0 is a right angle\u2014a quarter turn\u2014and two angles meeting at a right angle form it perfectly",
+    "distractors": [
+      {
+        "option": "Because that's what we're taught",
+        "diagnostic_tag": "ROTE_LEARNING",
+        "engagement_framing": "There's geometry behind it! Imagine two angles meeting inside a square corner.",
+        "follow_up": {
+          "text": "Does a square corner equal 90\u00b0?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because 90 is divisible by many numbers",
+        "diagnostic_tag": "MATHEMATICAL_PROPERTY",
+        "engagement_framing": "90 being divisible is true but not the reason! The reason is geometric\u2014right angles.",
+        "follow_up": {
+          "text": "Does a right angle always equal 90\u00b0?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because 180 divided by 2 is 90",
+        "diagnostic_tag": "SUPPLEMENTARY_LOGIC",
+        "engagement_framing": "That's how we calculate it, but not why! The reason is about perpendicular lines forming right angles.",
+        "follow_up": {
+          "text": "Is the reason mathematical calculation or geometric shape?",
+          "options": [
+            "Geometric shape",
+            "Mathematical calculation"
+          ],
+          "correct": "Geometric shape",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A16_001",
+    "module": "M5",
+    "atom": "A16",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "Two lines intersect. One angle is 72\u00b0. What is the opposite angle?",
+    "correct_answer": "72\u00b0",
+    "distractors": [
+      {
+        "option": "108\u00b0",
+        "diagnostic_tag": "SUPPLEMENTARY_MISTAKE",
+        "engagement_framing": "108\u00b0 is the supplementary angle (next to 72\u00b0). Opposite angles are *equal*, not supplementary!",
+        "follow_up": {
+          "text": "Are opposite angles equal or supplementary?",
+          "options": [
+            "Equal",
+            "Supplementary"
+          ],
+          "correct": "Equal",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "90\u00b0",
+        "diagnostic_tag": "COMPLEMENTARY_ERROR",
+        "engagement_framing": "Opposite angles aren't complementary. They're *vertically opposite*, which means they're equal!",
+        "follow_up": {
+          "text": "If one angle is 72\u00b0, is the opposite angle also 72\u00b0?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "144\u00b0",
+        "diagnostic_tag": "DOUBLING_ERROR",
+        "engagement_framing": "Doubling doesn't apply here! Opposite angles are equal, not double.",
+        "follow_up": {
+          "text": "Does opposite mean twice as much?",
+          "options": [
+            "No, same as",
+            "Yes, twice as much"
+          ],
+          "correct": "No, same as",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A17_002",
+    "module": "M5",
+    "atom": "A17",
+    "type": "Procedural",
+    "difficulty": 3,
+    "text": "Two parallel lines are cut by a transversal. If one angle is 65\u00b0, find its corresponding angle.",
+    "correct_answer": "65\u00b0",
+    "distractors": [
+      {
+        "option": "115\u00b0",
+        "diagnostic_tag": "SUPPLEMENTARY_CONFUSION",
+        "engagement_framing": "Corresponding angles are on the same side at matching positions. They're equal, not supplementary!",
+        "follow_up": {
+          "text": "Are corresponding angles equal or supplementary?",
+          "options": [
+            "Equal",
+            "Supplementary"
+          ],
+          "correct": "Equal",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "90\u00b0",
+        "diagnostic_tag": "PERPENDICULAR_ASSUMPTION",
+        "engagement_framing": "The transversal doesn't have to be perpendicular! Corresponding angles are wherever they match.",
+        "follow_up": {
+          "text": "If one corresponding angle is 65\u00b0, must the transversal be perpendicular?",
+          "options": [
+            "No",
+            "Yes"
+          ],
+          "correct": "No",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "180\u00b0",
+        "diagnostic_tag": "STRAIGHT_LINE_ERROR",
+        "engagement_framing": "180\u00b0 is a straight line, not an angle relationship! Corresponding angles are equal.",
+        "follow_up": {
+          "text": "Does a corresponding angle to 65\u00b0 equal 180\u00b0?",
+          "options": [
+            "No, it equals 65\u00b0",
+            "Yes"
+          ],
+          "correct": "No, it equals 65\u00b0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A17_WHY_001",
+    "module": "M5",
+    "atom": "A17_WHY",
+    "type": "Conceptual",
+    "difficulty": 3,
+    "text": "Why are corresponding angles equal when two parallel lines are cut by a transversal?",
+    "correct_answer": "Because parallel lines never change direction\u2014they maintain the same 'tilt' everywhere, so angles cut at matching positions are identical",
+    "distractors": [
+      {
+        "option": "Because transversals create symmetry",
+        "diagnostic_tag": "SYMMETRY_BIAS",
+        "engagement_framing": "Symmetry exists, but the real reason is about parallel lines' constant direction!",
+        "follow_up": {
+          "text": "Do parallel lines change their direction or stay the same everywhere?",
+          "options": [
+            "Stay the same",
+            "Change direction"
+          ],
+          "correct": "Stay the same",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because they add to 180\u00b0",
+        "diagnostic_tag": "SUPPLEMENTARY_CONFUSION",
+        "engagement_framing": "Some angle pairs add to 180\u00b0, but corresponding angles are *equal*, not supplementary!",
+        "follow_up": {
+          "text": "Do corresponding angles add to 180\u00b0 or are they equal?",
+          "options": [
+            "Equal",
+            "Add to 180\u00b0"
+          ],
+          "correct": "Equal",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we define them that way",
+        "diagnostic_tag": "DEFINITIONAL_ONLY",
+        "engagement_framing": "It's not just a definition! The property comes from how parallel lines work geometrically.",
+        "follow_up": {
+          "text": "If lines are parallel, must they cut at the same angle?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A18_002",
+    "module": "M6",
+    "atom": "A18",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "In a triangle, two angles are 48\u00b0 and 67\u00b0. Find the third angle.",
+    "correct_answer": "65\u00b0",
+    "distractors": [
+      {
+        "option": "115\u00b0",
+        "diagnostic_tag": "SUPPLEMENTARY_SUM",
+        "engagement_framing": "You used 180\u00b0 minus one angle. But all *three* angles sum to 180\u00b0!",
+        "follow_up": {
+          "text": "Do all three angles in a triangle add to 180\u00b0 or just two?",
+          "options": [
+            "All three",
+            "Just two"
+          ],
+          "correct": "All three",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "48\u00b0",
+        "diagnostic_tag": "ANGLE_REPETITION",
+        "engagement_framing": "You repeated one of the given angles. The third must be different!",
+        "follow_up": {
+          "text": "If two angles are 48\u00b0 and 67\u00b0, is the third angle one of these?",
+          "options": [
+            "No, it's different",
+            "Yes"
+          ],
+          "correct": "No, it's different",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "180\u00b0",
+        "diagnostic_tag": "SUM_AS_ANSWER",
+        "engagement_framing": "180\u00b0 is what all three add to, not the third angle! We need 180 - 48 - 67.",
+        "follow_up": {
+          "text": "Is 180\u00b0 the sum or the third angle?",
+          "options": [
+            "The sum",
+            "The third angle"
+          ],
+          "correct": "The sum",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A18_WHY_001",
+    "module": "M6",
+    "atom": "A18_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do the three angles of any triangle always sum to exactly 180\u00b0?",
+    "correct_answer": "Because if you 'unfold' the three corners, they form a straight line, which is 180\u00b0",
+    "distractors": [
+      {
+        "option": "Because 180 is special",
+        "diagnostic_tag": "NUMERICAL_BIAS",
+        "engagement_framing": "180 is special *geometrically* because it's a straight angle. The reason connects to shape, not the number!",
+        "follow_up": {
+          "text": "Does a straight line equal 180\u00b0?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because triangles have three sides",
+        "diagnostic_tag": "SIDES_NOT_ANGLES",
+        "engagement_framing": "Triangles have three sides, but that doesn't explain the angle sum! It's about how corners fold.",
+        "follow_up": {
+          "text": "Does the number of sides determine the angle sum?",
+          "options": [
+            "No, the geometry does",
+            "Yes"
+          ],
+          "correct": "No, the geometry does",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we define triangles that way",
+        "diagnostic_tag": "DEFINITIONAL_ONLY",
+        "engagement_framing": "It's not a definition\u2014it's a geometric fact! If you try to make a triangle with angles summing to more or less, it fails!",
+        "follow_up": {
+          "text": "Can you draw a triangle with angles 60\u00b0, 60\u00b0, and 70\u00b0?",
+          "options": [
+            "No, they don't sum to 180\u00b0",
+            "Yes"
+          ],
+          "correct": "No, they don't sum to 180\u00b0",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A19_002",
+    "module": "M6",
+    "atom": "A19",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "An exterior angle of a triangle is 130\u00b0. The two remote interior angles are 50\u00b0 and x. Find x.",
+    "correct_answer": "80\u00b0",
+    "distractors": [
+      {
+        "option": "50\u00b0",
+        "diagnostic_tag": "REPETITION_ERROR",
+        "engagement_framing": "You repeated the given interior angle. Exterior = sum of both remote interior angles.",
+        "follow_up": {
+          "text": "Is x equal to 50\u00b0 or something else?",
+          "options": [
+            "Something else",
+            "50\u00b0"
+          ],
+          "correct": "Something else",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "180\u00b0",
+        "diagnostic_tag": "STRAIGHT_ANGLE_ERROR",
+        "engagement_framing": "180\u00b0 is what the exterior and interior adjacent angles sum to, not the remote angle!",
+        "follow_up": {
+          "text": "Is 130\u00b0 the sum of the remote angles or supplementary to an interior angle?",
+          "options": [
+            "Sum of remote",
+            "Supplementary"
+          ],
+          "correct": "Sum of remote",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "130\u00b0",
+        "diagnostic_tag": "EXTERIOR_AS_ANSWER",
+        "engagement_framing": "130\u00b0 is the exterior angle itself! We use it to find the sum: 50 + x = 130.",
+        "follow_up": {
+          "text": "If 50 + x = 130, what is x?",
+          "options": [
+            "80",
+            "130"
+          ],
+          "correct": "80",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A20_002",
+    "module": "M6",
+    "atom": "A20",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "Can a triangle have sides 4, 6, and 11?",
+    "correct_answer": "No (4 + 6 = 10, which is not > 11)",
+    "distractors": [
+      {
+        "option": "Yes, all sides are different",
+        "diagnostic_tag": "UNIQUENESS_BIAS",
+        "engagement_framing": "Different lengths alone aren't enough. The sum of two shorter sides must *exceed* the longest side.",
+        "follow_up": {
+          "text": "Do 4 + 6 and 11 satisfy 4 + 6 > 11?",
+          "options": [
+            "No",
+            "Yes"
+          ],
+          "correct": "No",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Yes, 11 is the longest",
+        "diagnostic_tag": "LONGEST_SIDE_BIAS",
+        "engagement_framing": "Having a longest side isn't enough. That longest side must be less than the sum of the other two!",
+        "follow_up": {
+          "text": "Must the longest side be less than the sum of the other two?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Yes, because 4 + 6 + 11 > 0",
+        "diagnostic_tag": "SUM_POSITIVITY",
+        "engagement_framing": "The sum being positive doesn't matter! We need 4 + 6 > 11, which is false.",
+        "follow_up": {
+          "text": "Is the triangle inequality about the total sum or pairwise sums?",
+          "options": [
+            "Pairwise sums",
+            "Total sum"
+          ],
+          "correct": "Pairwise sums",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A21_002",
+    "module": "M6",
+    "atom": "A21",
+    "type": "Procedural",
+    "difficulty": 3,
+    "text": "In a right triangle, the legs are 6 and 8. Find the hypotenuse.",
+    "correct_answer": "10",
+    "distractors": [
+      {
+        "option": "14",
+        "diagnostic_tag": "ADDITION_ERROR",
+        "engagement_framing": "Adding gives the perimeter, not the hypotenuse! Use $a^2 + b^2 = c^2$.",
+        "follow_up": {
+          "text": "Is the hypotenuse equal to 6 + 8 or something from Pythagoras?",
+          "options": [
+            "Something from Pythagoras",
+            "6 + 8"
+          ],
+          "correct": "Something from Pythagoras",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "7",
+        "diagnostic_tag": "AVERAGE_ERROR",
+        "engagement_framing": "The average of the legs isn't the hypotenuse! We need $\\\\sqrt{6^2 + 8^2} = \\\\sqrt{100} = 10$.",
+        "follow_up": {
+          "text": "Is the hypotenuse the average or the square root of the sum of squares?",
+          "options": [
+            "Square root of sum of squares",
+            "Average"
+          ],
+          "correct": "Square root of sum of squares",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "100",
+        "diagnostic_tag": "FORGET_SQUARE_ROOT",
+        "engagement_framing": "You found $6^2 + 8^2 = 36 + 64 = 100$. But that's $c^2$! Take the square root: $c = \\\\sqrt{100} = 10$.",
+        "follow_up": {
+          "text": "If $c^2 = 100$, what is $c$?",
+          "options": [
+            "10",
+            "100"
+          ],
+          "correct": "10",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A21_WHY_001",
+    "module": "M6",
+    "atom": "A21_WHY",
+    "type": "Conceptual",
+    "difficulty": 3,
+    "text": "Why does Pythagoras' theorem use *squares* of side lengths?",
+    "correct_answer": "Because area is a 2D measure, and the relationship between the three sides is actually about the areas of squares drawn on each side",
+    "distractors": [
+      {
+        "option": "Because squaring makes numbers bigger",
+        "diagnostic_tag": "MAGNITUDE_BIAS",
+        "engagement_framing": "Squaring does enlarge, but that's not the reason! The reason is geometric\u2014areas of squares!",
+        "follow_up": {
+          "text": "Is Pythagoras about areas or just about making numbers bigger?",
+          "options": [
+            "About areas",
+            "Just enlarging"
+          ],
+          "correct": "About areas",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because Pythagoras liked squares",
+        "diagnostic_tag": "PERSONAL_PREFERENCE",
+        "engagement_framing": "It's not preference\u2014it's geometry! The relationship holds for area units, not just lengths.",
+        "follow_up": {
+          "text": "Is the theorem about lengths or areas?",
+          "options": [
+            "Areas (of squares)",
+            "Just lengths"
+          ],
+          "correct": "Areas (of squares)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "To balance the equation",
+        "diagnostic_tag": "ALGEBRAIC_REASONING",
+        "engagement_framing": "While it does balance algebraically, the root reason is geometric\u2014areas of squares on each side!",
+        "follow_up": {
+          "text": "Does Pythagoras describe areas or just an algebraic equation?",
+          "options": [
+            "Areas of squares",
+            "Just algebra"
+          ],
+          "correct": "Areas of squares",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A22_002",
+    "module": "M7",
+    "atom": "A22",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "If 2:3 = 8:x, find x.",
+    "correct_answer": "12",
+    "distractors": [
+      {
+        "option": "6",
+        "diagnostic_tag": "SCALING_ERROR",
+        "engagement_framing": "2 becomes 8, so the scale factor is 4. Apply it to 3 as well: 3 \u00d7 4 = 12.",
+        "follow_up": {
+          "text": "If 2 becomes 8, what's the scale factor?",
+          "options": [
+            "4",
+            "6"
+          ],
+          "correct": "4",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "3",
+        "diagnostic_tag": "WRONG_MAPPING",
+        "engagement_framing": "You picked 3, but 3 should become something larger when 2 becomes 8!",
+        "follow_up": {
+          "text": "Is x larger or smaller than 3?",
+          "options": [
+            "Larger",
+            "Smaller"
+          ],
+          "correct": "Larger",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "24",
+        "diagnostic_tag": "MULTIPLICATION_ERROR",
+        "engagement_framing": "You might be multiplying all terms. The correct method: Cross-multiply: 2x = 3 \u00d7 8 = 24, so x = 12.",
+        "follow_up": {
+          "text": "What is 2 \u00d7 12 vs 3 \u00d7 8?",
+          "options": [
+            "Both equal 24",
+            "Different"
+          ],
+          "correct": "Both equal 24",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A23_002",
+    "module": "M7",
+    "atom": "A23",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Convert 0.35 to a percentage.",
+    "correct_answer": "35%",
+    "distractors": [
+      {
+        "option": "3.5%",
+        "diagnostic_tag": "DECIMAL_SHIFT_ERROR",
+        "engagement_framing": "You moved the decimal once, but to convert to percent, move it *two* places right: 0.35 \u2192 35%.",
+        "follow_up": {
+          "text": "To convert a decimal to percent, multiply by 100. Is 0.35 \u00d7 100 = 3.5 or 35?",
+          "options": [
+            "35",
+            "3.5"
+          ],
+          "correct": "35",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "350%",
+        "diagnostic_tag": "OVER_SHIFT",
+        "engagement_framing": "You shifted too far! 0.35 means 35 per 100, which is 35%, not 350%.",
+        "follow_up": {
+          "text": "Does 0.35 mean 35 per 100 or 350 per 100?",
+          "options": [
+            "35 per 100",
+            "350 per 100"
+          ],
+          "correct": "35 per 100",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "0.35%",
+        "diagnostic_tag": "NO_CONVERSION",
+        "engagement_framing": "You kept the decimal notation! Converting to percent means moving the decimal two places: 0.35 \u2192 35%.",
+        "follow_up": {
+          "text": "Is 0.35% or 35% larger?",
+          "options": [
+            "35%",
+            "0.35%"
+          ],
+          "correct": "35%",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A23_WHY_001",
+    "module": "M7",
+    "atom": "A23_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do we use percentages instead of just fractions or decimals?",
+    "correct_answer": "Percentages use 100 as a universal base, making it easy to compare parts of different 'wholes'",
+    "distractors": [
+      {
+        "option": "Because percentages are always bigger numbers",
+        "diagnostic_tag": "MAGNITUDE_BIAS",
+        "engagement_framing": "True, but that's not the real advantage! The advantage is *comparison across different totals*.",
+        "follow_up": {
+          "text": "Is $\\\\frac{3}{5}$ of a pizza equal to $\\\\frac{3}{4}$ of a pizza?",
+          "options": [
+            "No, different",
+            "Yes, same"
+          ],
+          "correct": "No, different",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because they're always exact",
+        "diagnostic_tag": "PRECISION_BIAS",
+        "engagement_framing": "Percentages can be approximate too! The real value is universal comparison using the base 100.",
+        "follow_up": {
+          "text": "Can you compare $\\\\frac{1}{3}$ and $\\\\frac{1}{4}$ easily? What about 33.3% and 25%?",
+          "options": [
+            "Easier with percentages",
+            "Same difficulty"
+          ],
+          "correct": "Easier with percentages",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because percentages are simpler to calculate",
+        "diagnostic_tag": "CALCULATION_FOCUS",
+        "engagement_framing": "Calculation is one advantage, but the real innovation is the *universal base of 100 for comparison*!",
+        "follow_up": {
+          "text": "If 30% of 100 is 30 and 30% of 50 is 15, does percent help compare?",
+          "options": [
+            "Yes, same percent",
+            "No"
+          ],
+          "correct": "Yes, same percent",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A24_001",
+    "module": "M7",
+    "atom": "A24",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "A shopkeeper buys a shirt for $300 and sells it for $450. What is the profit percentage?",
+    "correct_answer": "50%",
+    "distractors": [
+      {
+        "option": "33.33%",
+        "diagnostic_tag": "WRONG_BASE",
+        "engagement_framing": "You might have divided by the selling price. Profit % is always on the *cost price*: (150/300) \u00d7 100 = 50%.",
+        "follow_up": {
+          "text": "Profit % = (Profit / Cost Price) \u00d7 100. Cost Price is $300, right?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "150",
+        "diagnostic_tag": "FORGET_PERCENT",
+        "engagement_framing": "150 is the profit amount, not the percentage! To get percent, divide by cost and multiply by 100.",
+        "follow_up": {
+          "text": "Is profit amount the same as profit percentage?",
+          "options": [
+            "No, different",
+            "Yes"
+          ],
+          "correct": "No, different",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "66.67%",
+        "diagnostic_tag": "CALCULATION_ERROR",
+        "engagement_framing": "Check: Profit = 450 - 300 = 150. Profit % = (150 / 300) \u00d7 100 = 50%, not 66.67%.",
+        "follow_up": {
+          "text": "What is 150 / 300?",
+          "options": [
+            "0.5",
+            "0.667"
+          ],
+          "correct": "0.5",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A25_002",
+    "module": "M8",
+    "atom": "A25",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Simplify: $\\\\frac{24}{36}$",
+    "correct_answer": "$\\\\frac{2}{3}$",
+    "distractors": [
+      {
+        "option": "$\\\\frac{12}{18}$",
+        "diagnostic_tag": "PARTIAL_SIMPLIFICATION",
+        "engagement_framing": "You simplified partway! Can you simplify more? Find the GCD of 12 and 18.",
+        "follow_up": {
+          "text": "Can $\\\\frac{12}{18}$ be simplified further?",
+          "options": [
+            "Yes, to $\\\\frac{2}{3}$",
+            "No"
+          ],
+          "correct": "Yes, to $\\\\frac{2}{3}$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{24}{36}$",
+        "diagnostic_tag": "NO_SIMPLIFICATION",
+        "engagement_framing": "24 and 36 share common factors! Divide both by their GCD (12) to get $\\\\frac{2}{3}$.",
+        "follow_up": {
+          "text": "What is the GCD of 24 and 36?",
+          "options": [
+            "12",
+            "6"
+          ],
+          "correct": "12",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$\\\\frac{6}{9}$",
+        "diagnostic_tag": "WRONG_FACTORS",
+        "engagement_framing": "You divided by 4, but need to divide by the *greatest* common factor (12) to fully simplify.",
+        "follow_up": {
+          "text": "Is $\\\\frac{6}{9}$ fully simplified or can it be simpler?",
+          "options": [
+            "Can be simpler",
+            "Fully simplified"
+          ],
+          "correct": "Can be simpler",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A25_WHY_001",
+    "module": "M8",
+    "atom": "A25_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do we simplify fractions if $\\\\frac{6}{9}$ and $\\\\frac{2}{3}$ are equal?",
+    "correct_answer": "Because simplification reveals the 'identity' of the fraction\u2014the simplest form shows what the fraction *essentially* is",
+    "distractors": [
+      {
+        "option": "Because unsimplified fractions are wrong",
+        "diagnostic_tag": "CORRECTNESS_BIAS",
+        "engagement_framing": "$\\\\frac{6}{9}$ isn't wrong\u2014just not simplified! The reason is clarity, not correctness.",
+        "follow_up": {
+          "text": "Is $\\\\frac{6}{9}$ incorrect or just not fully simplified?",
+          "options": [
+            "Not fully simplified",
+            "Incorrect"
+          ],
+          "correct": "Not fully simplified",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because the rule says so",
+        "diagnostic_tag": "ROTE_RULE",
+        "engagement_framing": "There's logic! Simplified form is unique\u2014it's the clearest way to see the relationship.",
+        "follow_up": {
+          "text": "Are $\\\\frac{2}{3}$, $\\\\frac{4}{6}$, and $\\\\frac{6}{9}$ all the same value?",
+          "options": [
+            "Yes, equal but different forms",
+            "No"
+          ],
+          "correct": "Yes, equal but different forms",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because teachers prefer it",
+        "diagnostic_tag": "AUTHORITY_FOCUS",
+        "engagement_framing": "Teachers prefer it for a reason: simplification shows the *essence* of the fraction clearly!",
+        "follow_up": {
+          "text": "Does $\\\\frac{2}{3}$ tell you more clearly what the fraction represents than $\\\\frac{6}{9}$?",
+          "options": [
+            "Yes, it's clearer",
+            "No"
+          ],
+          "correct": "Yes, it's clearer",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A26_002",
+    "module": "M8",
+    "atom": "A26",
+    "type": "Logical",
+    "difficulty": 3,
+    "text": "How many rational numbers exist between $\\\\frac{1}{3}$ and $\\\\frac{1}{2}$?",
+    "correct_answer": "Infinitely many",
+    "distractors": [
+      {
+        "option": "1 (such as $\\\\frac{5}{12}$)",
+        "diagnostic_tag": "FINITE_ASSUMPTION",
+        "engagement_framing": "There's at least one! But can you find another between $\\\\frac{1}{3}$ and $\\\\frac{5}{12}$?",
+        "follow_up": {
+          "text": "Can you find a number between 0.333 and 0.417?",
+          "options": [
+            "Yes, infinitely many",
+            "No, only one"
+          ],
+          "correct": "Yes, infinitely many",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "2",
+        "diagnostic_tag": "GUESS_LIMIT",
+        "engagement_framing": "You're thinking there's a limit, but the density property says rationals are *infinitely dense*!",
+        "follow_up": {
+          "text": "Between any two rational numbers, can you always find another?",
+          "options": [
+            "Yes, always",
+            "No, sometimes not"
+          ],
+          "correct": "Yes, always",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "0 (none exist)",
+        "diagnostic_tag": "DENSITY_REJECTION",
+        "engagement_framing": "There are definitely some! The average of $\\\\frac{1}{3}$ and $\\\\frac{1}{2}$ is $\\\\frac{5}{12}$, which lies between them.",
+        "follow_up": {
+          "text": "Is $\\\\frac{5}{12}$ between $\\\\frac{1}{3}$ and $\\\\frac{1}{2}$?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A27_002",
+    "module": "M9",
+    "atom": "A27",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "A parallelogram has a base of 10 cm and a height of 6 cm. Find the area.",
+    "correct_answer": "60 square cm",
+    "distractors": [
+      {
+        "option": "32 square cm",
+        "diagnostic_tag": "PERIMETER_CONFUSION",
+        "engagement_framing": "You calculated the perimeter! Area = base \u00d7 height, not base + height.",
+        "follow_up": {
+          "text": "Is area found by multiplying base and height or adding them?",
+          "options": [
+            "Multiplying",
+            "Adding"
+          ],
+          "correct": "Multiplying",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "16 square cm",
+        "diagnostic_tag": "WRONG_DIMENSIONS",
+        "engagement_framing": "Check your calculation: 10 \u00d7 6 = 60, not 16. Did you use the right dimensions?",
+        "follow_up": {
+          "text": "What is 10 \u00d7 6?",
+          "options": [
+            "60",
+            "16"
+          ],
+          "correct": "60",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "120 square cm",
+        "diagnostic_tag": "DOUBLED_CALCULATION",
+        "engagement_framing": "You might have doubled the base or height. Area of a parallelogram = base \u00d7 height = 10 \u00d7 6 = 60.",
+        "follow_up": {
+          "text": "Is the area 10 \u00d7 6 or 2 \u00d7 10 \u00d7 6?",
+          "options": [
+            "10 \u00d7 6",
+            "2 \u00d7 10 \u00d7 6"
+          ],
+          "correct": "10 \u00d7 6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A27_WHY_001",
+    "module": "M9",
+    "atom": "A27_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why is the area of a parallelogram 'base \u00d7 height' rather than 'side \u00d7 side'?",
+    "correct_answer": "Because 'height' is the perpendicular distance between parallel sides, and area is measured perpendicular to the base",
+    "distractors": [
+      {
+        "option": "Because it's the formula we're taught",
+        "diagnostic_tag": "FORMULA_ONLY",
+        "engagement_framing": "There's logic! The slanted side doesn't define the 'spread' of the shape\u2014the perpendicular height does!",
+        "follow_up": {
+          "text": "Does a slanted side or a perpendicular height measure the 'width' of a shape?",
+          "options": [
+            "Perpendicular height",
+            "Slanted side"
+          ],
+          "correct": "Perpendicular height",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because a parallelogram is like a rectangle",
+        "diagnostic_tag": "SHAPE_ANALOGY",
+        "engagement_framing": "Good analogy! A parallelogram *becomes* a rectangle when you measure from the perpendicular height.",
+        "follow_up": {
+          "text": "If you 'slice and slide' a parallelogram, what shape do you get?",
+          "options": [
+            "A rectangle",
+            "A triangle"
+          ],
+          "correct": "A rectangle",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because height is always longer",
+        "diagnostic_tag": "MAGNITUDE_BIAS",
+        "engagement_framing": "Height isn't always longer\u2014it's special because it's *perpendicular*, capturing the true 'width' of the shape.",
+        "follow_up": {
+          "text": "Is height about length or about direction (perpendicular)?",
+          "options": [
+            "Direction (perpendicular)",
+            "Just length"
+          ],
+          "correct": "Direction (perpendicular)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A28_002",
+    "module": "M9",
+    "atom": "A28",
+    "type": "Logical",
+    "difficulty": 3,
+    "text": "If a circle's diameter is 14 cm, what is its circumference? (Use $\\\\pi \\\\approx \\\\frac{22}{7}$)",
+    "correct_answer": "44 cm",
+    "distractors": [
+      {
+        "option": "88 cm",
+        "diagnostic_tag": "RADIUS_DIAMETER_CONFUSION",
+        "engagement_framing": "You treated 14 as the radius, not the diameter! Circumference = \u03c0 \u00d7 diameter = $\\\\frac{22}{7}$ \u00d7 14.",
+        "follow_up": {
+          "text": "Is diameter 14 or radius 14?",
+          "options": [
+            "Diameter 14",
+            "Radius 14"
+          ],
+          "correct": "Diameter 14",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "154 cm",
+        "diagnostic_tag": "AREA_INSTEAD",
+        "engagement_framing": "That's closer to area! Circumference = \u03c0 \u00d7 d, not \u03c0 \u00d7 r\u00b2. And circumference = 44, not 154.",
+        "follow_up": {
+          "text": "Is circumference about the edge (perimeter) or the inside (area)?",
+          "options": [
+            "The edge",
+            "Inside"
+          ],
+          "correct": "The edge",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "28 cm",
+        "diagnostic_tag": "CALCULATION_ERROR",
+        "engagement_framing": "Check: $\\\\frac{22}{7}$ \u00d7 14 = 22 \u00d7 2 = 44, not 28.",
+        "follow_up": {
+          "text": "What is $\\\\frac{22}{7}$ \u00d7 14?",
+          "options": [
+            "44",
+            "28"
+          ],
+          "correct": "44",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A29_002",
+    "module": "M9",
+    "atom": "A29",
+    "type": "Logical",
+    "difficulty": 3,
+    "text": "A square field of side 20m has a circular pond of diameter 10m in its center. Find the area of the field *not* covered by the pond.",
+    "correct_answer": "400 - 25\u03c0 square m (or approximately 321.5 square m)",
+    "distractors": [
+      {
+        "option": "400 square m",
+        "diagnostic_tag": "IGNORE_POND",
+        "engagement_framing": "You found the field's area but forgot to subtract the pond! Area = Field - Pond.",
+        "follow_up": {
+          "text": "Must we subtract the pond's area from the field?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "375 square m",
+        "diagnostic_tag": "WRONG_POND_CALCULATION",
+        "engagement_framing": "Check the pond's area: radius = 5, so area = \u03c0r\u00b2 = 25\u03c0 \u2248 78.5. Field - Pond = 400 - 78.5 \u2248 321.5.",
+        "follow_up": {
+          "text": "Is the pond's radius 5m or 10m?",
+          "options": [
+            "5m",
+            "10m"
+          ],
+          "correct": "5m",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "10 square m",
+        "diagnostic_tag": "DIAMETER_ONLY",
+        "engagement_framing": "10 is the diameter. For area, we need the radius (5) and use \u03c0r\u00b2 = \u03c0 \u00d7 25 \u2248 78.5.",
+        "follow_up": {
+          "text": "If diameter is 10, what is the radius?",
+          "options": [
+            "5",
+            "10"
+          ],
+          "correct": "5",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A30_001",
+    "module": "M10",
+    "atom": "A30",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "In the expression $4x^2 - 7x + 5$, what is the coefficient of $x$?",
+    "correct_answer": "-7",
+    "distractors": [
+      {
+        "option": "4",
+        "diagnostic_tag": "FIRST_COEFFICIENT",
+        "engagement_framing": "4 is the coefficient of $x^2$, not $x$. The term with $x$ (not $x^2$) is -7x.",
+        "follow_up": {
+          "text": "Is -7 the coefficient of $x$ or $x^2$?",
+          "options": [
+            "Coefficient of x",
+            "Coefficient of $x^2$"
+          ],
+          "correct": "Coefficient of x",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "5",
+        "diagnostic_tag": "CONSTANT_CONFUSION",
+        "engagement_framing": "5 is a constant (no variable attached). The coefficient of $x$ is in the $-7x$ term.",
+        "follow_up": {
+          "text": "Is 5 a coefficient or a constant?",
+          "options": [
+            "A constant",
+            "A coefficient"
+          ],
+          "correct": "A constant",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "7",
+        "diagnostic_tag": "SIGN_OMISSION",
+        "engagement_framing": "The coefficient includes the sign! The term is -7x, so the coefficient is -7, not +7.",
+        "follow_up": {
+          "text": "Is the coefficient of -7x equal to 7 or -7?",
+          "options": [
+            "-7",
+            "7"
+          ],
+          "correct": "-7",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A31_002",
+    "module": "M10",
+    "atom": "A31",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Simplify: $6a + 2b - 3a + 5b$",
+    "correct_answer": "3a + 7b",
+    "distractors": [
+      {
+        "option": "3a + 3b",
+        "diagnostic_tag": "LIKE_TERM_ERROR",
+        "engagement_framing": "You combined a-terms correctly but check the b-terms: 2b + 5b = 7b, not 3b.",
+        "follow_up": {
+          "text": "What is 2b + 5b?",
+          "options": [
+            "7b",
+            "3b"
+          ],
+          "correct": "7b",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "6a + 5b",
+        "diagnostic_tag": "PARTIAL_SIMPLIFICATION",
+        "engagement_framing": "You didn't fully combine a-terms. 6a - 3a = 3a. Combine both families!",
+        "follow_up": {
+          "text": "What is 6a - 3a?",
+          "options": [
+            "3a",
+            "6a"
+          ],
+          "correct": "3a",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "11a + 7b",
+        "diagnostic_tag": "ALL_ADDITION",
+        "engagement_framing": "Watch the signs! 6a + (-3a) = 3a, not 9a. And 6a - 3a \u2260 11a.",
+        "follow_up": {
+          "text": "Is it 6a + 3a or 6a - 3a?",
+          "options": [
+            "6a - 3a = 3a",
+            "6a + 3a = 9a"
+          ],
+          "correct": "6a - 3a = 3a",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A31_WHY_001",
+    "module": "M10",
+    "atom": "A31_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why can we only combine 'like terms' (e.g., $3x + 2x = 5x$ but not $3x + 2y$)?",
+    "correct_answer": "Because variables represent different quantities\u2014combining 3 apples with 2 apples works, but combining apples with oranges doesn't",
+    "distractors": [
+      {
+        "option": "Because the rule says we can't",
+        "diagnostic_tag": "AUTHORITY_ONLY",
+        "engagement_framing": "There's logic! Different variables represent different 'things,' just like apples and oranges.",
+        "follow_up": {
+          "text": "Can you add 3 apples + 2 oranges and get '5 fruits' directly?",
+          "options": [
+            "No, they're different",
+            "Yes"
+          ],
+          "correct": "No, they're different",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because x and y are different letters",
+        "diagnostic_tag": "SUPERFICIAL_REASON",
+        "engagement_framing": "True, but the reason is deeper\u2014x and y represent different *quantities* or *unknowns*!",
+        "follow_up": {
+          "text": "Does $x$ and $y$ represent the same unknown or different unknowns?",
+          "options": [
+            "Different unknowns",
+            "Same unknown"
+          ],
+          "correct": "Different unknowns",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because combining them would make the answer wrong",
+        "diagnostic_tag": "CONSEQUENCE_CONFUSION",
+        "engagement_framing": "It would make the answer meaningless! 3x + 2y stays as is because x and y are distinct quantities.",
+        "follow_up": {
+          "text": "Is $3x + 2y$ wrong or just not combinable into a single term?",
+          "options": [
+            "Not combinable",
+            "Wrong"
+          ],
+          "correct": "Not combinable",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A32_002",
+    "module": "M10",
+    "atom": "A32",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Evaluate: $2x^2 - 3x + 1$ when $x = 2$",
+    "correct_answer": "3",
+    "distractors": [
+      {
+        "option": "5",
+        "diagnostic_tag": "EXPONENT_IGNORED",
+        "engagement_framing": "Check: $2(2)^2 = 2 \u00d7 4 = 8$, not $2 \u00d7 2 = 4$. The exponent matters!",
+        "follow_up": {
+          "text": "What is $2^2$?",
+          "options": [
+            "4",
+            "2"
+          ],
+          "correct": "4",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "-1",
+        "diagnostic_tag": "SIGN_ERROR",
+        "engagement_framing": "Watch signs: $8 - 6 + 1 = 3$, not -1. Check: $-3x = -3(2) = -6$.",
+        "follow_up": {
+          "text": "What is $8 - 6 + 1$?",
+          "options": [
+            "3",
+            "-1"
+          ],
+          "correct": "3",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "8",
+        "diagnostic_tag": "PARTIAL_CALCULATION",
+        "engagement_framing": "You found $2x^2 = 8$, but there's more! $8 - 6 + 1 = 3$.",
+        "follow_up": {
+          "text": "After $2x^2 = 8$, what do we do next?",
+          "options": [
+            "Add all terms",
+            "Stop"
+          ],
+          "correct": "Add all terms",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A32_WHY_001",
+    "module": "M10",
+    "atom": "A32_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why are variables like 'x' called 'placeholders'?",
+    "correct_answer": "Because they're empty containers we fill with numbers, allowing one expression to work for infinitely many values",
+    "distractors": [
+      {
+        "option": "Because they replace letters",
+        "diagnostic_tag": "SUPERFICIAL_REASON",
+        "engagement_framing": "Not about replacing letters\u2014about representing unknown or variable quantities!",
+        "follow_up": {
+          "text": "Can $x$ be any number or just one specific number?",
+          "options": [
+            "Any number",
+            "Just one"
+          ],
+          "correct": "Any number",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because they're used in equations",
+        "diagnostic_tag": "CONTEXT_ONLY",
+        "engagement_framing": "True, but the real reason is they hold *different values* depending on the situation!",
+        "follow_up": {
+          "text": "Is $x$ the same value every time we use it?",
+          "options": [
+            "No, it can vary",
+            "Yes"
+          ],
+          "correct": "No, it can vary",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because they save writing",
+        "diagnostic_tag": "CONVENIENCE_BIAS",
+        "engagement_framing": "While true, the deeper reason is they let us write *general rules* that work for many numbers!",
+        "follow_up": {
+          "text": "Does $2x + 1$ work for $x = 1$, $x = 2$, and $x = 10$?",
+          "options": [
+            "Yes, all of them",
+            "No"
+          ],
+          "correct": "Yes, all of them",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A33_002",
+    "module": "M11",
+    "atom": "A33",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Simplify: $2^3 \\\\times 2^4 = ?$",
+    "correct_answer": "$2^7$ or 128",
+    "distractors": [
+      {
+        "option": "$2^{12}$",
+        "diagnostic_tag": "MULTIPLY_EXPONENTS",
+        "engagement_framing": "When multiplying same bases, we *add* exponents, not multiply! $2^3 \\\\times 2^4 = 2^{3+4} = 2^7$.",
+        "follow_up": {
+          "text": "Do we add or multiply exponents when multiplying powers?",
+          "options": [
+            "Add",
+            "Multiply"
+          ],
+          "correct": "Add",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$4^7$",
+        "diagnostic_tag": "BASE_ADDITION",
+        "engagement_framing": "The base stays the same! Only exponents change: $2^3 \\\\times 2^4 = 2^7$, not $4^7$.",
+        "follow_up": {
+          "text": "Does the base change or stay the same?",
+          "options": [
+            "Stays the same",
+            "Changes"
+          ],
+          "correct": "Stays the same",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$2^1$",
+        "diagnostic_tag": "EXPONENT_SUBTRACTION",
+        "engagement_framing": "You subtracted! But when multiplying powers, we add exponents: 3 + 4 = 7.",
+        "follow_up": {
+          "text": "Is it $2^{3+4}$ or $2^{4-3}$?",
+          "options": [
+            "$2^{3+4}$",
+            "$2^{4-3}$"
+          ],
+          "correct": "$2^{3+4}$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A33_WHY_001",
+    "module": "M11",
+    "atom": "A33_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do we *add* exponents when multiplying powers of the same base?",
+    "correct_answer": "Because exponents count repeated multiplication\u2014adding counts how many times we multiply in total",
+    "distractors": [
+      {
+        "option": "Because multiplication and addition are related",
+        "diagnostic_tag": "OPERATIONS_BLUR",
+        "engagement_framing": "They are related, but the reason is specific: exponents *represent* repeated multiplication!",
+        "follow_up": {
+          "text": "Does $2^3$ mean $2 \\\\times 2 \\\\times 2$ (3 times)?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we can't multiply exponents",
+        "diagnostic_tag": "POSSIBILITY_CONFUSION",
+        "engagement_framing": "We *can* multiply exponents (in different situations), but here we add because of what exponents mean!",
+        "follow_up": {
+          "text": "If $2^3 = 2 \\\\times 2 \\\\times 2$ and $2^4 = 2 \\\\times 2 \\\\times 2 \\\\times 2$, how many 2's total?",
+          "options": [
+            "7",
+            "12"
+          ],
+          "correct": "7",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because the rule simplifies calculations",
+        "diagnostic_tag": "CONVENIENCE_BIAS",
+        "engagement_framing": "It does simplify, but the reason is logical: counting all multiplications together!",
+        "follow_up": {
+          "text": "Is $3 + 4 = 7$ the correct count of multiplications?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A34_002",
+    "module": "M11",
+    "atom": "A34",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "Simplify: $(3^2)^3 = ?$",
+    "correct_answer": "$3^6$ or 729",
+    "distractors": [
+      {
+        "option": "$3^5$",
+        "diagnostic_tag": "ADDITION_INSTEAD",
+        "engagement_framing": "When raising a power to a power, we *multiply* exponents, not add! $(3^2)^3 = 3^{2 \\\\times 3} = 3^6$.",
+        "follow_up": {
+          "text": "Do we add or multiply exponents for $(3^2)^3$?",
+          "options": [
+            "Multiply",
+            "Add"
+          ],
+          "correct": "Multiply",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$3^9$",
+        "diagnostic_tag": "WRONG_OPERATION",
+        "engagement_framing": "Check: $2 \\\\times 3 = 6$, not 9. Where might 9 come from? (Perhaps $2 + 3 + 4 = 9$?)",
+        "follow_up": {
+          "text": "What is $2 \\\\times 3$?",
+          "options": [
+            "6",
+            "9"
+          ],
+          "correct": "6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "$9^3$",
+        "diagnostic_tag": "BASE_POWER_ERROR",
+        "engagement_framing": "The base doesn't change! $(3^2)^3 = (9)^3$ in value, but in exponent form, it's $3^6$.",
+        "follow_up": {
+          "text": "Is $(3^2)^3$ written as $3^6$ or $9^3$?",
+          "options": [
+            "$3^6$",
+            "$9^3$"
+          ],
+          "correct": "$3^6$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A34_WHY_001",
+    "module": "M11",
+    "atom": "A34_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why do we *multiply* exponents for $(a^m)^n$?",
+    "correct_answer": "Because $(a^m)^n$ means we repeat the group $a^m$ a total of $n$ times, which multiplies the exponent",
+    "distractors": [
+      {
+        "option": "Because multiplication is stronger than addition",
+        "diagnostic_tag": "OPERATION_HIERARCHY",
+        "engagement_framing": "It's not about strength\u2014it's about the structure! $(a^m)^n$ repeats a group $n$ times.",
+        "follow_up": {
+          "text": "Does $(a^2)^3$ mean 'repeat $a^2$ three times'?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because exponents represent multiplication",
+        "diagnostic_tag": "PARTIAL_TRUTH",
+        "engagement_framing": "True, but here we're multiplying the *count* of multiplications!",
+        "follow_up": {
+          "text": "If $a^2 = a \\\\times a$ (2 multiplications) and we repeat it 3 times, how many multiplications total?",
+          "options": [
+            "6",
+            "5"
+          ],
+          "correct": "6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because we define it that way",
+        "diagnostic_tag": "DEFINITIONAL_ONLY",
+        "engagement_framing": "It comes from the meaning of exponents, not just a definition!",
+        "follow_up": {
+          "text": "Is $(2^2)^3 = 2^6$ or something else?",
+          "options": [
+            "$2^6 = 64$",
+            "Something else"
+          ],
+          "correct": "$2^6 = 64$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A35_001",
+    "module": "M11",
+    "atom": "A35",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "Why does any non-zero number raised to the power 0 equal 1? (e.g., $5^0 = 1$)",
+    "correct_answer": "Because $a^0$ represents 'no multiplication'\u2014the identity element for multiplication, which is 1",
+    "distractors": [
+      {
+        "option": "Because 0 is special",
+        "diagnostic_tag": "ZERO_MYSTIQUE",
+        "engagement_framing": "0 is special, but the reason is logical: zero multiplications = identity (no change).",
+        "follow_up": {
+          "text": "If you multiply a number by 1, does it change?",
+          "options": [
+            "No, it stays the same",
+            "Yes"
+          ],
+          "correct": "No, it stays the same",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because $a^1 = a$, so $a^0 = 0$",
+        "diagnostic_tag": "PATTERN_MISREAD",
+        "engagement_framing": "Interesting logic, but it doesn't work! The pattern is: $a^2 \u00f7 a = a^1$, and $a^1 \u00f7 a = a^0 = 1$.",
+        "follow_up": {
+          "text": "If $a^1 \u00f7 a = 1$, does $a^0 = 1$?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because mathematicians decided it",
+        "diagnostic_tag": "AUTHORITY_ONLY",
+        "engagement_framing": "It wasn't arbitrary\u2014it comes from consistent division patterns!",
+        "follow_up": {
+          "text": "Is $a^0 = 1$ based on logic or just a rule?",
+          "options": [
+            "Based on logic",
+            "Just a rule"
+          ],
+          "correct": "Based on logic",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A36_001",
+    "module": "M12",
+    "atom": "A36",
+    "type": "Verbal",
+    "difficulty": 2,
+    "text": "Which shape has *line symmetry*?",
+    "correct_answer": "An isosceles triangle (reflects across the height to the base)",
+    "distractors": [
+      {
+        "option": "A scalene triangle (all sides different)",
+        "diagnostic_tag": "NO_SYMMETRY_ASSUMPTION",
+        "engagement_framing": "Scalene triangles have NO line symmetry because no line divides them into equal reflected halves.",
+        "follow_up": {
+          "text": "Does a scalene triangle reflect into itself across any line?",
+          "options": [
+            "No",
+            "Yes"
+          ],
+          "correct": "No",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "A parallelogram (general, not rectangle)",
+        "diagnostic_tag": "VISUAL_BIAS",
+        "engagement_framing": "A general parallelogram doesn't reflect into itself. Only special ones (rectangles, squares) do!",
+        "follow_up": {
+          "text": "Does a parallelogram reflect perfectly across a diagonal?",
+          "options": [
+            "No, not usually",
+            "Yes"
+          ],
+          "correct": "No, not usually",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "A trapezoid (one pair of parallel sides)",
+        "diagnostic_tag": "PARTIAL_SYMMETRY",
+        "engagement_framing": "Most trapezoids don't have line symmetry. Only *isosceles* trapezoids do!",
+        "follow_up": {
+          "text": "Do all trapezoids have line symmetry or just some?",
+          "options": [
+            "Just some (isosceles)",
+            "All"
+          ],
+          "correct": "Just some (isosceles)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A37_002",
+    "module": "M12",
+    "atom": "A37",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "What is the order of rotational symmetry for a square?",
+    "correct_answer": "4",
+    "distractors": [
+      {
+        "option": "2",
+        "diagnostic_tag": "INCOMPLETE_ROTATION",
+        "engagement_framing": "A square looks the same at 90\u00b0, 180\u00b0, 270\u00b0, and 360\u00b0. That's 4 times, not 2!",
+        "follow_up": {
+          "text": "At how many rotation angles does a square look identical?",
+          "options": [
+            "4 (90\u00b0, 180\u00b0, 270\u00b0, 360\u00b0)",
+            "2"
+          ],
+          "correct": "4 (90\u00b0, 180\u00b0, 270\u00b0, 360\u00b0)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "8",
+        "diagnostic_tag": "SYMMETRY_DOUBLING",
+        "engagement_framing": "8 might include line symmetries! For rotational only, a square has order 4.",
+        "follow_up": {
+          "text": "Is rotational symmetry about spinning or reflecting?",
+          "options": [
+            "Spinning (rotation)",
+            "Reflecting"
+          ],
+          "correct": "Spinning (rotation)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "1",
+        "diagnostic_tag": "NO_SYMMETRY",
+        "engagement_framing": "Order 1 means only 360\u00b0 rotation (no symmetry). A square definitely rotates symmetrically!",
+        "follow_up": {
+          "text": "Does a square look the same after a 90\u00b0 rotation?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A38_002",
+    "module": "M13",
+    "atom": "A38",
+    "type": "Procedural",
+    "difficulty": 2,
+    "text": "A pyramid has 5 faces and 5 vertices. How many edges does it have?",
+    "correct_answer": "8",
+    "distractors": [
+      {
+        "option": "10",
+        "diagnostic_tag": "EULER_MISAPPLICATION",
+        "engagement_framing": "Let's use $F + V - E = 2$: 5 + 5 - E = 2, so E = 8, not 10.",
+        "follow_up": {
+          "text": "If 5 + 5 - E = 2, what is E?",
+          "options": [
+            "8",
+            "10"
+          ],
+          "correct": "8",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "12",
+        "diagnostic_tag": "CALCULATION_ERROR",
+        "engagement_framing": "Check: 5 + 5 = 10. For $F + V - E = 2$, we have 10 - E = 2, so E = 8.",
+        "follow_up": {
+          "text": "What is 10 - 2?",
+          "options": [
+            "8",
+            "12"
+          ],
+          "correct": "8",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "7",
+        "diagnostic_tag": "WRONG_FORMULA",
+        "engagement_framing": "You might be subtracting differently. The correct formula is $F + V - E = 2$.",
+        "follow_up": {
+          "text": "Is it $F + V - E = 2$ or something else?",
+          "options": [
+            "$F + V - E = 2$",
+            "Other"
+          ],
+          "correct": "$F + V - E = 2$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A38_WHY_001",
+    "module": "M13",
+    "atom": "A38_WHY",
+    "type": "Conceptual",
+    "difficulty": 2,
+    "text": "Why is Euler's formula ($F + V - E = 2$) true for *all* polyhedra?",
+    "correct_answer": "Because it describes the fundamental topological balance\u2014the relationship between surfaces, corners, and edges holds universally for closed 3D shapes",
+    "distractors": [
+      {
+        "option": "Because all polyhedra are the same",
+        "diagnostic_tag": "FALSE_UNIFORMITY",
+        "engagement_framing": "Polyhedra differ greatly, but they all satisfy the formula! It's a universal law.",
+        "follow_up": {
+          "text": "Do a cube and a pyramid have the same number of faces?",
+          "options": [
+            "No, they're different",
+            "Yes"
+          ],
+          "correct": "No, they're different",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because Euler discovered it",
+        "diagnostic_tag": "AUTHORITY_ONLY",
+        "engagement_framing": "Euler discovered it, but it's true because of topology, not authority!",
+        "follow_up": {
+          "text": "Does the formula work for shapes Euler never saw?",
+          "options": [
+            "Yes, all polyhedra",
+            "No"
+          ],
+          "correct": "Yes, all polyhedra",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Because it's useful for calculations",
+        "diagnostic_tag": "UTILITY_BIAS",
+        "engagement_framing": "It's useful, but it's true because of a deep topological principle, not just utility!",
+        "follow_up": {
+          "text": "Is the formula useful OR is it a fundamental truth?",
+          "options": [
+            "Fundamental truth (and useful)",
+            "Just useful"
+          ],
+          "correct": "Fundamental truth (and useful)",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_A39_001",
+    "module": "M13",
+    "atom": "A39",
+    "type": "Logical",
+    "difficulty": 2,
+    "text": "Which net can be folded into a cube?",
+    "correct_answer": "A cross pattern with 6 squares (one center, four around, one opposite)",
+    "distractors": [
+      {
+        "option": "All 6 squares in a single row",
+        "diagnostic_tag": "NO_3D_VISUALIZATION",
+        "engagement_framing": "A row of 6 is too flat\u2014when folded, faces would overlap! A valid net distributes squares smartly.",
+        "follow_up": {
+          "text": "If you fold a row of 6 squares, do any overlap?",
+          "options": [
+            "Yes, they overlap",
+            "No"
+          ],
+          "correct": "Yes, they overlap",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "A T-shape with only 4 squares",
+        "diagnostic_tag": "INCOMPLETE_NET",
+        "engagement_framing": "A cube needs 6 faces, so we need 6 squares! A T with 4 is incomplete.",
+        "follow_up": {
+          "text": "How many faces does a cube have?",
+          "options": [
+            "6",
+            "4"
+          ],
+          "correct": "6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "5 squares arranged randomly",
+        "diagnostic_tag": "PARTIAL_NET",
+        "engagement_framing": "5 is one short of 6! And arrangement matters\u2014they need to fold without overlapping.",
+        "follow_up": {
+          "text": "Can 5 squares fold into a complete cube?",
+          "options": [
+            "No, need 6",
+            "Yes"
+          ],
+          "correct": "No, need 6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_L1_002",
+    "module": "L_GEN",
+    "atom": "L1",
+    "type": "Logical",
+    "difficulty": 4,
+    "text": "Find the next number: $1, 4, 9, 16, 25, ...$",
+    "correct_answer": "36",
+    "distractors": [
+      {
+        "option": "26",
+        "diagnostic_tag": "DIFFERENCE_PATTERN",
+        "engagement_framing": "You found the differences (+3, +5, +7...), but these are *perfect squares*: $1^2, 2^2, 3^2, 4^2, 5^2, ...$",
+        "follow_up": {
+          "text": "Is 25 equal to $5^2$?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "30",
+        "diagnostic_tag": "ARITHMETIC_SEQUENCE",
+        "engagement_framing": "This isn't an arithmetic sequence (constant difference). Look for a deeper pattern: $1^2, 2^2, 3^2, ...$",
+        "follow_up": {
+          "text": "Is the pattern adding a constant or squaring numbers?",
+          "options": [
+            "Squaring numbers",
+            "Adding a constant"
+          ],
+          "correct": "Squaring numbers",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "35",
+        "diagnostic_tag": "CLOSE_GUESS",
+        "engagement_framing": "Close! But $6^2 = 36$, and the sequence is $1^2, 2^2, 3^2, 4^2, 5^2, 6^2, ...$",
+        "follow_up": {
+          "text": "What is $6^2$?",
+          "options": [
+            "36",
+            "35"
+          ],
+          "correct": "36",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_L2_002",
+    "module": "L_GEN",
+    "atom": "L2",
+    "type": "Verbal",
+    "difficulty": 3,
+    "text": "If CAT is written as DBU, how is DOG written?",
+    "correct_answer": "EPH",
+    "distractors": [
+      {
+        "option": "COG",
+        "diagnostic_tag": "NO_TRANSFORMATION",
+        "engagement_framing": "The letters shift! C\u2192D (+1), A\u2192B (+1), T\u2192U (+1). So D\u2192E, O\u2192P, G\u2192H.",
+        "follow_up": {
+          "text": "Does each letter shift forward by 1 in the alphabet?",
+          "options": [
+            "Yes",
+            "No"
+          ],
+          "correct": "Yes",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "EOP",
+        "diagnostic_tag": "PARTIAL_PATTERN",
+        "engagement_framing": "You shifted D and O, but G\u2192H, not P. Check: D+1=E, O+1=P, G+1=H.",
+        "follow_up": {
+          "text": "What letter comes after G?",
+          "options": [
+            "H",
+            "P"
+          ],
+          "correct": "H",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "DPH",
+        "diagnostic_tag": "SELECTIVE_SHIFT",
+        "engagement_framing": "D should stay as E (not D)! The pattern shifts all letters. D+1=E.",
+        "follow_up": {
+          "text": "If CAT becomes DBU, does D shift to E or stay D?",
+          "options": [
+            "Shift to E",
+            "Stay D"
+          ],
+          "correct": "Shift to E",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_L3_002",
+    "module": "L_GEN",
+    "atom": "L3",
+    "type": "Logical",
+    "difficulty": 3,
+    "text": "Starting at a house, a person walks 3 km East, then 4 km North. Where is the person relative to the house?",
+    "correct_answer": "5 km North-East (or at distance $\\\\sqrt{3^2 + 4^2} = 5$ km)",
+    "distractors": [
+      {
+        "option": "1 km North",
+        "diagnostic_tag": "SUBTRACTION_ERROR",
+        "engagement_framing": "You subtracted! But the person moved both East and North. Use Pythagoras: $\\\\sqrt{3^2 + 4^2} = 5$ km.",
+        "follow_up": {
+          "text": "Does moving East then North mean subtracting or combining?",
+          "options": [
+            "Combining",
+            "Subtracting"
+          ],
+          "correct": "Combining",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "7 km North-East",
+        "diagnostic_tag": "SIMPLE_ADDITION",
+        "engagement_framing": "Adding distances works for perimeter, but here we're finding the direct path (hypotenuse)!",
+        "follow_up": {
+          "text": "Is the direct distance 3 + 4 or $\\\\sqrt{3^2 + 4^2}$?",
+          "options": [
+            "$\\\\sqrt{3^2 + 4^2} = 5$",
+            "3 + 4 = 7"
+          ],
+          "correct": "$\\\\sqrt{3^2 + 4^2} = 5$",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "East",
+        "diagnostic_tag": "ONE_DIRECTION",
+        "engagement_framing": "The person moved East *and* North, so they're North-East, not just East!",
+        "follow_up": {
+          "text": "If you move East and North, are you East or North-East?",
+          "options": [
+            "North-East",
+            "Just East"
+          ],
+          "correct": "North-East",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_L4_002",
+    "module": "L_GEN",
+    "atom": "L4",
+    "type": "Verbal",
+    "difficulty": 4,
+    "text": "My father's father is my __________.",
+    "correct_answer": "Grandfather (or paternal grandfather)",
+    "distractors": [
+      {
+        "option": "Great-grandfather",
+        "diagnostic_tag": "GENERATIONAL_SKIP",
+        "engagement_framing": "Your father's father is your grandfather, not great-grandfather! Great-grandfather is your grandfather's father.",
+        "follow_up": {
+          "text": "Is your father's father your grandfather or great-grandfather?",
+          "options": [
+            "Grandfather",
+            "Great-grandfather"
+          ],
+          "correct": "Grandfather",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Cousin",
+        "diagnostic_tag": "RELATION_CONFUSION",
+        "engagement_framing": "Cousins are related through aunts/uncles. Your father's father is a direct ancestor!",
+        "follow_up": {
+          "text": "Is your grandfather an ancestor or a cousin?",
+          "options": [
+            "An ancestor",
+            "A cousin"
+          ],
+          "correct": "An ancestor",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "Uncle",
+        "diagnostic_tag": "SIBLING_ERROR",
+        "engagement_framing": "Uncles are your parent's siblings. Your father's father is your grandparent!",
+        "follow_up": {
+          "text": "Is your father's father your parent's parent or your parent's sibling?",
+          "options": [
+            "Parent's parent",
+            "Parent's sibling"
+          ],
+          "correct": "Parent's parent",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  },
+  {
+    "id": "DIAG_L5_002",
+    "module": "L_GEN",
+    "atom": "L5",
+    "type": "Logical",
+    "difficulty": 4,
+    "text": "If $M + M + M = 18$ and $M - N = 5$, find $N$.",
+    "correct_answer": "1",
+    "distractors": [
+      {
+        "option": "5",
+        "diagnostic_tag": "INCOMPLETE_SOLUTION",
+        "engagement_framing": "You found the difference value! But now use it: 6 - 5 = 1, so N = 1.",
+        "follow_up": {
+          "text": "If M = 6 and M - N = 5, what is N?",
+          "options": [
+            "1",
+            "5"
+          ],
+          "correct": "1",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "13",
+        "diagnostic_tag": "WRONG_OPERATION",
+        "engagement_framing": "Check: M + M + M = 18 means 3M = 18, so M = 6. Then 6 - N = 5, so N = 1.",
+        "follow_up": {
+          "text": "What is 18 \u00f7 3?",
+          "options": [
+            "6",
+            "13"
+          ],
+          "correct": "6",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      },
+      {
+        "option": "6",
+        "diagnostic_tag": "VALUE_CONFUSION",
+        "engagement_framing": "6 is the value of M, not N! M - N = 5, so 6 - N = 5, which gives N = 1.",
+        "follow_up": {
+          "text": "Is N equal to M or less than M?",
+          "options": [
+            "Less than M",
+            "Equal to M"
+          ],
+          "correct": "Less than M",
+          "type": "CONCEPT_CHECK",
+          "intervention_strategy": "SCAFFOLD"
+        }
+      }
+    ]
+  }
+]

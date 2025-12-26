@@ -1,0 +1,464 @@
+{
+    "curriculum_version": "4.0",
+    "grade": 7,
+    "subject": "Mathematics & Olympiad Foundation",
+    "total_modules": 13,
+    "modules": [
+        {
+            "module_id": "M1",
+            "name": "Integers",
+            "atoms": [
+                {
+                    "id": "A1",
+                    "type": "Verbal",
+                    "name": "Relative Zero",
+                    "description": "Understanding elevation, depth, and temperature relative to origin points."
+                },
+                {
+                    "id": "A2",
+                    "type": "Procedural",
+                    "name": "Additive Inverse",
+                    "description": "Mastering the 'Zero-Pair' concept (-x + x = 0)."
+                },
+                {
+                    "id": "A2_WHY",
+                    "type": "Conceptual",
+                    "name": "The Physics of Neutrality",
+                    "description": "Understanding why opposites cancel to create a 'Blue Sky' (Zero)."
+                },
+                {
+                    "id": "A3",
+                    "type": "Procedural",
+                    "name": "Sign Distribution",
+                    "description": "Handling nested brackets and -(-x) operations."
+                },
+                {
+                    "id": "A3_WHY",
+                    "type": "Conceptual",
+                    "name": "Directional Flipping",
+                    "description": "Visualizing a negative sign as a 180-degree turn in perspective."
+                },
+                {
+                    "id": "A4",
+                    "type": "Logical",
+                    "name": "Product Sign Rules",
+                    "description": "Predicting signs for odd/even counts of negative factors."
+                }
+            ]
+        },
+        {
+            "module_id": "M2",
+            "name": "Fractions & Decimals",
+            "atoms": [
+                {
+                    "id": "A5",
+                    "type": "Procedural",
+                    "name": "Reciprocal Pivot",
+                    "description": "Why we invert and multiply in division."
+                },
+                {
+                    "id": "A5_WHY",
+                    "type": "Conceptual",
+                    "name": "The Logic of Groups",
+                    "description": "Visualizing division as 'How many of these fit inside that?'"
+                },
+                {
+                    "id": "A6",
+                    "type": "Verbal",
+                    "name": "Unit Rate Scaling",
+                    "description": "Comparing verbal rates like 2/3 of a liter vs 0.7 liters."
+                },
+                {
+                    "id": "A7",
+                    "type": "Procedural",
+                    "name": "Place Value Shift",
+                    "description": "Multiplying/Dividing by powers of 10 (decimal jumps)."
+                },
+                {
+                    "id": "A7_WHY",
+                    "type": "Conceptual",
+                    "name": "The Power of Scale",
+                    "description": "Understanding how shifting place values expands or shrinks quantities by orders of magnitude."
+                },
+                {
+                    "id": "A8",
+                    "type": "Logical",
+                    "name": "Pattern Decimals",
+                    "description": "Differentiating recurring vs terminating decimals."
+                }
+            ]
+        },
+        {
+            "module_id": "M3",
+            "name": "Data Handling",
+            "atoms": [
+                {
+                    "id": "A9",
+                    "type": "Verbal",
+                    "name": "Central Tendency",
+                    "description": "Distinguishing Mean (Balance), Median (Middle), and Mode (Frequency)."
+                },
+                {
+                    "id": "A10",
+                    "type": "Procedural",
+                    "name": "Range & Spread",
+                    "description": "Calculating the stretch of a data set."
+                },
+                {
+                    "id": "A10_WHY",
+                    "type": "Conceptual",
+                    "name": "The Diversity of Data",
+                    "description": "Understanding how spread defines the reliability and predictability of a data story."
+                },
+                {
+                    "id": "A11",
+                    "type": "Logical",
+                    "name": "Probability Bounds",
+                    "description": "The 0-1 scale from 'Impossible' to 'Certain'."
+                }
+            ]
+        },
+        {
+            "module_id": "M4",
+            "name": "Simple Equations",
+            "atoms": [
+                {
+                    "id": "A12",
+                    "type": "Procedural",
+                    "name": "Equation Balancing",
+                    "description": "The Golden Rule: Symmetrical operations on both sides."
+                },
+                {
+                    "id": "A12_WHY",
+                    "type": "Conceptual",
+                    "name": "The Law of Equilibrium",
+                    "description": "Visualizing an equation as a perfectly balanced scale where truth is preserved through symmetry."
+                },
+                {
+                    "id": "A13",
+                    "type": "Verbal",
+                    "name": "Linguistic Mapping",
+                    "description": "Dictionary: Mapping 'of' to ×, 'is' to =, 'exceeds' to +."
+                },
+                {
+                    "id": "A14",
+                    "type": "Logical",
+                    "name": "Inverse Back-tracking",
+                    "description": "Mentally reversing operations to isolate unknowns."
+                }
+            ]
+        },
+        {
+            "module_id": "M5",
+            "name": "Lines & Angles",
+            "atoms": [
+                {
+                    "id": "A15",
+                    "type": "Procedural",
+                    "name": "Angular Pairs",
+                    "description": "Complementary (90°) and Supplementary (180°) calculation."
+                },
+                {
+                    "id": "A15_WHY",
+                    "type": "Conceptual",
+                    "name": "Completing the Circle",
+                    "description": "Understanding how angles work together to define straight lines and corners."
+                },
+                {
+                    "id": "A16",
+                    "type": "Logical",
+                    "name": "Intersection Logic",
+                    "description": "Vertically opposite angles and their equality."
+                },
+                {
+                    "id": "A17",
+                    "type": "Procedural",
+                    "name": "Transversal Patterns",
+                    "description": "Mastering F (Corresponding), Z (Alternate), and C (Co-interior) shapes."
+                },
+                {
+                    "id": "A17_WHY",
+                    "type": "Conceptual",
+                    "name": "Parallel Perspectives",
+                    "description": "Visualizing how parallel lines preserve angular identity across space."
+                }
+            ]
+        },
+        {
+            "module_id": "M6",
+            "name": "Triangles & Properties",
+            "atoms": [
+                {
+                    "id": "A18",
+                    "type": "Procedural",
+                    "name": "Angle Sum Theory",
+                    "description": "The constant 180° constraint of Euclidean triangles."
+                },
+                {
+                    "id": "A18_WHY",
+                    "type": "Conceptual",
+                    "name": "The Boundless Interior",
+                    "description": "Understanding why the three corners of any triangle must always fold into a straight line."
+                },
+                {
+                    "id": "A19",
+                    "type": "Logical",
+                    "name": "Exterior Angle Rule",
+                    "description": "Exterior angle = Sum of two interior opposites."
+                },
+                {
+                    "id": "A20",
+                    "type": "Logical",
+                    "name": "Triangle Inequality",
+                    "description": "The law that sum of 2 sides must > 3rd side."
+                },
+                {
+                    "id": "A21",
+                    "type": "Procedural",
+                    "name": "Pythagoras’ Foundation",
+                    "description": "Relationship between legs and hypotenuse in right triangles."
+                },
+                {
+                    "id": "A21_WHY",
+                    "type": "Conceptual",
+                    "name": "The Square Truth",
+                    "description": "Visualizing area relationships as the bridge between linear lengths in a right-angled world."
+                }
+            ]
+        },
+        {
+            "module_id": "M7",
+            "name": "Comparing Quantities",
+            "atoms": [
+                {
+                    "id": "A22",
+                    "type": "Verbal",
+                    "name": "Ratio Equivalence",
+                    "description": "Scaling ratios up/down while maintaining proportionality."
+                },
+                {
+                    "id": "A23",
+                    "type": "Procedural",
+                    "name": "Percentage Conversion",
+                    "description": "Interchanging between fractions, decimals, and percent."
+                },
+                {
+                    "id": "A23_WHY",
+                    "type": "Conceptual",
+                    "name": "The Hundred-Base View",
+                    "description": "Understanding percentages as a universal language for comparing unequal 'wholes'."
+                },
+                {
+                    "id": "A24",
+                    "type": "Verbal",
+                    "name": "Real-world Interest",
+                    "description": "Financial logic for Profit, Loss, and Simple Interest."
+                }
+            ]
+        },
+        {
+            "module_id": "M8",
+            "name": "Rational Numbers",
+            "atoms": [
+                {
+                    "id": "A25",
+                    "type": "Procedural",
+                    "name": "Standard Simplification",
+                    "description": "Reducing rational numbers to the simplest form."
+                },
+                {
+                    "id": "A25_WHY",
+                    "type": "Conceptual",
+                    "name": "Finding the Essence",
+                    "description": "Understanding that fractions are 'identities' and simplification reveals their simplest form without changing their value."
+                },
+                {
+                    "id": "A26",
+                    "type": "Logical",
+                    "name": "Density Property",
+                    "description": "Proving infinite numbers exist between any two rationals."
+                }
+            ]
+        },
+        {
+            "module_id": "M9",
+            "name": "Perimeter & Area",
+            "atoms": [
+                {
+                    "id": "A27",
+                    "type": "Procedural",
+                    "name": "Quadrilateral Area",
+                    "description": "Calculating Area of Parallelograms and Triangles."
+                },
+                {
+                    "id": "A27_WHY",
+                    "type": "Conceptual",
+                    "name": "Measuring Space",
+                    "description": "Understanding area as the multiplication of perpendicular dimensions to fill a plane."
+                },
+                {
+                    "id": "A28",
+                    "type": "Logical",
+                    "name": "Circle Constant (Pi)",
+                    "description": "Relationship between Circumference, Diameter, and Area."
+                },
+                {
+                    "id": "A29",
+                    "type": "Logical",
+                    "name": "Shaded Region Logic",
+                    "description": "Area by subtraction (Compound shape dissection)."
+                }
+            ]
+        },
+        {
+            "module_id": "M10",
+            "name": "Algebraic Expressions",
+            "atoms": [
+                {
+                    "id": "A30",
+                    "type": "Verbal",
+                    "name": "Term Anatomy",
+                    "description": "Identifying Coefficients, Constants, and Degree."
+                },
+                {
+                    "id": "A31",
+                    "type": "Procedural",
+                    "name": "Like-Term Unification",
+                    "description": "Merging algebraic families (x terms with x terms)."
+                },
+                {
+                    "id": "A31_WHY",
+                    "type": "Conceptual",
+                    "name": "Family Ties in Algebra",
+                    "description": "Understanding why we can only group terms that share the same 'DNA' (variable and exponent)."
+                },
+                {
+                    "id": "A32",
+                    "type": "Procedural",
+                    "name": "Variable Substitution",
+                    "description": "Evaluating expressions given specific x/y values."
+                },
+                {
+                    "id": "A32_WHY",
+                    "type": "Conceptual",
+                    "name": "The Placeholder Power",
+                    "description": "Understanding variables as 'empty containers' that allow us to build general rules for any specific case."
+                }
+            ]
+        },
+        {
+            "module_id": "M11",
+            "name": "Exponents & Powers",
+            "atoms": [
+                {
+                    "id": "A33",
+                    "type": "Procedural",
+                    "name": "Multiplication Law",
+                    "description": "a^m * a^n = a^(m+n)."
+                },
+                {
+                    "id": "A33_WHY",
+                    "type": "Conceptual",
+                    "name": "Compound Growth",
+                    "description": "Understanding exponents as the stacking of repeated multiplications."
+                },
+                {
+                    "id": "A34",
+                    "type": "Procedural",
+                    "name": "Power of a Power",
+                    "description": "(a^m)^n = a^mn."
+                },
+                {
+                    "id": "A34_WHY",
+                    "type": "Conceptual",
+                    "name": "Layered Scaling",
+                    "description": "Visualizing how nested powers create exponential leaps in quantity."
+                },
+                {
+                    "id": "A35",
+                    "type": "Logical",
+                    "name": "The Zero Mystery",
+                    "description": "Why x^0 = 1 (Growth logic)."
+                }
+            ]
+        },
+        {
+            "module_id": "M12",
+            "name": "Symmetry",
+            "atoms": [
+                {
+                    "id": "A36",
+                    "type": "Verbal",
+                    "name": "Line Symmetry",
+                    "description": "Reflectional balance across an axis."
+                },
+                {
+                    "id": "A37",
+                    "type": "Logical",
+                    "name": "Rotational Order",
+                    "description": "Symmetry through 360° rotation (Order vs Angle)."
+                }
+            ]
+        },
+        {
+            "module_id": "M13",
+            "name": "Visualizing Solid Shapes",
+            "atoms": [
+                {
+                    "id": "A38",
+                    "type": "Procedural",
+                    "name": "Euler’s Formula",
+                    "description": "Linking F + V - E = 2."
+                },
+                {
+                    "id": "A38_WHY",
+                    "type": "Conceptual",
+                    "name": "The Network of Forms",
+                    "description": "Understanding the fundamental topological balance between surfaces, points, and paths in any solid."
+                },
+                {
+                    "id": "A39",
+                    "type": "Logical",
+                    "name": "Nets & Mapping",
+                    "description": "Unfolding 3D solids into 2D templates."
+                }
+            ]
+        },
+        {
+            "module_id": "L_GEN",
+            "name": "Olympiad Logic Section",
+            "atoms": [
+                {
+                    "id": "L1",
+                    "type": "Logical",
+                    "name": "Pattern Recognition",
+                    "description": "Predicting next steps in complex sequences."
+                },
+                {
+                    "id": "L2",
+                    "type": "Verbal",
+                    "name": "Coding-Decoding",
+                    "description": "Linguistic logical mapping (Verbal strength test)."
+                },
+                {
+                    "id": "L3",
+                    "type": "Logical",
+                    "name": "Direction Sense",
+                    "description": "Mental mapping of spatial movements."
+                },
+                {
+                    "id": "L4",
+                    "type": "Verbal",
+                    "name": "Blood Relations",
+                    "description": "Deciphering family trees through logic."
+                },
+                {
+                    "id": "L5",
+                    "type": "Logical",
+                    "name": "Cryptarithmetic",
+                    "description": "Letter-for-Number substitution puzzles."
+                }
+            ]
+        }
+    ]
+}

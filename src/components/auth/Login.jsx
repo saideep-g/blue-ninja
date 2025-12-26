@@ -7,7 +7,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
  * Styled for the Blue Ninja theme. 
  * Allows students to enter their personal "Summer Sky" dashboard.
  */
-function Login() {
+function Login({ setUserRole }) {
     const [isSignUp, setIsSignUp] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
