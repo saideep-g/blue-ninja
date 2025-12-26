@@ -429,7 +429,7 @@ export default function App() {
           <Route path="/" element={<BlueNinjaContent />} />
 
           {/* Admin Analytics Dashboard */}
-          <Route path="/admin" element={<AdminAnalyticsDashboard />} />
+          <Route path="/admin" element={<AnalyticsLogViewer />} />
         </Routes>
       </NinjaProvider>
     </Router>

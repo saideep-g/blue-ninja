@@ -51,7 +51,7 @@ function AnalyticsLogViewer() {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const q = query(collection(db, 'students'), where('role', '!=', 'TEACHER'));
+                const q = query(collection(db, 'students'));
                 const snapshot = await getDocs(q);
                 const studentList = snapshot.docs.map(doc => ({
                     id: doc.id,
@@ -136,19 +136,19 @@ function AnalyticsLogViewer() {
     };
 
     const isLogComplete = (log) => {
-        return REQUIRED_FIELDS.every(field => 
+        return REQUIRED_FIELDS.every(field =>
             log[field] !== undefined && log[field] !== null && log[field] !== ''
         );
     };
 
     const getMissingFields = (log) => {
-        return REQUIRED_FIELDS.filter(field => 
+        return REQUIRED_FIELDS.filter(field =>
             log[field] === undefined || log[field] === null || log[field] === ''
         );
     };
 
     // ============ INSIGHT GENERATORS ============
-    
+
     /**
      * Generate human-readable insights from a log
      * Tells the STORY of what happened
@@ -266,7 +266,7 @@ function AnalyticsLogViewer() {
         if (logs.length === 0) return [];
 
         const insights = [];
-        
+
         const correctCount = logs.filter(l => l.isCorrect).length;
         const recoveredCount = logs.filter(l => l.isRecovered).length;
         const incorrectCount = logs.length - correctCount - recoveredCount;
@@ -410,11 +410,10 @@ function AnalyticsLogViewer() {
                             <button
                                 key={student.id}
                                 onClick={() => setSelectedStudent(student.id)}
-                                className={`p-4 rounded-lg border-2 transition-all text-left ${
-                                    selectedStudent === student.id
+                                className={`p-4 rounded-lg border-2 transition-all text-left ${selectedStudent === student.id
                                         ? 'border-blue-600 bg-blue-50 shadow-md'
                                         : 'border-slate-200 hover:border-slate-300 bg-slate-50 hover:bg-slate-100'
-                                }`}
+                                    }`}
                             >
                                 <p className="font-bold text-slate-900">{student.name}</p>
                                 <p className="text-xs text-slate-500 mt-1">⭐ L{student.heroLevel} • {student.powerPoints}⚡</p>
@@ -430,13 +429,12 @@ function AnalyticsLogViewer() {
                         {generateSessionInsights().map((insight, idx) => (
                             <div
                                 key={idx}
-                                className={`rounded-lg p-4 border-l-4 ${
-                                    insight.type === 'summary' ? 'bg-blue-50 border-blue-500' :
-                                    insight.type === 'momentum' ? 'bg-yellow-50 border-yellow-500' :
-                                    insight.type === 'struggle' ? 'bg-red-50 border-red-500' :
-                                    insight.type === 'learning' ? 'bg-green-50 border-green-500' :
-                                    'bg-purple-50 border-purple-500'
-                                }`}
+                                className={`rounded-lg p-4 border-l-4 ${insight.type === 'summary' ? 'bg-blue-50 border-blue-500' :
+                                        insight.type === 'momentum' ? 'bg-yellow-50 border-yellow-500' :
+                                            insight.type === 'struggle' ? 'bg-red-50 border-red-500' :
+                                                insight.type === 'learning' ? 'bg-green-50 border-green-500' :
+                                                    'bg-purple-50 border-purple-500'
+                                    }`}
                             >
                                 <div className="flex items-start gap-3">
                                     <span className="text-2xl">{insight.icon}</span>
@@ -475,21 +473,19 @@ function AnalyticsLogViewer() {
                 <div className="flex gap-2 justify-center">
                     <button
                         onClick={() => setViewMode('insights')}
-                        className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                            viewMode === 'insights'
+                        className={`px-6 py-3 rounded-lg font-bold transition-all ${viewMode === 'insights'
                                 ? 'bg-blue-600 text-white shadow-lg'
                                 : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-blue-300'
-                        }`}
+                            }`}
                     >
                         💡 Story View (Insightful)
                     </button>
                     <button
                         onClick={() => setViewMode('raw')}
-                        className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                            viewMode === 'raw'
+                        className={`px-6 py-3 rounded-lg font-bold transition-all ${viewMode === 'raw'
                                 ? 'bg-slate-600 text-white shadow-lg'
                                 : 'bg-white border-2 border-slate-200 text-slate-700 hover:border-slate-300'
-                        }`}
+                            }`}
                     >
                         📋 Raw Data (Technical)
                     </button>
@@ -536,15 +532,13 @@ function AnalyticsLogViewer() {
                                                 <div className="text-right space-y-1">
                                                     {getStatusBadge(log)}
                                                     <div className="text-xs">
-                                                        <p className={`font-bold ${
-                                                            log.isCorrect ? 'text-green-700' : log.isRecovered ? 'text-yellow-700' : 'text-red-700'
-                                                        }`}>
+                                                        <p className={`font-bold ${log.isCorrect ? 'text-green-700' : log.isRecovered ? 'text-yellow-700' : 'text-red-700'
+                                                            }`}>
                                                             {log.isCorrect ? '✓ CORRECT' : log.isRecovered ? '🔄 RECOVERED' : '✗ INCORRECT'}
                                                         </p>
                                                         {log.speedRating && (
-                                                            <p className={`font-bold ${
-                                                                log.speedRating === 'SPRINT' ? 'text-blue-700' : 'text-slate-600'
-                                                            }`}>
+                                                            <p className={`font-bold ${log.speedRating === 'SPRINT' ? 'text-blue-700' : 'text-slate-600'
+                                                                }`}>
                                                                 {log.speedRating}
                                                             </p>
                                                         )}
@@ -557,15 +551,14 @@ function AnalyticsLogViewer() {
                                                 {generateLogInsight(log, idx, logs.length).map((insight, insightIdx) => (
                                                     <div
                                                         key={insightIdx}
-                                                        className={`rounded p-3 border-l-4 ${
-                                                            insight.type === 'success' ? 'bg-green-50 border-green-500' :
-                                                            insight.type === 'recovery' ? 'bg-yellow-50 border-yellow-500' :
-                                                            insight.type === 'struggle' ? 'bg-red-50 border-red-500' :
-                                                            insight.type === 'speed' ? 'bg-blue-50 border-blue-500' :
-                                                            insight.type === 'concept' ? 'bg-purple-50 border-purple-500' :
-                                                            insight.type === 'action' ? 'bg-orange-50 border-orange-500' :
-                                                            'bg-slate-50 border-slate-300'
-                                                        }`}
+                                                        className={`rounded p-3 border-l-4 ${insight.type === 'success' ? 'bg-green-50 border-green-500' :
+                                                                insight.type === 'recovery' ? 'bg-yellow-50 border-yellow-500' :
+                                                                    insight.type === 'struggle' ? 'bg-red-50 border-red-500' :
+                                                                        insight.type === 'speed' ? 'bg-blue-50 border-blue-500' :
+                                                                            insight.type === 'concept' ? 'bg-purple-50 border-purple-500' :
+                                                                                insight.type === 'action' ? 'bg-orange-50 border-orange-500' :
+                                                                                    'bg-slate-50 border-slate-300'
+                                                            }`}
                                                     >
                                                         <p className="text-sm font-bold text-slate-900">
                                                             {insight.icon} {insight.title}
@@ -592,16 +585,14 @@ function AnalyticsLogViewer() {
                                                         return (
                                                             <div
                                                                 key={field}
-                                                                className={`p-2 rounded text-xs border ${
-                                                                    isMissing
+                                                                className={`p-2 rounded text-xs border ${isMissing
                                                                         ? 'bg-red-50 border-red-200'
                                                                         : 'bg-green-50 border-green-200'
-                                                                }`}
+                                                                    }`}
                                                             >
                                                                 <p className="font-bold text-slate-600 uppercase text-xs mb-1">{field}</p>
-                                                                <p className={`font-mono text-xs ${
-                                                                    isMissing ? 'text-red-700' : 'text-green-700'
-                                                                }`}>
+                                                                <p className={`font-mono text-xs ${isMissing ? 'text-red-700' : 'text-green-700'
+                                                                    }`}>
                                                                     {formatValue(value, field)}
                                                                 </p>
                                                             </div>
@@ -630,18 +621,16 @@ function AnalyticsLogViewer() {
                                                     return (
                                                         <div
                                                             key={field}
-                                                            className={`p-3 rounded border ${
-                                                                isMissing
+                                                            className={`p-3 rounded border ${isMissing
                                                                     ? 'bg-red-50 border-red-200'
                                                                     : 'bg-green-50 border-green-200'
-                                                            }`}
+                                                                }`}
                                                         >
                                                             <p className="text-xs font-bold text-slate-600 uppercase mb-1">
                                                                 {field}
                                                             </p>
-                                                            <p className={`text-sm font-mono ${
-                                                                isMissing ? 'text-red-700' : 'text-green-700'
-                                                            }`}>
+                                                            <p className={`text-sm font-mono ${isMissing ? 'text-red-700' : 'text-green-700'
+                                                                }`}>
                                                                 {formatValue(value, field)}
                                                             </p>
                                                         </div>
