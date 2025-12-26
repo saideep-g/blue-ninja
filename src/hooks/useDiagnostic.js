@@ -69,7 +69,8 @@ export function useDiagnostic(injectedQuestions = null) {
     * ✅ FIXED: Removed the !injectedQuestions check that was preventing saves
     * Now it always persists completion when isComplete=true
     * 
-    * ✅ NEW: Added failsafe - if masteryData is empty, initialize with default mastery
+    * ✅ NEW: Also updates localStorage so it doesn't have stale data on refresh
+    * This is the critical fix for the "diagnostic restarts after refresh" bug
      */
     useEffect(() => {
         const saveCompletion = async () => {
@@ -123,6 +124,26 @@ export function useDiagnostic(injectedQuestions = null) {
                         mastery: finalMastery,
                         hurdles: hurdles
                     }));
+                    
+                    // 🎯 CRITICAL FIX: Also update localStorage so it doesn't have stale data on refresh
+                    // This prevents the "diagnostic restarts after refresh" bug
+                    console.log('[useDiagnostic] 📝 Updating localStorage with completion data...');
+                    localStorage.setItem(`ninja_session_${auth.currentUser.uid}`, JSON.stringify({
+                        stats: {
+                            powerPoints: 0,
+                            heroLevel: 1,
+                            mastery: finalMastery,
+                            hurdles: hurdles,
+                            consecutiveBossSuccesses: {},
+                            completedMissions: 0,
+                            currentQuest: 'COMPLETED',  // ✅ KEY: Set to COMPLETED
+                            streakCount: 0,
+                            lastMissionDate: null
+                        },
+                        buffer: { logs: [], pointsGained: 0 },
+                        role: 'STUDENT'
+                    }));
+                    console.log('[useDiagnostic] ✅ localStorage updated with completion status!');
                     
                 } catch (error) {
                     console.error("[useDiagnostic] 🔴 Failed to save quest completion:", error);
