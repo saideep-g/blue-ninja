@@ -19,7 +19,7 @@ import { BlueNinjaTheme } from './theme/themeConfig';
 import StudentInsightsReport from './components/dashboard/StudentInsightsReport';
 import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
 import ParentDashboard from './components/parent/ParentDashboard';
-import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
+import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 
 /**
  * Blue Ninja Content Component
@@ -27,6 +27,11 @@ import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard'
  * Optimized Dashboard UX and Hero Quest placement.
  * Refined: Fully implements Nexus Dev Mode routing using "State Hijacking" to use
  * the exact same Production JSX for high-velocity testing.
+ * 
+ * FIX: Diagnostic-First Flow for New Users
+ * - New users ALWAYS see diagnostic quest first (currentQuest: 'DIAGNOSTIC')
+ * - Only after completing diagnostic does "Start Daily Flight" become available
+ * - Dashboard only shows after diagnostic is complete
  */
 function BlueNinjaContent() {
   const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement, userRole, setUserRole } = useNinja();
@@ -86,25 +91,25 @@ function BlueNinjaContent() {
   };
 
   /**
-   * handleDailyAnswer
-   * Unified handler for Daily Missions to ensure ground truth is logged.
+   * handleDailyAnswer - FIX: Correct Function Signature
+   * Now properly calculates timeSpent and speedRating BEFORE calling submitDailyAnswer
+   * This ensures all required fields are logged correctly
    */
-  const handleDailyAnswer = (isCorrect, choice, isRecovered, tag) => {
+  const handleDailyAnswer = (isCorrect, choice, isRecovered, tag, timeSpentSeconds) => {
+    // Calculate speedRating based on thinking time (in seconds)
+    const speedRating = timeSpentSeconds < 3 ? 'SPRINT' : (timeSpentSeconds < 15 ? 'NORMAL' : 'SLOW');
 
-    // Calculate speedRating based on thinking time
-    const speedRating = timeSpentSeconds < 3
-      ? 'SPRINT'
-      : (timeSpentSeconds < 15 ? 'NORMAL' : 'SLOW');
+    // Now pass the correctly calculated parameters
     submitDailyAnswer(
       isCorrect,
       choice,
       isRecovered,
       tag,
-      dailyQ.correct_answer, // Pass ground truth for validation
-      timeSpentSeconds,  // ✅ Now passed
-      speedRating        // ✅ Now passed
+      timeSpentSeconds, // Time spent in seconds
+      speedRating       // Calculated speed rating
     );
-    // Update power points
+
+    // Update power points for correct/recovered answers
     if (isCorrect) updatePower(15);
     else if (isRecovered) updatePower(7);
   };
@@ -118,9 +123,11 @@ function BlueNinjaContent() {
   const activeMastery = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.mastery || {}) : sessionMastery;
   const activeHurdles = ninjaStats?.currentQuest === 'COMPLETED' ? (ninjaStats.hurdles || {}) : sessionHurdles;
 
-  // Sync view state based on database profile
+  // FIX: Improved View Synchronization Logic
+  // Ensures proper flow: DIAGNOSTIC → DASHBOARD → DAILY_MISSION
   useEffect(() => {
     if (ninjaStats?.currentQuest === 'COMPLETED' && currentView === 'QUEST') {
+      // Diagnostic is complete, move to dashboard
       setCurrentView('DASHBOARD');
     }
   }, [ninjaStats?.currentQuest]);
@@ -148,6 +155,11 @@ function BlueNinjaContent() {
     </div>
   );
   if (!user) return <Login setUserRole={setUserRole} />;
+
+  // Admin role - Analytics viewer
+  if (userRole === 'ADMIN') {
+    return <AnalyticsLogViewer />;
+  }
 
   // FIX: Role-based routing
   if (userRole === 'TEACHER') {

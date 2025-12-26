@@ -2,12 +2,19 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
- * MissionCard: Step 12 & 13 Final Implementation
+ * MissionCard: Complete Implementation with Consistent onAnswer Signature
  * Fully handles LaTeX rendering, engagement framing, and hurdle tracking.
  * Detailed comments explain the logic flow for VS Code diffing.
  * Ensures the 'Bonus Mission' (Follow-Up) is visible and interactable 
  * after an incorrect answer is submitted.
  * Implements Auto-Advance, Success Animations, and Thinking-Time Tracking.
+ * 
+ * CRITICAL FIX: All onAnswer calls now use EXACTLY 5 parameters:
+ * onAnswer(isCorrect, choice, isRecovered, tag, timeSpentSeconds)
+ * 
+ * - timeSpent is converted from milliseconds to seconds
+ * - speedRating is calculated by the handler in App.jsx
+ * - No extra parameters like rating, cappedTime
  */
 function MissionCard({ question, onAnswer, onStartRecovery }) {
     // Local state to track the ninja's current selection before submission
@@ -22,7 +29,7 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
 
     // Performance State
     const [isCorrectPulse, setIsCorrectPulse] = useState(false);
-    const [speedRating, setSpeedRating] = useState(null); // 'SPRINT', 'STEADY', 'DEEP'
+    const [speedRating, setSpeedRating] = useState(null); // 'SPRINT', 'NORMAL', 'SLOW'
 
     const [thinkingTime, setThinkingTime] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -72,14 +79,15 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
      * calculatePerformance
      * Determines the Speed Factor based on Difficulty.
      * Baseline: 8 seconds per difficulty level.
+     * Returns: 'SPRINT' | 'NORMAL' | 'SLOW'
      */
     const calculatePerformance = (timeSpent) => {
         const expectedTime = (question.difficulty || 3) * 8000;
         const speedFactor = timeSpent / expectedTime;
 
         if (speedFactor < 0.6) return 'SPRINT';
-        if (speedFactor < 1.2) return 'STEADY';
-        return 'DEEP';
+        if (speedFactor < 1.2) return 'NORMAL';
+        return 'SLOW';
     };
 
     // Phase 3: Pause timer when tab is hidden or student is idle
@@ -106,24 +114,27 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
     /**
      * handleCheck - Logic to check the primary answer.
      * If correct: Triggers success animation and auto-advances after 1.2s.
-     * Correct Answer: Triggers "Speed Up" animations and auto-advances.
      * If wrong: Shows Ninja Insight and starts recovery timer.
-     * Wrong Answer: Triggers "Slow Down" feedback and Ninja Insight.
+     * 
+     * CRITICAL FIX: Converts timeSpentMs to timeSpentSeconds
+     * and calls onAnswer with EXACTLY 5 parameters
      */
     const handleCheck = () => {
-        // Cap thinking time at 5 minutes to prevent skewed data from extreme idle
-        const cappedTime = Math.min(thinkingTime, 300000);
-        const timeSpent = Date.now() - startTimeRef.current;
+        // Convert milliseconds to seconds for logging
+        const timeSpentMs = Date.now() - startTimeRef.current;
+        const timeSpentSeconds = Math.round(timeSpentMs / 1000);
         const isCorrect = selectedOption === question.correct_answer;
 
         if (isCorrect) {
-            const rating = calculatePerformance(timeSpent);
+            const rating = calculatePerformance(timeSpentMs);
             setSpeedRating(rating);
             setIsCorrectPulse(true);
             // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
             // Asymmetrical feedback: Auto-advance after 1.2s to preserve momentum
             setTimeout(() => {
-                onAnswer(true, selectedOption, false, null, timeSpent, rating, cappedTime);
+                // ✅ FIXED: Call with exactly 5 parameters
+                // The handler in App.jsx will calculate speedRating from timeSpentSeconds
+                onAnswer(true, selectedOption, false, null, timeSpentSeconds);
             }, 1200);
         } else {
             // Step 12: Extract the diagnostic_tag to track misconceptions (Hurdles)
@@ -170,16 +181,19 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                 {speedRating && (
                     <motion.span
                         initial={{ scale: 0 }} animate={{ scale: 1 }}
-                        className={`text-[9px] font-black uppercase px-2 py-1 rounded ${speedRating === 'SPRINT' ? 'bg-yellow-400 text-blue-900' : 'bg-blue-100 text-blue-600'
-                            }`}
+                        className={`text-[9px] font-black uppercase px-2 py-1 rounded ${
+                            speedRating === 'SPRINT' ? 'bg-yellow-400 text-blue-900' : 'bg-blue-100 text-blue-600'
+                        }`}
                     >
-                        {speedRating} FLOW
+                        ⚡ {speedRating} FLOW
                     </motion.span>
                 )}
             </div>
 
             {/* Main Question Text */}
-            <div className={`mb-10 transition-opacity duration-300 ${isTypesetting ? 'opacity-0' : 'opacity-100'}`}>
+            <div className={`mb-10 transition-opacity duration-300 ${
+                isTypesetting ? 'opacity-0' : 'opacity-100'
+            }`}>
                 <h2 className="text-2xl md:text-3xl font-bold text-slate-800 leading-tight">
                     {question.text}
                 </h2>
@@ -195,12 +209,13 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                 <button
                                     key={index}
                                     onClick={() => !isCorrectPulse && setSelectedOption(option)}
-                                    className={`p-5 rounded-2xl text-left font-bold transition-all border-2 relative overflow-hidden ${isSelected
-                                        ? isCorrectPulse
-                                            ? 'bg-green-500 border-green-500 text-white shadow-xl'
-                                            : 'bg-blue-600 border-blue-600 text-white shadow-lg'
-                                        : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
-                                        } ${isCorrectPulse && isSelected ? 'animate-bounce' : ''}`}
+                                    className={`p-5 rounded-2xl text-left font-bold transition-all border-2 relative overflow-hidden ${
+                                        isSelected
+                                            ? isCorrectPulse
+                                                ? 'bg-green-500 border-green-500 text-white shadow-xl'
+                                                : 'bg-blue-600 border-blue-600 text-white shadow-lg'
+                                            : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                                    } ${isCorrectPulse && isSelected ? 'animate-bounce' : ''}`}
                                 >
                                     {option}
                                     {isCorrectPulse && isSelected && (
@@ -220,10 +235,11 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         <button
                             disabled={!selectedOption}
                             onClick={handleCheck}
-                            className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${selectedOption
-                                ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
-                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                }`}
+                            className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${
+                                selectedOption
+                                    ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
+                                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                            }`}
                         >
                             Check Answer ➤
                         </button>
@@ -252,11 +268,19 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                     <button
                                         key={i}
                                         onClick={() => {
-                                            const cappedTime = Math.min(thinkingTime, 300000);
-                                            const timeSpent = Date.now() - startTimeRef.current;
+                                            // Convert milliseconds to seconds
+                                            const timeSpentMs = Date.now() - startTimeRef.current;
+                                            const timeSpentSeconds = Math.round(timeSpentMs / 1000);
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
-                                            // Fixed: Signature corrected to pass isRecovered and tag correctly
-                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpent, null, cappedTime);
+                                            
+                                            // ✅ FIXED: Call with exactly 5 parameters
+                                            // isCorrect = false (wrong first attempt)
+                                            // choice = selectedOption (original wrong answer)
+                                            // isRecovered = recoveryCorrect (correct on bonus)
+                                            // tag = feedbackData.diagnostic_tag (misconception)
+                                            // timeSpentSeconds = calculated in seconds
+                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpentSeconds);
+                                            
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
@@ -272,14 +296,23 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         /* If no follow-up is defined in the JSON, provide a way to continue */
                         <button
                             onClick={() => {
-                                const cappedTime = Math.min(thinkingTime, 300000);
-                                const timeSpent = Date.now() - startTimeRef.current;
-                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpent, null, cappedTime);
+                                // Convert milliseconds to seconds
+                                const timeSpentMs = Date.now() - startTimeRef.current;
+                                const timeSpentSeconds = Math.round(timeSpentMs / 1000);
+                                
+                                // ✅ FIXED: Call with exactly 5 parameters
+                                // isCorrect = false (student got it wrong)
+                                // choice = selectedOption (original wrong answer)
+                                // isRecovered = false (no bonus mission to recover)
+                                // tag = feedbackData?.diagnostic_tag (misconception)
+                                // timeSpentSeconds = calculated in seconds
+                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpentSeconds);
+                                
                                 setShowFeedback(false);
                                 setFeedbackData(null);
                                 setSelectedOption(null);
                             }}
-                            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest"
+                            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all"
                         >
                             Next Mission ➤
                         </button>
