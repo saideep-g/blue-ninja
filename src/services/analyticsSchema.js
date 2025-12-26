@@ -146,8 +146,8 @@ export const ANALYTICS_SCHEMA = {
                     severity: 'ERROR',
                     expected: Object.entries(mapping).find(([_, r]) =>
                         log.timeSpent >= r.min && log.timeSpent <= r.max
-                    )?.
-        };
+                    )?.[0]
+                };
             }
 
             return { valid: true };

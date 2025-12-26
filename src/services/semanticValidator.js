@@ -190,3 +190,61 @@ const getHealthStatus = (score) => {
     if (score >= 0.5) return { status: 'CAUTION', emoji: '🟡' };
     return { status: 'CRITICAL', emoji: '❤️' };
 };
+
+
+/**
+ * SEMANTIC VALIDATOR (Tier 2)
+ * Updated to work with insightGenerator
+ */
+
+export function semanticValidate(log) {
+    const issues = [];
+
+    // Lucky Guess
+    if (log.isCorrect && log.speedRating === 'SPRINT' && log.confidenceAfter < 0.5) {
+        issues.push({
+            type: 'WARNING',
+            code: 'LUCKY_GUESS',
+            message: 'Correct but too fast + low confidence = lucky guess',
+            severity: 'MEDIUM',
+        });
+    }
+
+    // Hidden Misconception
+    if (!log.isCorrect && log.confidenceBefore > 0.7) {
+        issues.push({
+            type: 'ERROR',
+            code: 'HIDDEN_MISCONCEPTION',
+            message: 'High confidence but wrong = dangerous misconception',
+            severity: 'HIGH',
+        });
+    }
+
+    // Resistant Misconception
+    if (!log.isCorrect && log.isRecovered && log.timeSpent > 5000) {
+        issues.push({
+            type: 'WARNING',
+            code: 'RESISTANT_MISCONCEPTION',
+            message: 'Took long time to recover - concept is resistant',
+            severity: 'MEDIUM',
+        });
+    }
+
+    // Confidence Drop
+    if (log.confidenceAfter - log.confidenceBefore < -0.3) {
+        issues.push({
+            type: 'WARNING',
+            code: 'CONFIDENCE_DROP',
+            message: 'Confidence dropped significantly',
+            severity: 'MEDIUM',
+        });
+    }
+
+    return {
+        isValid: issues.length === 0,
+        score: 100 - issues.length * 10,
+        issues,
+    };
+}
+
+export default semanticValidate;
