@@ -8,6 +8,11 @@ import { motion, AnimatePresence } from 'framer-motion';
  * Ensures the 'Bonus Mission' (Follow-Up) is visible and interactable 
  * after an incorrect answer is submitted.
  * Implements Auto-Advance, Success Animations, and Thinking-Time Tracking.
+ * 
+ * FIX: Corrected onAnswer handler signature
+ * - Now passes: (isCorrect, choice, isRecovered, tag, timeSpentSeconds)
+ * - The handler will calculate speedRating from timeSpentSeconds
+ * - This ensures consistency with useDailyMission function signature
  */
 function MissionCard({ question, onAnswer, onStartRecovery }) {
     // Local state to track the ninja's current selection before submission
@@ -111,19 +116,20 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
      * Wrong Answer: Triggers "Slow Down" feedback and Ninja Insight.
      */
     const handleCheck = () => {
-        // Cap thinking time at 5 minutes to prevent skewed data from extreme idle
-        const cappedTime = Math.min(thinkingTime, 300000);
-        const timeSpent = Date.now() - startTimeRef.current;
+        // Convert milliseconds to seconds for the handler
+        const timeSpentMs = Date.now() - startTimeRef.current;
+        const timeSpentSeconds = Math.round(timeSpentMs / 1000);
         const isCorrect = selectedOption === question.correct_answer;
 
         if (isCorrect) {
-            const rating = calculatePerformance(timeSpent);
+            const rating = calculatePerformance(timeSpentMs);
             setSpeedRating(rating);
             setIsCorrectPulse(true);
             // UX Decision: 1.2s pause for the "Success Beat" before auto-advancing
             // Asymmetrical feedback: Auto-advance after 1.2s to preserve momentum
             setTimeout(() => {
-                onAnswer(true, selectedOption, false, null, timeSpent, rating, cappedTime);
+                // FIX: Corrected signature - pass only 5 params
+                onAnswer(true, selectedOption, false, null, timeSpentSeconds);
             }, 1200);
         } else {
             // Step 12: Extract the diagnostic_tag to track misconceptions (Hurdles)
@@ -195,11 +201,12 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                 <button
                                     key={index}
                                     onClick={() => !isCorrectPulse && setSelectedOption(option)}
-                                    className={`p-5 rounded-2xl text-left font-bold transition-all border-2 relative overflow-hidden ${isSelected
-                                        ? isCorrectPulse
-                                            ? 'bg-green-500 border-green-500 text-white shadow-xl'
-                                            : 'bg-blue-600 border-blue-600 text-white shadow-lg'
-                                        : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
+                                    className={`p-5 rounded-2xl text-left font-bold transition-all border-2 relative overflow-hidden ${
+                                        isSelected
+                                            ? isCorrectPulse
+                                                ? 'bg-green-500 border-green-500 text-white shadow-xl'
+                                                : 'bg-blue-600 border-blue-600 text-white shadow-lg'
+                                            : 'bg-white border-blue-50 text-slate-700 hover:border-blue-200 hover:bg-blue-50'
                                         } ${isCorrectPulse && isSelected ? 'animate-bounce' : ''}`}
                                 >
                                     {option}
@@ -220,9 +227,10 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         <button
                             disabled={!selectedOption}
                             onClick={handleCheck}
-                            className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${selectedOption
-                                ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
-                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                            className={`w-full mt-8 py-5 rounded-2xl font-black text-lg transition-all ${
+                                selectedOption
+                                    ? 'bg-[var(--color-accent)] text-blue-900 shadow-xl cursor-pointer active:scale-95'
+                                    : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                 }`}
                         >
                             Check Answer ➤
@@ -252,11 +260,11 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                                     <button
                                         key={i}
                                         onClick={() => {
-                                            const cappedTime = Math.min(thinkingTime, 300000);
-                                            const timeSpent = Date.now() - startTimeRef.current;
+                                            const timeSpentMs = Date.now() - startTimeRef.current;
+                                            const timeSpentSeconds = Math.round(timeSpentMs / 1000);
                                             const recoveryCorrect = opt === feedbackData.follow_up.correct;
-                                            // Fixed: Signature corrected to pass isRecovered and tag correctly
-                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpent, null, cappedTime);
+                                            // FIX: Corrected signature - pass only 5 params
+                                            onAnswer(false, selectedOption, recoveryCorrect, feedbackData.diagnostic_tag, timeSpentSeconds);
                                             setShowFeedback(false);
                                             setFeedbackData(null);
                                             setSelectedOption(null);
@@ -272,9 +280,10 @@ function MissionCard({ question, onAnswer, onStartRecovery }) {
                         /* If no follow-up is defined in the JSON, provide a way to continue */
                         <button
                             onClick={() => {
-                                const cappedTime = Math.min(thinkingTime, 300000);
-                                const timeSpent = Date.now() - startTimeRef.current;
-                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpent, null, cappedTime);
+                                const timeSpentMs = Date.now() - startTimeRef.current;
+                                const timeSpentSeconds = Math.round(timeSpentMs / 1000);
+                                // FIX: Corrected signature - pass only 5 params
+                                onAnswer(false, selectedOption, false, feedbackData?.diagnostic_tag, timeSpentSeconds);
                                 setShowFeedback(false);
                                 setFeedbackData(null);
                                 setSelectedOption(null);
