@@ -27,6 +27,22 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
         nextActions,
     } = insights;
 
+
+    // Add at top:
+    if (!logs || logs.length === 0) {
+        return (
+            <div className="ninja-card">
+                <h2 className="text-2xl font-black text-blue-800 mb-4">📊 Your Insights</h2>
+                <div className="text-center py-10">
+                    <div className="text-4xl mb-3">📈</div>
+                    <p className="text-blue-600 font-bold">Complete more missions to see your insights</p>
+                    <p className="text-xs text-gray-500 mt-2">Insights appear after 5+ questions</p>
+                </div>
+            </div>
+        );
+    }
+
+
     return (
         <div className="space-y-6">
             {/* Header */}
@@ -105,10 +121,10 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
                             <div
                                 key={hurdle.tag}
                                 className={`p-4 rounded-xl border-l-4 ${hurdle.severity === 'CRITICAL'
-                                        ? 'border-l-red-600 bg-white'
-                                        : hurdle.severity === 'HIGH'
-                                            ? 'border-l-orange-600 bg-white'
-                                            : 'border-l-yellow-600 bg-white'
+                                    ? 'border-l-red-600 bg-white'
+                                    : hurdle.severity === 'HIGH'
+                                        ? 'border-l-orange-600 bg-white'
+                                        : 'border-l-yellow-600 bg-white'
                                     }`}
                             >
                                 <div className="flex items-start justify-between mb-2">
@@ -120,10 +136,10 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
                                     </div>
                                     <span
                                         className={`px-2 py-1 rounded text-[10px] font-black uppercase whitespace-nowrap ${hurdle.severity === 'CRITICAL'
-                                                ? 'bg-red-600 text-white'
-                                                : hurdle.severity === 'HIGH'
-                                                    ? 'bg-orange-600 text-white'
-                                                    : 'bg-yellow-600 text-white'
+                                            ? 'bg-red-600 text-white'
+                                            : hurdle.severity === 'HIGH'
+                                                ? 'bg-orange-600 text-white'
+                                                : 'bg-yellow-600 text-white'
                                             }`}
                                     >
                                         {hurdle.severity}
@@ -176,10 +192,10 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
                                                 ⏱️ {rec.timeEstimate}
                                             </span>
                                             <span className={`font-black px-2 py-1 rounded ${rec.urgency === 'HIGH'
-                                                    ? 'bg-red-600 text-white'
-                                                    : rec.urgency === 'MEDIUM'
-                                                        ? 'bg-yellow-600 text-white'
-                                                        : 'bg-gray-600 text-white'
+                                                ? 'bg-red-600 text-white'
+                                                : rec.urgency === 'MEDIUM'
+                                                    ? 'bg-yellow-600 text-white'
+                                                    : 'bg-gray-600 text-white'
                                                 }`}>
                                                 {rec.urgency}
                                             </span>
