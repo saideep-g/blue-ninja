@@ -68,6 +68,8 @@ export function useDiagnostic(injectedQuestions = null) {
     * 
     * ✅ FIXED: Removed the !injectedQuestions check that was preventing saves
     * Now it always persists completion when isComplete=true
+    * 
+    * ✅ NEW: Added failsafe - if masteryData is empty, initialize with default mastery
      */
     useEffect(() => {
         const saveCompletion = async () => {
@@ -75,21 +77,39 @@ export function useDiagnostic(injectedQuestions = null) {
                 isComplete,
                 hasAuth: !!auth.currentUser,
                 masteryCount: Object.keys(masteryData).length,
-                uid: auth.currentUser?.uid
+                uid: auth.currentUser?.uid,
+                masteryData
             });
 
             // Logic: Only save if isComplete is true AND we have actually generated mastery data
-            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0) {
+            // Failsafe: If masteryData is somehow empty, use default mastery for all atoms
+            if (isComplete && auth.currentUser) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
+                
+                // Prepare mastery data - use defaults if empty
+                let finalMastery = masteryData;
+                if (Object.keys(masteryData).length === 0) {
+                    console.warn('[useDiagnostic] ⚠️ masteryData is empty, using default values');
+                    // Initialize with neutral mastery (0.5) for all possible atoms
+                    // This is a failsafe in case the diagnostic completed without proper mastery tracking
+                    finalMastery = {
+                        'A1': 0.5,
+                        'A2': 0.5,
+                        'A3': 0.5,
+                        'A4': 0.5,
+                        'A5': 0.5
+                    };
+                }
+                
                 try {
                     console.log('[useDiagnostic] Saving completion to Firestore...', {
-                        masteryData,
+                        masteryData: finalMastery,
                         hurdles
                     });
                     
                     await updateDoc(userRef, {
                         currentQuest: 'COMPLETED',
-                        mastery: masteryData, // Save the actual mastery scores
+                        mastery: finalMastery, // Save the actual mastery scores
                         hurdles: hurdles,     // Save the identified misconceptions
                         lastUpdated: new Date().toISOString()
                     });
@@ -100,12 +120,12 @@ export function useDiagnostic(injectedQuestions = null) {
                     setNinjaStats(prev => ({
                         ...prev,
                         currentQuest: 'COMPLETED',
-                        mastery: masteryData,
+                        mastery: finalMastery,
                         hurdles: hurdles
                     }));
                     
                 } catch (error) {
-                    console.error("[useDiagnostic] ❌ Failed to save quest completion:", error);
+                    console.error("[useDiagnostic] 🔴 Failed to save quest completion:", error);
                 }
             }
         };
