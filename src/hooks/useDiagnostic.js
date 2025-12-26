@@ -18,7 +18,7 @@ import { SAMPLE_DIAGNOSTIC_QUESTIONS } from '../data/sampleDiagnosticQuestions.j
  * REFINED: Explicitly captures studentAnswer and correctAnswer for the Inquiry on Learning.
  */
 export function useDiagnostic(injectedQuestions = null) {
-    const { logQuestionResult } = useNinja(); //
+    const { logQuestionResult, setNinjaStats } = useNinja(); //
     const [questions, setQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [masteryData, setMasteryData] = useState({}); // { A1: 0.65, A3: 0.85 }
@@ -61,34 +61,56 @@ export function useDiagnostic(injectedQuestions = null) {
     }, [injectedQuestions]); // Now properly tracks the injected questions
 
     /**
-    * PERSISTENCE FIX:
+    * PERSISTENCE FIX (UPDATED):
     * When the diagnostic is complete, we save the status AND the results to Firestore.
     * This ensures the Mastery and Hurdles are available after a page refresh.
     * Only save completion if we have actual session data to save.
+    * 
+    * ✅ FIXED: Removed the !injectedQuestions check that was preventing saves
+    * Now it always persists completion when isComplete=true
      */
     useEffect(() => {
         const saveCompletion = async () => {
-            // Logic: Only save if isComplete is true AND we have actually generated mastery data
-            // SAFETY GATE: Do not save completion if using the test user in Dev Mode
-            // This prevents test data from polluting your real analytical trends.
-            const isTestUser = auth.currentUser?.uid.includes('test_user');
+            console.log('[useDiagnostic] Checking save completion:', {
+                isComplete,
+                hasAuth: !!auth.currentUser,
+                masteryCount: Object.keys(masteryData).length,
+                uid: auth.currentUser?.uid
+            });
 
-            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0 && !injectedQuestions) {
+            // Logic: Only save if isComplete is true AND we have actually generated mastery data
+            if (isComplete && auth.currentUser && Object.keys(masteryData).length > 0) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
                 try {
+                    console.log('[useDiagnostic] Saving completion to Firestore...', {
+                        masteryData,
+                        hurdles
+                    });
+                    
                     await updateDoc(userRef, {
                         currentQuest: 'COMPLETED',
                         mastery: masteryData, // Save the actual mastery scores
                         hurdles: hurdles,     // Save the identified misconceptions
                         lastUpdated: new Date().toISOString()
                     });
+                    
+                    console.log('[useDiagnostic] ✅ Completion saved successfully!');
+                    
+                    // Also update local state immediately so App.jsx reacts
+                    setNinjaStats(prev => ({
+                        ...prev,
+                        currentQuest: 'COMPLETED',
+                        mastery: masteryData,
+                        hurdles: hurdles
+                    }));
+                    
                 } catch (error) {
-                    console.error("Failed to save quest completion:", error);
+                    console.error("[useDiagnostic] ❌ Failed to save quest completion:", error);
                 }
             }
         };
         saveCompletion();
-    }, [isComplete, masteryData, hurdles, injectedQuestions]); // Added dependencies to ensure final data is caught
+    }, [isComplete, masteryData, hurdles]); // Removed injectedQuestions dependency
 
     // Starts the high-precision timer for the "Bonus Mission" branch
     const startRecoveryTimer = () => {
@@ -108,6 +130,14 @@ export function useDiagnostic(injectedQuestions = null) {
      * @param {number} timeSpentSeconds - Time spent in seconds (from MissionCard)
      */
     const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer, timeSpentSeconds) => {
+        console.log('[useDiagnostic] submitAnswer called:', {
+            questionId,
+            isCorrect,
+            atomId,
+            currentIndex,
+            totalQuestions: questions.length
+        });
+        
         // ✅ FIXED: Use timeSpentSeconds from MissionCard if provided
         // Otherwise calculate from our internal timer
         let timeSpent;
@@ -190,7 +220,15 @@ export function useDiagnostic(injectedQuestions = null) {
         // Adaptive Stopping Logic: Stop if 85% confidence reached
         const avgMastery = Object.values(newMastery).reduce((a, b) => a + b, 0) / (Object.keys(newMastery).length || 1);
 
+        console.log('[useDiagnostic] After answer:', {
+            currentIndex: currentIndex + 1,
+            totalQuestions: questions.length,
+            avgMastery,
+            shouldComplete: avgMastery > 0.85 || currentIndex >= questions.length - 1
+        });
+
         if (avgMastery > 0.85 || currentIndex >= questions.length - 1) {
+            console.log('[useDiagnostic] 🎉 DIAGNOSTIC COMPLETE!');
             setIsComplete(true);
         } else {
             setCurrentIndex(prev => prev + 1);
