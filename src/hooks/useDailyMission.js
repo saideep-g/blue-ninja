@@ -49,6 +49,12 @@ export function useDailyMission(devQuestions = null) {
         try {
             // Fetching from the unified mission bank
             const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
+            if (qSnap.empty) {
+                console.warn("No questions found");
+                setMissionQuestions([]);
+                setIsLoading(false);
+                return;
+            }
             const allQuestions = qSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
             const mastery = ninjaStats.mastery || {};
@@ -91,6 +97,7 @@ export function useDailyMission(devQuestions = null) {
             setIsLoading(false);
         } catch (error) {
             console.error("Failed to generate Daily 10:", error);
+            setMissionQuestions([]);  // ADD THIS LINE
             setIsLoading(false);
         }
     }, [ninjaStats.mastery, ninjaStats.hurdles, devQuestions]);

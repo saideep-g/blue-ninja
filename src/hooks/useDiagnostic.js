@@ -39,11 +39,20 @@ export function useDiagnostic(injectedQuestions = null) {
             } else {
                 try {
                     const qSnap = await getDocs(collection(db, 'diagnostic_questions'));
-                    const sortedQs = qSnap.docs.map(doc => doc.data())
-                        .sort((a, b) => a.difficulty - b.difficulty);
+                    if (qSnap.empty) {
+                        console.warn("No questions found");
+                        setQuestions([]);
+                        return;
+                    }
+                    const sortedQs = qSnap.docs
+                        .map(doc => ({ id: doc.id, ...doc.data() }))
+                        .sort((a, b) => (a.difficulty || 0) - (b.difficulty || 0));
                     setQuestions(sortedQs);
+
                 } catch (error) {
                     console.error("Error loading diagnostic questions:", error);
+                    setQuestions([]);  // ADD THIS LINE
+
                 }
             }
             questionStartTime.current = Date.now();
