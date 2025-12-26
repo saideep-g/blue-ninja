@@ -1,8 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
 import { doc, getDoc, getDocs, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy, limit, addDoc } from 'firebase/firestore';
-import { nexusDB } from '../services/nexusSync'; //
-
+import { nexusDB } from '../services/nexusSync'; //;
 
 const NinjaContext = createContext();
 
@@ -19,6 +18,8 @@ export function NinjaProvider({ children }) {
     const [loading, setLoading] = useState(true);
     const [activeAchievement, setActiveAchievement] = useState(null);
     const [sessionHistory, setSessionHistory] = useState([]); // Phase 2.2: Store recent logs
+    const [userRole, setUserRole] = useState('STUDENT'); // ADD THIS LINE
+
 
     // Main stats state, hydrated from LocalStorage or Firestore
     const [ninjaStats, setNinjaStats] = useState({
@@ -48,12 +49,14 @@ export function NinjaProvider({ children }) {
                     const data = JSON.parse(localSession);
                     setNinjaStats(data.stats);
                     setLocalBuffer(data.buffer);
+                    setUserRole(data.role || 'STUDENT'); // Restore role
                 } else {
                     // Priority 2: Fetch from Firestore only if no local scratchpad exists
                     const userDoc = await getDoc(doc(db, "students", user.uid));
                     if (userDoc.exists()) {
                         // Sync database status (including COMPLETED status) to local state
                         setNinjaStats(userDoc.data());
+                        setUserRole(userDoc.data().role || 'STUDENT'); // Get role from DB
                         // Phase 2.2: Fetch the latest 50 logs for analytics
                         fetchSessionLogs(user.uid);
                     } else {
@@ -312,7 +315,9 @@ export function NinjaProvider({ children }) {
             updateStreak,
             syncToCloud,
             loading,
-            activeAchievement
+            activeAchievement,
+            userRole,
+            setUserRole
         }}>
             {!loading && children}
         </NinjaContext.Provider>

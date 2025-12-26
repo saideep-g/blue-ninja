@@ -12,11 +12,12 @@ import BossTracker from './components/dashboard/BossTracker';
 import Achievements from './components/dashboard/Achievements';
 import AchievementUnlock from './components/dashboard/AchievementUnlock';
 import ConceptPowerMap from './components/dashboard/ConceptPowerMap';
-import MissionHistory from './components/dashboard/MissionHistory'; // Phase 2.2 New Component
+import MissionHistory from './components/dashboard/MissionHistory';
 import { auth } from './firebase/config';
 import { BlueNinjaTheme } from './theme/themeConfig';
 import StudentInsightsReport from './components/dashboard/StudentInsightsReport';
 import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
+import ParentDashboard from './components/parent/ParentDashboard';
 
 /**
  * Blue Ninja Content Component
@@ -26,13 +27,13 @@ import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashbo
  * the exact same Production JSX for high-velocity testing.
  */
 function BlueNinjaContent() {
-  const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement } = useNinja();
+  const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement, userRole, setUserRole } = useNinja();
   const { devMode, devConfig, setDevConfig } = useContext(DevModeContext);
 
   /// Standard views: QUEST (Diagnostic), DASHBOARD, or DAILY_MISSION
   const [currentView, setCurrentView] = useState('QUEST');
+  const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
 
-  const [userRole, setUserRole] = useState('STUDENT');
 
   /**
    * INJECTION LOGIC:
@@ -134,12 +135,16 @@ function BlueNinjaContent() {
       <div className="animate-pulse text-4xl">🌊</div>
     </div>
   );
+  if (!user) return <Login setUserRole={setUserRole} />;
 
+  // FIX: Role-based routing
   if (userRole === 'TEACHER') {
-    return <TeacherAnalyticsDashboard />;
+    return <TeacherAnalyticsDashboard onSwitchRole={() => setUserRole('STUDENT')} />;
   }
 
-  if (!user) return <Login />;
+  if (userRole === 'PARENT') {
+    return <ParentDashboard onSwitchRole={() => setUserRole('STUDENT')} />;
+  }
 
   /**
    * UNIFIED RENDER LOGIC
@@ -236,7 +241,7 @@ function BlueNinjaContent() {
         <div className="p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
           <AchievementUnlock achievement={activeAchievement} />
 
-          {/* Dashboard Header */}
+          {/* Dashboard Header with Role Switcher */}
           <header className="flex justify-between items-center mb-10">
             <div>
               <h1 className="text-3xl font-black italic text-blue-800 uppercase tracking-tighter">
@@ -251,12 +256,48 @@ function BlueNinjaContent() {
                 </span>
               </div>
             </div>
-            <button onClick={() => auth.signOut()} className="text-xs font-black text-blue-400 uppercase tracking-widest hover:text-blue-800 transition-colors">
-              Sign Out 🚪
-            </button>
+            <div className="flex gap-2">
+              {/* Role Switcher */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700"
+                >
+                  👤 {userRole === 'STUDENT' ? 'Student' : userRole === 'TEACHER' ? 'Teacher' : 'Parent'} ▼
+                </button>
+                {showRoleSwitcher && (
+                  <div className="absolute right-0 mt-2 bg-white border-2 border-blue-200 rounded-lg shadow-lg z-10">
+                    <button
+                      onClick={() => { setUserRole('STUDENT'); setShowRoleSwitcher(false); }}
+                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
+                    >
+                      📚 Student View
+                    </button>
+                    <button
+                      onClick={() => { setUserRole('TEACHER'); setShowRoleSwitcher(false); }}
+                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
+                    >
+                      👨‍🏫 Teacher View
+                    </button>
+                    <button
+                      onClick={() => { setUserRole('PARENT'); setShowRoleSwitcher(false); }}
+                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
+                    >
+                      👨‍👩‍👧 Parent View
+                    </button>
+                  </div>
+                )}
+              </div>
+              <button
+                onClick={() => auth.signOut()}
+                className="text-xs font-black text-blue-400 uppercase tracking-widest hover:text-blue-800 transition-colors"
+              >
+                Sign Out 🚪
+              </button>
+            </div>
           </header>
 
-          {/* Phase 2.4 UX Update: Prominent Hero Quest Action at the Top */}
+          {/* Hero Quest Action */}
           <div className="ninja-card bg-blue-600 text-white border-none flex flex-col md:flex-row items-center justify-between p-8 md:p-12 mb-8 gap-6 shadow-2xl">
             <div className="text-center md:text-left z-10">
               <h2 className="text-3xl font-black uppercase italic mb-2 tracking-tighter">The Sky Is Calling</h2>
@@ -278,17 +319,13 @@ function BlueNinjaContent() {
               <PowerMap masteryData={activeMastery} />
               <ConceptPowerMap masteryData={activeMastery} />
               <StudentInsightsReport logs={sessionHistory} />
-
-
-
             </div>
-
 
             {/* Intel Column */}
             <div className="space-y-8">
               <BossTracker hurdles={activeHurdles} />
               <Achievements ninjaStats={ninjaStats} />
-              {/* Phase 2.2: Detailed Mission History added to primary column */}
+              {/*Detailed Mission History added to primary column */}
               <MissionHistory logs={sessionHistory} />
             </div>
           </div>
