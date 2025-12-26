@@ -90,13 +90,23 @@ function BlueNinjaContent() {
    * Unified handler for Daily Missions to ensure ground truth is logged.
    */
   const handleDailyAnswer = (isCorrect, choice, isRecovered, tag) => {
+
+    // Calculate speedRating based on thinking time
+    const speedRating = timeSpentSeconds < 3
+      ? 'SPRINT'
+      : (timeSpentSeconds < 15 ? 'NORMAL' : 'SLOW');
     submitDailyAnswer(
       isCorrect,
       choice,
       isRecovered,
       tag,
-      dailyQ.correct_answer // Pass ground truth for validation
+      dailyQ.correct_answer, // Pass ground truth for validation
+      timeSpentSeconds,  // ✅ Now passed
+      speedRating        // ✅ Now passed
     );
+    // Update power points
+    if (isCorrect) updatePower(15);
+    else if (isRecovered) updatePower(7);
   };
 
   // Determine Source of Truth: Use DB data if quest is complete, otherwise use session data
@@ -113,7 +123,7 @@ function BlueNinjaContent() {
     if (ninjaStats?.currentQuest === 'COMPLETED' && currentView === 'QUEST') {
       setCurrentView('DASHBOARD');
     }
-  }, [ninjaStats?.currentQuest, currentView]);
+  }, [ninjaStats?.currentQuest]);
 
   // Global Theme Setup
   useEffect(() => {
