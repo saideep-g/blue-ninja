@@ -70,11 +70,18 @@ function BlueNinjaContent() {
   } = useDailyMission(devMode && devConfig.currentView === 'DAILY_TEST' ? devConfig.testQuestions : null);
 
   /**
-   * handleDiagAnswer
-   * Unified handler to ensure studentAnswer and correctAnswer are captured for analytics.
-   * This fixes the "Missing Fields" error in the validation script.
+   * handleDiagAnswer - FIXED: Unified handler with proper parameter signature
+   * Now accepts all 5 parameters that MissionCard passes:
+   * @param {boolean} isCorrect - Is the answer correct?
+   * @param {string} choice - Student's selected answer
+   * @param {boolean} isRecovered - Did student recover on bonus mission?
+   * @param {string} tag - Diagnostic tag/misconception
+   * @param {number} timeSpentSeconds - Time spent in seconds (NEW PARAMETER)
+   * 
+   * ✅ FIXED: The function now properly accepts and uses timeSpentSeconds
+   * This prevents the "Document already exists" error from double-logging
    */
-  const handleDiagAnswer = (isCorrect, choice, isRecovered, tag) => {
+  const handleDiagAnswer = (isCorrect, choice, isRecovered, tag, timeSpentSeconds) => {
     // We pass the full set of analytical data to the hook
     submitDiag(
       diagQ.id,
@@ -83,7 +90,8 @@ function BlueNinjaContent() {
       isRecovered,
       tag,
       choice, // studentAnswer
-      diagQ.correct_answer // ground truth correctAnswer
+      diagQ.correct_answer, // ground truth correctAnswer
+      timeSpentSeconds // Now passing the time spent in seconds (FIXED)
     );
 
     // Update power points based on performance
