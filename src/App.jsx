@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { NinjaProvider, useNinja } from './context/NinjaContext';
 import { DevModeContext } from './context/DevModeContext';
 import DevMenu from './components/dev/DevMenu';
@@ -18,6 +19,7 @@ import { BlueNinjaTheme } from './theme/themeConfig';
 import StudentInsightsReport from './components/dashboard/StudentInsightsReport';
 import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
 import ParentDashboard from './components/parent/ParentDashboard';
+import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
 
 /**
  * Blue Ninja Content Component
@@ -394,10 +396,19 @@ function BlueNinjaContent() {
   );
 }
 
+
 export default function App() {
   return (
-    <NinjaProvider>
-      <BlueNinjaContent />
-    </NinjaProvider>
+    <Router>
+      <NinjaProvider>
+        <Routes>
+          {/* Main App */}
+          <Route path="/" element={<BlueNinjaContent />} />
+
+          {/* Admin Analytics Dashboard */}
+          <Route path="/admin" element={<AdminAnalyticsDashboard />} />
+        </Routes>
+      </NinjaProvider>
+    </Router>
   );
 }
