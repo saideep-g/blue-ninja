@@ -103,15 +103,27 @@ export function useDiagnostic(injectedQuestions = null) {
      * @param {string} atomId 
      * @param {boolean} isRecovered - True if follow-up was correct
      * @param {string} diagnosticTag - The tag from the selected distractor
+     * @param {string} studentAnswer - What the student selected
+     * @param {string} correctAnswer - The correct answer
+     * @param {number} timeSpentSeconds - Time spent in seconds (from MissionCard)
      */
-    const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer) => {
-        const endTime = Date.now();
+    const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer, timeSpentSeconds) => {
+        // ✅ FIXED: Use timeSpentSeconds from MissionCard if provided
+        // Otherwise calculate from our internal timer
+        let timeSpent;
+        if (timeSpentSeconds !== undefined) {
+            // Use the precise timing from MissionCard (already in seconds)
+            timeSpent = timeSpentSeconds;
+        } else {
+            // Fallback: Calculate from our refs (for backward compatibility)
+            const timeSpentMs = Date.now() - questionStartTime.current;
+            timeSpent = Math.round(timeSpentMs / 1000);
+        }
+
         // Implement Bayesian Update Logic
         const currentScore = masteryData[atomId] || 0.5; // Default prior
 
-        // High-precision timing analytics
-        const timeSpentMs = endTime - questionStartTime.current;
-        const timeSpent = Math.round(timeSpentMs / 1000); // ✅ CONVERT TO SECONDS
+        // Calculate speed rating based on thinking time (in seconds)
         const speedRating = timeSpent < 3 ? 'SPRINT' : (timeSpent < 15 ? 'STEADY' : 'DEEP');
 
         // Analytics: Calculate Recovery Velocity (how fast they understood the hint)
@@ -119,7 +131,7 @@ export function useDiagnostic(injectedQuestions = null) {
         let recoveryVelocity = 0; // Default to 0
         if (isRecovered && branchStartTime.current) {
             const initialTimeMs = branchStartTime.current - questionStartTime.current;
-            const branchTimeMs = endTime - branchStartTime.current;
+            const branchTimeMs = Date.now() - branchStartTime.current;
             // Velocity = (Initial Thinking Time - Recovery Time) / Initial Thinking Time
             if (initialTimeMs > 0) {
                 recoveryVelocity = (initialTimeMs - branchTimeMs) / initialTimeMs;
@@ -160,7 +172,7 @@ export function useDiagnostic(injectedQuestions = null) {
             isRecovered,
             recoveryVelocity,     // ✅ FIXED: Now explicitly passed
             diagnosticTag,        // ✅ Captured
-            timeSpent,            // ✅ FIXED: Now in SECONDS (not milliseconds)
+            timeSpent,            // ✅ FIXED: Now in SECONDS
             speedRating,
             atomId,
             masteryBefore: currentScore,
