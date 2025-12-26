@@ -18,6 +18,7 @@ import { BlueNinjaTheme } from './theme/themeConfig';
 import StudentInsightsReport from './components/dashboard/StudentInsightsReport';
 import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashboard';
 import ParentDashboard from './components/parent/ParentDashboard';
+import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 
 /**
  * Blue Ninja Content Component
@@ -136,6 +137,11 @@ function BlueNinjaContent() {
     </div>
   );
   if (!user) return <Login setUserRole={setUserRole} />;
+
+  // Admin role - Analytics viewer
+  if (userRole === 'ADMIN') {
+    return <AnalyticsLogViewer />;
+  }
 
   // FIX: Role-based routing
   if (userRole === 'TEACHER') {
