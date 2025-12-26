@@ -11,10 +11,12 @@ import { validateNexusLogs } from '../../services/nexusValidator';
 function DevMenu() {
     const { devConfig, setDevConfig, runInitialSync, startTestScenario, TEST_USER_ID } = useDevMode();
     const [report, setReport] = useState(null);
+    const [showFullDetails, setShowFullDetails] = useState(false);
 
     const runIntegrityCheck = async () => {
         const result = await validateNexusLogs();
         setReport(result);
+        setShowFullDetails(result.status === 'FAIL');
     };
 
     return (
@@ -89,9 +91,68 @@ function DevMenu() {
                                 </div>
                             </div>
 
+                            {/* Metrics Summary */}
+                            {report.metrics && (
+                                <div className="mb-4 pb-4 border-b border-slate-700">
+                                    <div className="text-[10px] font-bold text-slate-400 uppercase mb-2">Metrics:</div>
+                                    <div className="grid grid-cols-2 gap-2 text-[9px]">
+                                        <div>Total Logs: <span className="text-blue-400">{report.metrics.totalLogs}</span></div>
+                                        <div>Latest ID: <span className="text-blue-400">{report.latestLog?.id || 'N/A'}</span></div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Schema Validation Issues */}
+                            {report.status === 'FAIL' && report.validation?.schema?.issues && report.validation.schema.issues.length > 0 && (
+                                <div className="mb-4 pb-4 border-b border-slate-700">
+                                    <button
+                                        onClick={() => setShowFullDetails(!showFullDetails)}
+                                        className="text-[10px] font-bold text-red-400 uppercase mb-2 hover:text-red-300 cursor-pointer"
+                                    >
+                                        ▼ Schema Validation Issues ({report.validation.schema.issues.length})
+                                    </button>
+                                    {showFullDetails && (
+                                        <div className="space-y-2">
+                                            {report.validation.schema.issues.map((issue, idx) => (
+                                                <div key={idx} className="bg-red-900/20 p-2 rounded border border-red-800/50 text-[9px]">
+                                                    <div className="font-bold text-red-300">{issue.field}</div>
+                                                    <div className="text-red-200/80">{issue.message}</div>
+                                                    {issue.code && <div className="text-red-400/60">Code: {issue.code}</div>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Semantic Validation Issues */}
+                            {report.status === 'FAIL' && report.validation?.semantic?.issues && report.validation.semantic.issues.length > 0 && (
+                                <div className="mb-4 pb-4 border-b border-slate-700">
+                                    <button
+                                        onClick={() => setShowFullDetails(!showFullDetails)}
+                                        className="text-[10px] font-bold text-yellow-400 uppercase mb-2 hover:text-yellow-300 cursor-pointer"
+                                    >
+                                        ▼ Semantic Validation Issues ({report.validation.semantic.issues.length})
+                                    </button>
+                                    {showFullDetails && (
+                                        <div className="space-y-2">
+                                            {report.validation.semantic.issues.map((issue, idx) => (
+                                                <div key={idx} className="bg-yellow-900/20 p-2 rounded border border-yellow-800/50 text-[9px]">
+                                                    <div className="font-bold text-yellow-300">{issue.category || 'Unknown'}</div>
+                                                    <div className="text-yellow-200/80">{issue.message}</div>
+                                                    {issue.interpretation && <div className="text-yellow-400/60 mt-1">💡 {issue.interpretation}</div>}
+                                                    {issue.recommendation && <div className="text-yellow-400/60 mt-1">📌 {issue.recommendation}</div>}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {/* Missing Fields (Tier 1) */}
                             {report.status === 'FAIL' && report.missingFields && report.missingFields.length > 0 && (
                                 <div className="mt-4">
-                                    <div className="text-[10px] font-bold text-red-400 uppercase mb-2">Missing Fields:</div>
+                                    <div className="text-[10px] font-bold text-red-400 uppercase mb-2">Missing Fields (Tier 1):</div>
                                     <div className="flex flex-wrap gap-2">
                                         {report.missingFields.map(f => (
                                             <span key={f} className="px-2 py-1 bg-red-900/50 text-red-200 text-[9px] font-mono rounded">{f}</span>
@@ -101,7 +162,19 @@ function DevMenu() {
                             )}
 
                             {report.status === 'PASS' && (
-                                <p className="text-xs text-green-400">All 12 analytical fields are correctly populated in NexusDB.</p>
+                                <p className="text-xs text-green-400">✓ All validations passed. Data is ready for insights generation.</p>
+                            )}
+
+                            {/* Raw Log Data (Debug) */}
+                            {showFullDetails && report.latestLog && (
+                                <details className="mt-4 pt-4 border-t border-slate-700">
+                                    <summary className="text-[10px] font-bold text-slate-400 cursor-pointer hover:text-slate-300">
+                                        📋 Raw Log Data (Debug)
+                                    </summary>
+                                    <pre className="mt-2 bg-black/50 p-3 rounded text-[8px] overflow-x-auto text-slate-300">
+                                        {JSON.stringify(report.latestLog, null, 2)}
+                                    </pre>
+                                </details>
                             )}
                         </div>
                     ) : (
