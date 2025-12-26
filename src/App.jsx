@@ -42,6 +42,15 @@ function BlueNinjaContent() {
   const [currentView, setCurrentView] = useState('QUEST');
   const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
 
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('[App.jsx] State changed:', {
+      currentView,
+      ninjaStatsCurrentQuest: ninjaStats?.currentQuest,
+      diagComplete,
+      userId: user?.uid
+    });
+  }, [currentView, ninjaStats?.currentQuest, user?.uid]);
 
   /**
    * INJECTION LOGIC:
@@ -82,6 +91,13 @@ function BlueNinjaContent() {
    * This prevents the "Document already exists" error from double-logging
    */
   const handleDiagAnswer = (isCorrect, choice, isRecovered, tag, timeSpentSeconds) => {
+    console.log('[App.jsx] handleDiagAnswer called:', {
+      isCorrect,
+      choice,
+      tag,
+      timeSpentSeconds
+    });
+
     // We pass the full set of analytical data to the hook
     submitDiag(
       diagQ.id,
@@ -134,12 +150,21 @@ function BlueNinjaContent() {
 
   // FIX: Improved View Synchronization Logic
   // Ensures proper flow: DIAGNOSTIC → DASHBOARD → DAILY_MISSION
+  // 🔍 DEBUG: Added extensive logging
   useEffect(() => {
+    console.log('[App.jsx] useEffect - View Sync Check:', {
+      currentQuestStatus: ninjaStats?.currentQuest,
+      currentView,
+      diagComplete,
+      shouldTransition: ninjaStats?.currentQuest === 'COMPLETED' && currentView === 'QUEST'
+    });
+
     if (ninjaStats?.currentQuest === 'COMPLETED' && currentView === 'QUEST') {
+      console.log('[App.jsx] 🔄 TRANSITIONING TO DASHBOARD...');
       // Diagnostic is complete, move to dashboard
       setCurrentView('DASHBOARD');
     }
-  }, [ninjaStats?.currentQuest]);
+  }, [ninjaStats?.currentQuest, currentView]);
 
   // Global Theme Setup
   useEffect(() => {
@@ -188,6 +213,8 @@ function BlueNinjaContent() {
   const effectiveView = isDevTesting
     ? (devConfig.currentView === 'DIAGNOSTIC_TEST' ? 'QUEST' : 'DAILY_MISSION')
     : currentView;
+
+  console.log('[App.jsx] Rendering view:', { effectiveView, diagComplete, diagIdx, diagTotal });
 
   return (
     <div className={isDevTesting ? "min-h-screen bg-slate-950" : "min-h-screen bg-[var(--color-surface)]"}>
