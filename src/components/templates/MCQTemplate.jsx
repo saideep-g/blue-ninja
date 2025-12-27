@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Lightbulb } from 'lucide-react';
 
 /**
- * MCQ_CONCEPT Template
- * Multiple choice with visual feedback
- * Best for: concept discrimination, vocabulary, quick checks
+ * REDESIGNED MCQTemplate
+ * World-class experience for young learners
+ * - Question is the hero
+ * - Clear, large options
+ * - Encouraging feedback
+ * - No anxiety-inducing metadata
  */
 export function MCQTemplate({ question, onAnswer, isSubmitting }) {
   const [selectedIndex, setSelectedIndex] = useState(null);
@@ -13,21 +16,25 @@ export function MCQTemplate({ question, onAnswer, isSubmitting }) {
 
   const options = question.interaction?.config?.options || [];
   const correctIndex = question.answerKey?.correctOptionIndex;
+  const prompt = question.content?.prompt?.text || 'What is your answer?';
+  const instruction = question.content?.instruction;
 
   const handleSelect = (index) => {
-    if (!submitted) setSelectedIndex(index);
+    if (!submitted && !isSubmitting) {
+      setSelectedIndex(index);
+    }
   };
 
   const handleSubmit = async () => {
-    if (selectedIndex === null) return;
+    if (selectedIndex === null || isSubmitting) return;
 
     const isCorrect = selectedIndex === correctIndex;
     const result = {
       isCorrect,
       selectedIndex,
       feedback: isCorrect
-        ? question.feedbackMap?.onCorrect || '✓ Correct! Well done!'
-        : question.feedbackMap?.onIncorrectAttempt1 || '✗ Not quite right. Try again!',
+        ? question.feedbackMap?.onCorrect || '✓ Excellent! That\'s correct!'
+        : question.feedbackMap?.onIncorrectAttempt1 || '✗ Not quite. Try thinking about it differently.',
     };
 
     setFeedback(result);
@@ -36,97 +43,139 @@ export function MCQTemplate({ question, onAnswer, isSubmitting }) {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg">
-      {/* Question Prompt */}
-      <div className="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
-        <h2 className="text-xl font-bold text-gray-900 mb-2">
-          {question.content?.prompt?.text}
+    <div className="w-full space-y-8 flex flex-col">
+      {/* ========== QUESTION PROMPT (HERO) ========== */}
+      <div className="space-y-3">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+          {prompt}
         </h2>
-        {question.content?.instruction && (
-          <p className="text-sm text-gray-600">{question.content.instruction}</p>
+        {instruction && (
+          <p className="text-base text-gray-600 leading-relaxed">
+            {instruction}
+          </p>
         )}
       </div>
 
-      {/* Options */}
-      <div className="space-y-3">
-        {options.map((option, index) => (
-          <div
-            key={index}
-            onClick={() => handleSelect(index)}
-            className={`p-4 rounded-lg border-2 cursor-pointer transition-all duration-200 ${
-              selectedIndex === index
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-200 bg-white hover:border-gray-300'
-            } ${submitted && index === correctIndex ? 'border-green-500 bg-green-50' : ''}
-            ${submitted && selectedIndex === index && index !== correctIndex ? 'border-red-500 bg-red-50' : ''}`}
-          >
-            <div className="flex items-start gap-3">
-              <div
-                className={`w-6 h-6 rounded-full border-2 mt-1 flex items-center justify-center ${
-                  selectedIndex === index
-                    ? 'border-blue-500 bg-blue-500'
-                    : 'border-gray-300'
-                } ${submitted && index === correctIndex ? 'border-green-500 bg-green-500' : ''}
-                ${submitted && selectedIndex === index && index !== correctIndex ? 'border-red-500 bg-red-500' : ''}`}
-              >
-                {selectedIndex === index && (
-                  <div className="w-2 h-2 bg-white rounded-full" />
-                )}
+      {/* ========== OPTIONS (LARGE, TOUCHABLE) ========== */}
+      <div className="space-y-3 flex-1">
+        {options.map((option, index) => {
+          const isSelected = selectedIndex === index;
+          const isCorrectOption = index === correctIndex;
+          const isWrongSelected = submitted && isSelected && !isCorrectOption;
+          const isCorrectSelected = submitted && isCorrectOption;
+
+          return (
+            <button
+              key={index}
+              onClick={() => handleSelect(index)}
+              disabled={submitted || isSubmitting}
+              className={`w-full p-5 md:p-6 rounded-xl border-2 text-left transition-all duration-200 font-medium text-base md:text-lg ${
+                // Before submission
+                !submitted
+                  ? isSelected
+                    ? 'border-blue-500 bg-blue-50 text-gray-900 shadow-md'
+                    : 'border-gray-200 bg-white text-gray-900 hover:border-blue-300 hover:bg-blue-50'
+                  : // After submission
+                  isCorrectSelected
+                  ? 'border-green-500 bg-green-50 text-green-900 shadow-md'
+                  : isWrongSelected
+                  ? 'border-red-500 bg-red-50 text-red-900 shadow-md'
+                  : 'border-gray-200 bg-gray-50 text-gray-600'
+              } ${submitted || isSubmitting ? 'cursor-default' : 'cursor-pointer'}`}
+            >
+              <div className="flex items-center gap-4">
+                {/* Radio button indicator */}
+                <div
+                  className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
+                    !submitted
+                      ? isSelected
+                        ? 'border-blue-500 bg-blue-500'
+                        : 'border-gray-300 bg-white'
+                      : isCorrectSelected
+                      ? 'border-green-500 bg-green-500'
+                      : isWrongSelected
+                      ? 'border-red-500 bg-red-500'
+                      : 'border-gray-300 bg-gray-100'
+                  }`}
+                >
+                  {isSelected && !submitted && (
+                    <div className="w-2 h-2 bg-white rounded-full" />
+                  )}
+                  {submitted && isCorrectSelected && (
+                    <CheckCircle2 className="w-5 h-5 text-white" />
+                  )}
+                  {submitted && isWrongSelected && (
+                    <XCircle className="w-5 h-5 text-white" />
+                  )}
+                </div>
+
+                {/* Option text */}
+                <span className="flex-1">{option.text}</span>
               </div>
-              <div className="flex-1">
-                <p className="text-gray-800">{option.text}</p>
-              </div>
-              {submitted && index === correctIndex && (
-                <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-              )}
-              {submitted && selectedIndex === index && index !== correctIndex && (
-                <XCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-              )}
-            </div>
-          </div>
-        ))}
+            </button>
+          );
+        })}
       </div>
 
-      {/* Submit Button */}
-      {!submitted && (
+      {/* ========== ACTION BUTTON ========== */}
+      {!submitted ? (
         <button
           onClick={handleSubmit}
           disabled={selectedIndex === null || isSubmitting}
-          className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+          className="w-full py-4 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-bold text-lg transition-all duration-200 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Check Answer
+          {isSubmitting ? 'Checking...' : 'Check Answer'}
         </button>
-      )}
+      ) : null}
 
-      {/* Feedback */}
+      {/* ========== FEEDBACK (ENCOURAGING) ========== */}
       {submitted && feedback && (
         <div
-          className={`p-4 rounded-lg border-l-4 flex gap-3 ${
+          className={`p-5 md:p-6 rounded-xl flex gap-4 items-start ${
             feedback.isCorrect
-              ? 'bg-green-50 border-green-500 text-green-800'
-              : 'bg-red-50 border-red-500 text-red-800'
+              ? 'bg-green-50 border-2 border-green-200'
+              : 'bg-blue-50 border-2 border-blue-200'
           }`}
         >
           {feedback.isCorrect ? (
-            <CheckCircle className="w-5 h-5 flex-shrink-0" />
+            <CheckCircle2 className="w-6 h-6 text-green-600 flex-shrink-0 mt-0.5" />
           ) : (
-            <XCircle className="w-5 h-5 flex-shrink-0" />
+            <Lightbulb className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
           )}
-          <p>{feedback.feedback}</p>
+          <div>
+            <p
+              className={`text-base md:text-lg font-semibold ${
+                feedback.isCorrect ? 'text-green-900' : 'text-blue-900'
+              }`}
+            >
+              {feedback.feedback}
+            </p>
+            {!feedback.isCorrect && (
+              <p className="text-sm text-blue-700 mt-2">
+                The correct answer is: <strong>{options[correctIndex]?.text}</strong>
+              </p>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Worked Solution */}
-      {submitted && question.workedSolution && (
-        <details className="bg-white p-4 rounded-lg border border-gray-200">
-          <summary className="cursor-pointer font-semibold text-gray-900 hover:text-blue-600">
-            📖 View Solution
+      {/* ========== WORKED SOLUTION (COLLAPSIBLE) ========== */}
+      {submitted && question.workedSolution?.steps && question.workedSolution.steps.length > 0 && (
+        <details className="bg-gradient-to-br from-purple-50 to-indigo-50 p-5 md:p-6 rounded-xl border-2 border-purple-200 group">
+          <summary className="cursor-pointer font-bold text-gray-900 text-base md:text-lg flex items-center gap-2 hover:text-purple-600 transition-colors">
+            <span>💡 See how to solve this</span>
+            <span className="ml-auto text-gray-400 group-open:rotate-180 transition-transform">▼</span>
           </summary>
-          <div className="mt-4 space-y-2 text-gray-700">
-            {question.workedSolution.steps?.map((step, idx) => (
-              <p key={idx} className="text-sm">
-                {idx + 1}. {step}
-              </p>
+          <div className="mt-4 space-y-3">
+            {question.workedSolution.steps.map((step, idx) => (
+              <div key={idx} className="flex gap-3">
+                <div className="flex-shrink-0 w-6 h-6 bg-purple-600 text-white rounded-full flex items-center justify-center text-xs font-bold">
+                  {idx + 1}
+                </div>
+                <p className="text-gray-700 text-sm md:text-base leading-relaxed flex-1 pt-0.5">
+                  {step}
+                </p>
+              </div>
             ))}
           </div>
         </details>
