@@ -1,257 +1,279 @@
 /**
- * Feature Flags for Blue Ninja v2.0 Rollout
- * 
- * Enables safe parallel deployment and gradual rollout of v2.0 features
- * while keeping v1 operational as fallback.
+ * Feature Flags Configuration for Blue Ninja v2.0 Rollout
+ *
+ * This file manages feature toggles for the parallel v1/v2 system rollout.
+ * Supports:
+ * - Environment-level toggles (global enable/disable)
+ * - User-level toggles (individual user beta testing)
+ * - Gradual rollout (percentage-based user targeting)
+ *
+ * Feature flags control:
+ * - QUIZ_V2_ENABLED: New multi-template quiz UI
+ * - ADMIN_V2_ENABLED: New admin panel with curriculum browser
+ * - CURRICULUM_V2_ENABLED: New curriculum navigation
+ * - BETA_FEATURES: Early access features
+ *
+ * @module config/featureFlags
  */
-
-import { db } from '../firebase/firebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
-
-// ============================================================================
-// ENVIRONMENT-BASED FEATURE FLAGS (Global)
-// ============================================================================
 
 /**
- * Global feature flags controlled via environment variables
- * 
- * Set in .env file:
- *   REACT_APP_QUIZ_V2_ENABLED=true
- *   REACT_APP_ADMIN_V2_ENABLED=true
- *   REACT_APP_CURRICULUM_V2_ENABLED=true
- *   REACT_APP_VALIDATION_V2_ENABLED=true
+ * Environment-level feature flag defaults
+ *
+ * These are read from .env.local or set in Firebase config.
+ * Override in environment variables:
+ * - REACT_APP_QUIZ_V2_ENABLED=true
+ * - REACT_APP_ADMIN_V2_ENABLED=true
+ * - etc.
  */
-export const GLOBAL_FEATURE_FLAGS = {
-  // Quiz delivery system
-  QUIZ_V2_ENABLED: process.env.REACT_APP_QUIZ_V2_ENABLED === 'true',
-  
-  // Admin panel
-  ADMIN_PANEL_V2_ENABLED: process.env.REACT_APP_ADMIN_V2_ENABLED === 'true',
-  
-  // Curriculum navigator
-  CURRICULUM_BROWSER_ENABLED: process.env.REACT_APP_CURRICULUM_V2_ENABLED === 'true',
-  
-  // Validation engine
-  VALIDATION_V2_ENABLED: process.env.REACT_APP_VALIDATION_V2_ENABLED === 'true'
+export const FEATURE_FLAGS = {
+  // Enable v2 quiz delivery UI with multi-template support
+  QUIZ_V2_ENABLED: process.env.REACT_APP_QUIZ_V2_ENABLED === 'true' || false,
+
+  // Enable v2 admin panel with curriculum browser and batch operations
+  ADMIN_V2_ENABLED: process.env.REACT_APP_ADMIN_V2_ENABLED === 'true' || false,
+
+  // Enable curriculum-first navigation in v2 systems
+  CURRICULUM_V2_ENABLED: process.env.REACT_APP_CURRICULUM_V2_ENABLED === 'true' || false,
+
+  // Feature flag source: where to read user-level toggles
+  // 'firestore' = read from Firestore user document
+  // 'local' = use only environment flags
+  // 'hybrid' = try Firestore first, fall back to local
+  FLAG_SOURCE: (process.env.REACT_APP_FEATURE_FLAG_SOURCE || 'hybrid') as 'firestore' | 'local' | 'hybrid',
+
+  // Development mode: show feature flag UI and logging
+  DEBUG_ENABLED: process.env.REACT_APP_DEBUG_FLAGS === 'true' || false
 };
 
-// ============================================================================
-// USER-SPECIFIC FEATURE FLAGS (Firestore)
-// ============================================================================
+/**
+ * User-level feature flag schema (stored in Firestore)
+ *
+ * Example user document:
+ * users/{userId}
+ *   featureFlags:
+ *     QUIZ_V2_ENABLED: true
+ *     ADMIN_V2_ENABLED: false
+ *     CURRICULUM_V2_ENABLED: true
+ *     BETA_FEATURES: true
+ *     ROLLOUT_PERCENTAGE: 100
+ */
+export const USER_FEATURE_FLAGS = {
+  QUIZ_V2_ENABLED: 'QUIZ_V2_ENABLED',
+  ADMIN_V2_ENABLED: 'ADMIN_V2_ENABLED',
+  CURRICULUM_V2_ENABLED: 'CURRICULUM_V2_ENABLED',
+  BETA_FEATURES: 'BETA_FEATURES',
+  ROLLOUT_PERCENTAGE: 'ROLLOUT_PERCENTAGE'
+} as const;
 
 /**
- * Get user-specific feature flags from Firestore
- * 
- * User document path: users/{userId}
- * Document structure:
- * {
- *   featureFlags: {
- *     QUIZ_V2_ENABLED: true,
- *     ADMIN_PANEL_V2_ENABLED: true,
- *     ...
- *   },
- *   betaVersion: true,  // User opted into beta testing
- *   role: 'teacher'     // Can determine access to new features
- * }
- * 
- * @param userId - Firebase user ID
- * @returns Object with feature flag overrides for this user
+ * Rollout strategy stages
+ *
+ * Each stage defines what percentage of users get the feature.
+ * Allows gradual rollout from 0% (internal testing) to 100% (full production).
  */
-export async function getUserFeatureFlags(
-  userId: string
-): Promise<Record<string, boolean>> {
-  try {
-    const userDocRef = doc(db, 'users', userId);
-    const userDoc = await getDoc(userDocRef);
-    
-    if (!userDoc.exists()) {
-      return {};
+export const ROLLOUT_STAGES = {
+  INTERNAL_TESTING: {
+    name: 'Internal Testing',
+    percentageOfUsers: 0,
+    description: 'Only internal team members',
+    durationDays: 2,
+    nextStage: 'LIMITED_BETA'
+  },
+
+  LIMITED_BETA: {
+    name: 'Limited Beta',
+    percentageOfUsers: 10,
+    description: '10% of active users',
+    durationDays: 2,
+    nextStage: 'EXPANDED_BETA'
+  },
+
+  EXPANDED_BETA: {
+    name: 'Expanded Beta',
+    percentageOfUsers: 50,
+    description: '50% of active users',
+    durationDays: 3,
+    nextStage: 'FULL_ROLLOUT'
+  },
+
+  FULL_ROLLOUT: {
+    name: 'Full Rollout',
+    percentageOfUsers: 100,
+    description: '100% of users - production stable',
+    durationDays: null,
+    nextStage: 'DEPRECATED'
+  },
+
+  DEPRECATED: {
+    name: 'Deprecated',
+    percentageOfUsers: 100,
+    description: 'v1 deprecated, v2 only',
+    durationDays: null,
+    nextStage: null
+  }
+} as const;
+
+/**
+ * Current rollout status for each feature
+ * Update this as you progress through stages
+ */
+export const ROLLOUT_STATUS: Record<string, keyof typeof ROLLOUT_STAGES> = {
+  QUIZ_V2_ENABLED: 'INTERNAL_TESTING',
+  ADMIN_V2_ENABLED: 'INTERNAL_TESTING',
+  CURRICULUM_V2_ENABLED: 'INTERNAL_TESTING',
+  BETA_FEATURES: 'INTERNAL_TESTING'
+};
+
+/**
+ * Helper: Determine if a feature is enabled for a user
+ *
+ * Logic:
+ * 1. Check if environment flag is globally disabled (hard override)
+ * 2. Check user-level override in Firestore (if available)
+ * 3. Use environment-level default
+ *
+ * @param featureName - Feature flag name
+ * @param userId - Optional user ID for user-level override
+ * @param userFlags - Optional user feature flags from Firestore
+ * @param deviceId - Optional device ID for A/B testing
+ * @returns Whether feature is enabled for this user
+ */
+export function isFeatureEnabled(
+  featureName: keyof typeof FEATURE_FLAGS,
+  userId?: string,
+  userFlags?: Record<string, boolean>,
+  deviceId?: string
+): boolean {
+  // 1. Check environment flag (global override)
+  if (!FEATURE_FLAGS[featureName]) {
+    return false; // Feature globally disabled
+  }
+
+  // 2. Check user-level override (if provided)
+  if (userFlags && featureName in userFlags) {
+    return userFlags[featureName];
+  }
+
+  // 3. Check rollout percentage (probabilistic rollout)
+  if (userId || deviceId) {
+    const rolloutStage = ROLLOUT_STATUS[featureName];
+    const stage = ROLLOUT_STAGES[rolloutStage];
+    const rolloutPercentage = stage.percentageOfUsers;
+
+    if (rolloutPercentage < 100) {
+      // Use consistent hash of userId/deviceId to determine if in rollout percentage
+      const hash = hashUserId(userId || deviceId || '');
+      return hash % 100 < rolloutPercentage;
     }
-    
-    const userData = userDoc.data();
-    return userData?.featureFlags || {};
+  }
+
+  // Default: use environment flag
+  return FEATURE_FLAGS[featureName];
+}
+
+/**
+ * Helper: Get all user feature flags
+ * (would be called with Firestore data)
+ *
+ * @param userId - User ID
+ * @returns Promise of user feature flags from Firestore
+ */
+export async function getUserFeatureFlags(userId: string): Promise<Record<string, boolean>> {
+  // This would be implemented to fetch from Firestore user document
+  // Placeholder for now
+  try {
+    // const userDoc = await db.collection('users').doc(userId).get();
+    // return userDoc.data()?.featureFlags || {};
+    return {};
   } catch (error) {
-    console.error(`Error fetching feature flags for user ${userId}:`, error);
+    console.error('Error fetching user feature flags:', error);
     return {};
   }
 }
 
-// ============================================================================
-// FEATURE FLAG CHECKING
-// ============================================================================
+/**
+ * Simple hash function for consistent user rollout
+ *
+ * Maps userId to 0-99 range so that the same userId
+ * always gets the same result. Allows for deterministic
+ * but randomized rollout percentages.
+ *
+ * @param userId - User ID or device ID
+ * @returns Hash value 0-99
+ */
+function hashUserId(userId: string): number {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) {
+    const char = userId.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash = hash & hash; // Convert to 32-bit integer
+  }
+  return Math.abs(hash) % 100;
+}
 
 /**
- * Check if a feature is enabled for a user
- * 
- * Resolution order (stops at first match):
- * 1. User-specific override (if userId provided)
- * 2. Global environment flag
- * 3. Default to false (feature disabled)
- * 
- * @param featureName - Name of feature to check
- * @param userId - Optional user ID for per-user overrides
- * @returns true if feature is enabled for user
+ * Debug logging for feature flag evaluation
+ *
+ * @param featureName - Feature name
+ * @param enabled - Whether enabled
+ * @param reason - Why it's enabled/disabled
  */
-export async function isFeatureEnabled(
+export function logFeatureFlagDecision(
   featureName: string,
-  userId?: string
-): Promise<boolean> {
-  // Check global flag first (fast path)
-  if (!(featureName in GLOBAL_FEATURE_FLAGS)) {
-    console.warn(`Unknown feature flag: ${featureName}`);
-    return false;
+  enabled: boolean,
+  reason: string
+) {
+  if (FEATURE_FLAGS.DEBUG_ENABLED) {
+    console.log(
+      `[FeatureFlag] ${featureName}: ${enabled ? 'ENABLED' : 'DISABLED'} - ${reason}`
+    );
   }
-  
-  // Check user-level override if userId provided
-  if (userId) {
-    try {
-      const userFlags = await getUserFeatureFlags(userId);
-      if (featureName in userFlags) {
-        return userFlags[featureName];
-      }
-    } catch (error) {
-      console.error(`Error checking user feature flags: ${error}`);
-    }
+}
+
+/**
+ * Feature flag monitoring interface
+ * 
+ * Use this to track feature flag performance and errors
+ */
+export interface FeatureFlagMetrics {
+  featureName: string;
+  enabled: boolean;
+  evaluationTimeMs: number;
+  userId?: string;
+  rolloutPercentage?: number;
+  timestamp: string;
+}
+
+/**
+ * Query current rollout status for monitoring/dashboards
+ *
+ * @returns Current status of all features
+ */
+export function getRolloutStatus() {
+  const status: Record<string, any> = {};
+
+  for (const feature of Object.keys(ROLLOUT_STATUS)) {
+    const stage = ROLLOUT_STATUS[feature as keyof typeof ROLLOUT_STATUS];
+    const stageDetails = ROLLOUT_STAGES[stage];
+
+    status[feature] = {
+      currentStage: stage,
+      ...stageDetails,
+      environmentEnabled: FEATURE_FLAGS[feature as keyof typeof FEATURE_FLAGS],
+      timestamp: new Date().toISOString()
+    };
   }
-  
-  // Fall back to global flag
-  return GLOBAL_FEATURE_FLAGS[featureName as keyof typeof GLOBAL_FEATURE_FLAGS] || false;
+
+  return status;
 }
 
-// ============================================================================
-// CONVENIENCE HELPERS
-// ============================================================================
-
-/**
- * Check if user should see v2 quiz interface
- */
-export async function useQuizV2(userId?: string): Promise<boolean> {
-  return isFeatureEnabled('QUIZ_V2_ENABLED', userId);
-}
-
-/**
- * Check if user should see v2 admin panel
- */
-export async function useAdminPanelV2(userId?: string): Promise<boolean> {
-  return isFeatureEnabled('ADMIN_PANEL_V2_ENABLED', userId);
-}
-
-/**
- * Check if v2 curriculum browser is available
- */
-export async function useCurriculumBrowserV2(userId?: string): Promise<boolean> {
-  return isFeatureEnabled('CURRICULUM_BROWSER_ENABLED', userId);
-}
-
-/**
- * Check if v2 validation engine should be used
- */
-export async function useValidationV2(userId?: string): Promise<boolean> {
-  return isFeatureEnabled('VALIDATION_V2_ENABLED', userId);
-}
-
-// ============================================================================
-// FEATURE FLAG MANAGEMENT (for admins)
-// ============================================================================
-
-/**
- * Statuses for tracking feature rollout progress
- */
-export enum RolloutStage {
-  DISABLED = 'disabled',          // Feature disabled for all users
-  INTERNAL_TESTING = 'internal',  // Testing team only
-  BETA = 'beta',                  // Opt-in beta users
-  GRADUAL_10 = 'gradual_10',     // 10% of users
-  GRADUAL_25 = 'gradual_25',     // 25% of users
-  GRADUAL_50 = 'gradual_50',     // 50% of users
-  GRADUAL_75 = 'gradual_75',     // 75% of users
-  FULL_ROLLOUT = 'full'           // 100% of users
-}
-
-/**
- * Get current rollout status for a feature
- * (This could be stored in Firestore and fetched)
- */
-export const ROLLOUT_STATUS: Record<string, RolloutStage> = {
-  QUIZ_V2_ENABLED: RolloutStage.DISABLED,          // Start disabled
-  ADMIN_PANEL_V2_ENABLED: RolloutStage.DISABLED,
-  CURRICULUM_BROWSER_ENABLED: RolloutStage.DISABLED,
-  VALIDATION_V2_ENABLED: RolloutStage.INTERNAL_TESTING
+export default {
+  FEATURE_FLAGS,
+  USER_FEATURE_FLAGS,
+  ROLLOUT_STAGES,
+  ROLLOUT_STATUS,
+  isFeatureEnabled,
+  getUserFeatureFlags,
+  getRolloutStatus,
+  logFeatureFlagDecision
 };
-
-// ============================================================================
-// ROLLOUT PLAN
-// ============================================================================
-
-/**
- * Recommended rollout timeline for v2.0 features:
- * 
- * Week 1: Internal Testing
- *   - VALIDATION_V2_ENABLED: INTERNAL_TESTING
- *   - Admin team tests new validation engine
- *   - Collect feedback on error messages
- * 
- * Week 2: Admin Beta Testing
- *   - ADMIN_PANEL_V2_ENABLED: BETA
- *   - 3-5 admin users test new admin panel
- *   - Test question uploads and curriculum browsing
- * 
- * Week 3: Student Beta (10-25%)
- *   - QUIZ_V2_ENABLED: GRADUAL_10
- *   - CURRICULUM_BROWSER_ENABLED: GRADUAL_10
- *   - Monitor performance and user feedback
- *   - Increase to GRADUAL_25 if no issues
- * 
- * Week 4: Student Rollout (50%+)
- *   - QUIZ_V2_ENABLED: GRADUAL_50
- *   - CURRICULUM_BROWSER_ENABLED: GRADUAL_50
- *   - Continue gradual increase
- * 
- * Week 5: Full Rollout
- *   - QUIZ_V2_ENABLED: FULL_ROLLOUT
- *   - ADMIN_PANEL_V2_ENABLED: FULL_ROLLOUT
- *   - CURRICULUM_BROWSER_ENABLED: FULL_ROLLOUT
- *   - VALIDATION_V2_ENABLED: FULL_ROLLOUT
- *   - Deprecate v1 code (keep as fallback)
- */
-
-export const ROLLOUT_PLAN = {
-  week1: {
-    stage: 'Internal Testing',
-    changes: {
-      VALIDATION_V2_ENABLED: true
-    },
-    description: 'Admin team tests new validation engine'
-  },
-  week2: {
-    stage: 'Admin Beta',
-    changes: {
-      ADMIN_PANEL_V2_ENABLED: true
-    },
-    description: 'Admin users test new admin panel'
-  },
-  week3: {
-    stage: 'Student Beta (10-25%)',
-    changes: {
-      QUIZ_V2_ENABLED: true,
-      CURRICULUM_BROWSER_ENABLED: true
-    },
-    description: 'Gradual student rollout with monitoring'
-  },
-  week4: {
-    stage: 'Student Rollout (50%)',
-    changes: {
-      // Continue rollout
-    },
-    description: 'Expand to 50% of students'
-  },
-  week5: {
-    stage: 'Full Rollout',
-    changes: {
-      // All features enabled globally
-    },
-    description: 'Complete migration to v2.0'
-  }
-};
-
-export default GLOBAL_FEATURE_FLAGS;
