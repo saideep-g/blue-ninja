@@ -27,6 +27,10 @@ const DailyMissionRunner = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
+  // Check if debug mode is enabled (safe way to check environment variables)
+  const isDebugMode = typeof window !== 'undefined' && 
+    localStorage?.getItem('DEBUG_MODE') === 'true';
+
   const handleAnswer = async (answer, timeSpent, speedRating) => {
     setIsSubmitting(true);
     setError(null);
@@ -168,8 +172,8 @@ const DailyMissionRunner = () => {
           />
         )}
 
-        {/* Debug info (dev only) */}
-        {process.env.REACT_APP_DEBUG && (
+        {/* Debug info (dev only) - Only show if DEBUG_MODE is enabled in localStorage */}
+        {isDebugMode && currentQuestion && (
           <div className="mt-8 bg-gray-800 text-green-400 p-4 rounded font-mono text-xs overflow-auto max-h-32">
             <div>Template: {currentQuestion?.templateId}</div>
             <div>Atom: {currentQuestion?.atomId}</div>
