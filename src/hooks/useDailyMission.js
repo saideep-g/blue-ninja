@@ -122,7 +122,7 @@ export function useDailyMission(devQuestions = null) {
 
         // Calculate speedRating here since MissionCard no longer passes it
         const expectedTime = (currentQuestion.difficulty || 3) * 8;
-        const speedRating = timeSpent < expectedTime * 0.6 ? 'SPRINT' : (timeSpent < expectedTime * 1.2 ? 'STEADY' : 'DEEP');
+        // const speedRating = timeSpent < expectedTime * 0.6 ? 'SPRINT' : (timeSpent < expectedTime * 1.2 ? 'STEADY' : 'DEEP');
 
         // FIX: Define cappedThinkingTime based on timeSpent (in seconds)
         // We cap it at 60s to prevent outliers from skewing analytics.

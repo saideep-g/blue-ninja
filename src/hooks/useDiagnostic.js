@@ -175,8 +175,8 @@ export function useDiagnostic(injectedQuestions = null) {
     const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer, timeSpentSeconds) => {
         // Retrieve current question data internally instead of expecting it from params
         const currentQuestion = questions[currentIndex];
-        const questionId = currentQuestion.id;
-        const atomId = currentQuestion.atom;
+        // const questionId = currentQuestion.id;
+        // const atomId = currentQuestion.atom;
         console.log('[useDiagnostic] submitAnswer called:', {
             questionId,
             isCorrect,
