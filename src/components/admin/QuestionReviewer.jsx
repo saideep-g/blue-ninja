@@ -34,15 +34,18 @@ const QuestionReviewer = ({
   const [editMode, setEditMode] = useState(false);
   const [editedQuestion, setEditedQuestion] = useState(null);
 
+  // Safe access to validation results array
+  const questionResults = validationResults?.questionResults || [];
+
   const selectedQuestion = questions.find(q => q.id === selectedQuestionId);
   const selectedValidation = selectedQuestion
-    ? validationResults?.questionResults.find(r => r.questionId === selectedQuestion.id)
+    ? questionResults.find(r => r.questionId === selectedQuestion.id)
     : null;
 
   // Filter questions based on search and status
   const filteredQuestions = useMemo(() => {
     return questions.filter(q => {
-      const validation = validationResults?.questionResults.find(r => r.questionId === q.id);
+      const validation = questionResults.find(r => r.questionId === q.id);
 
       // Search filter
       if (searchTerm && !q.id.toLowerCase().includes(searchTerm.toLowerCase())) {
@@ -51,19 +54,19 @@ const QuestionReviewer = ({
 
       // Status filter
       if (filterStatus === 'VALID' && !validation?.isValid) return false;
-      if (filterStatus === 'ERRORS' && validation?.errors.length === 0) return false;
-      if (filterStatus === 'WARNINGS' && validation?.warnings.length === 0) return false;
+      if (filterStatus === 'ERRORS' && (!validation?.errors || validation.errors.length === 0)) return false;
+      if (filterStatus === 'WARNINGS' && (!validation?.warnings || validation.warnings.length === 0)) return false;
 
       return true;
     });
-  }, [questions, searchTerm, filterStatus, validationResults]);
+  }, [questions, searchTerm, filterStatus, questionResults]);
 
   const getStatusIcon = (validation) => {
     if (!validation) return null;
     if (validation.isValid) {
       return <CheckCircle className="w-5 h-5 text-green-600" />;
     }
-    if (validation.errors.length > 0) {
+    if (validation.errors && validation.errors.length > 0) {
       return <AlertCircle className="w-5 h-5 text-red-600" />;
     }
     return <AlertTriangle className="w-5 h-5 text-yellow-600" />;
@@ -72,7 +75,7 @@ const QuestionReviewer = ({
   const getStatusColor = (validation) => {
     if (!validation) return 'bg-slate-100';
     if (validation.isValid) return 'bg-green-50 border-l-4 border-green-600';
-    if (validation.errors.length > 0) return 'bg-red-50 border-l-4 border-red-600';
+    if (validation.errors && validation.errors.length > 0) return 'bg-red-50 border-l-4 border-red-600';
     return 'bg-yellow-50 border-l-4 border-yellow-600';
   };
 
@@ -156,7 +159,7 @@ const QuestionReviewer = ({
           {/* Question List */}
           <div className="border-t border-slate-200 max-h-[600px] overflow-y-auto">
             {filteredQuestions.map(question => {
-              const validation = validationResults?.questionResults.find(
+              const validation = questionResults.find(
                 r => r.questionId === question.id
               );
               const isSelected = selectedQuestionIds.has(question.id);
@@ -200,7 +203,7 @@ const QuestionReviewer = ({
                         <span className="bg-slate-200 px-2 py-0.5 rounded">
                           {question.type}
                         </span>
-                        {validation && (
+                        {validation && validation.qualityGrade && (
                           <span className={`px-2 py-0.5 rounded font-semibold ${
                             validation.qualityGrade === 'A' ? 'bg-green-200 text-green-900' :
                             validation.qualityGrade === 'B' ? 'bg-blue-200 text-blue-900' :
