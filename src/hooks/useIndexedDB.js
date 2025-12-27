@@ -1,346 +1,504 @@
 /**
  * src/hooks/useIndexedDB.js
- * React hook for IndexedDB operations with state management
- * Handles initialization, error recovery, and automatic cleanup
- * Production-ready with proper lifecycle management
+ * ==========================
+ * 
+ * React hook for accessing IndexedDB service with automatic initialization
+ * and lifecycle management.
+ * 
+ * Features:
+ * - Automatic database initialization
+ * - Error handling and recovery
+ * - Loading state management
+ * - All CRUD operations wrapped
+ * - Auto-cleanup on unmount
+ * 
+ * Usage:
+ * ------
+ * const db = useIndexedDB();
+ * 
+ * if (!db.isInitialized) return <Loading />;
+ * if (db.error) return <Error msg={db.error} />;
+ * 
+ * await db.addPendingQuestion(qId, questionData);
+ * const questions = await db.getAllPendingQuestions(sessionId);
  */
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { indexedDBService } from '../services/indexedDBService.js';
+import { useEffect, useState, useCallback, useRef } from 'react';
+import { IndexedDBService } from '../services/indexedDBService';
 
 /**
- * Custom hook for managing IndexedDB operations
- * Provides methods for CRUD operations and session management
+ * Custom React hook for IndexedDB operations
+ * @returns {Object} Hook interface with all database methods
  */
 export function useIndexedDB() {
   const [isInitialized, setIsInitialized] = useState(false);
-  const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
   const dbRef = useRef(null);
-  const initAttempts = useRef(0);
-  const MAX_INIT_ATTEMPTS = 3;
+  const isMountedRef = useRef(true);
 
-  /**
-   * Initialize IndexedDB service
-   */
+  // Initialize database on mount
   useEffect(() => {
-    const initDB = async () => {
-      if (isInitialized || initAttempts.current >= MAX_INIT_ATTEMPTS) {
-        return;
-      }
+    let isMounted = true;
+    isMountedRef.current = true;
 
+    const initialize = async () => {
       try {
-        setIsLoading(true);
-        setError(null);
-
-        // Initialize service
-        await indexedDBService.initDatabase();
-        dbRef.current = indexedDBService;
-        setIsInitialized(true);
-        setError(null);
-        console.log('[useIndexedDB] Initialized successfully');
-      } catch (err) {
-        initAttempts.current++;
-        const errorMessage = `Failed to initialize IndexedDB (attempt ${initAttempts.current}/${MAX_INIT_ATTEMPTS}): ${err.message}`;
-        console.error('[useIndexedDB]', errorMessage);
-        setError(errorMessage);
-
-        // Retry after delay
-        if (initAttempts.current < MAX_INIT_ATTEMPTS) {
-          setTimeout(initDB, 1000 * initAttempts.current);
+        if (!dbRef.current) {
+          dbRef.current = new IndexedDBService();
         }
-      } finally {
-        setIsLoading(false);
+
+        await dbRef.current.initDatabase();
+
+        if (isMounted && isMountedRef.current) {
+          setIsInitialized(true);
+          setError(null);
+        }
+      } catch (err) {
+        if (isMounted && isMountedRef.current) {
+          setError(err.message || 'Failed to initialize IndexedDB');
+          setIsInitialized(false);
+          console.error('[useIndexedDB] Initialization error:', err);
+        }
       }
     };
 
-    initDB();
-  }, [isInitialized]);
+    initialize();
 
-  /**
-   * Add pending question
-   */
-  const addPendingQuestion = useCallback(
-    async (qId, questionData) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.addPendingQuestion(qId, questionData);
-    },
-    []
-  );
-
-  /**
-   * Update pending question
-   */
-  const updatePendingQuestion = useCallback(
-    async (qId, updates) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.updatePendingQuestion(qId, updates);
-    },
-    []
-  );
-
-  /**
-   * Get a specific pending question
-   */
-  const getPendingQuestion = useCallback(
-    async (qId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getPendingQuestion(qId);
-    },
-    []
-  );
-
-  /**
-   * Get all pending questions with optional filtering
-   */
-  const getAllPendingQuestions = useCallback(
-    async (sessionId = null) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getAllPendingQuestions(sessionId);
-    },
-    []
-  );
-
-  /**
-   * Get questions by status
-   */
-  const getPendingQuestionsByStatus = useCallback(
-    async (status, sessionId = null) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getPendingQuestionsByStatus(status, sessionId);
-    },
-    []
-  );
-
-  /**
-   * Delete a question
-   */
-  const deletePendingQuestion = useCallback(
-    async (qId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.deletePendingQuestion(qId);
-    },
-    []
-  );
-
-  /**
-   * Delete batch by session
-   */
-  const deleteBatchBySessionId = useCallback(
-    async (sessionId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.deleteBatchBySessionId(sessionId);
-    },
-    []
-  );
-
-  /**
-   * Create upload session
-   */
-  const createSession = useCallback(
-    async (sessionId, metadata) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.createSession(sessionId, metadata);
-    },
-    []
-  );
-
-  /**
-   * Get session
-   */
-  const getSession = useCallback(
-    async (sessionId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getSession(sessionId);
-    },
-    []
-  );
-
-  /**
-   * Update session
-   */
-  const updateSession = useCallback(
-    async (sessionId, updates) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.updateSession(sessionId, updates);
-    },
-    []
-  );
-
-  /**
-   * Close session
-   */
-  const closeSession = useCallback(
-    async (sessionId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.closeSession(sessionId);
-    },
-    []
-  );
-
-  /**
-   * Get all sessions
-   */
-  const getAllSessions = useCallback(
-    async (limit = 20, offset = 0) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getAllSessions(limit, offset);
-    },
-    []
-  );
-
-  /**
-   * Get sessions by admin
-   */
-  const getSessionsByAdmin = useCallback(
-    async (adminId, limit = 10) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getSessionsByAdmin(adminId, limit);
-    },
-    []
-  );
-
-  /**
-   * Cache validation result
-   */
-  const cacheValidationResult = useCallback(
-    async (qId, result) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.cacheValidationResult(qId, result);
-    },
-    []
-  );
-
-  /**
-   * Get validation cache
-   */
-  const getValidationCache = useCallback(
-    async (qId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getValidationCache(qId);
-    },
-    []
-  );
-
-  /**
-   * Clear validation cache
-   */
-  const clearValidationCache = useCallback(
-    async (qId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.clearValidationCache(qId);
-    },
-    []
-  );
-
-  /**
-   * Clear expired cache
-   */
-  const clearExpiredCache = useCallback(
-    async () => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.clearExpiredCache();
-    },
-    []
-  );
-
-  /**
-   * Clear old sessions
-   */
-  const clearOldSessions = useCallback(
-    async (daysOld = 30) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.clearOldSessions(daysOld);
-    },
-    []
-  );
-
-  /**
-   * Export session
-   */
-  const exportSession = useCallback(
-    async (sessionId) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.exportSession(sessionId);
-    },
-    []
-  );
-
-  /**
-   * Import session
-   */
-  const importSession = useCallback(
-    async (exportedData) => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.importSession(exportedData);
-    },
-    []
-  );
-
-  /**
-   * Get database statistics
-   */
-  const getStats = useCallback(
-    async () => {
-      if (!dbRef.current) {
-        throw new Error('IndexedDB not initialized');
-      }
-      return await dbRef.current.getStats();
-    },
-    []
-  );
-
-  /**
-   * Retry initialization
-   */
-  const retryInit = useCallback(() => {
-    initAttempts.current = 0;
-    setIsInitialized(false);
-    setError(null);
+    return () => {
+      isMounted = false;
+      isMountedRef.current = false;
+    };
   }, []);
 
+  // Wrapped methods
+  const addPendingQuestion = useCallback(async (qId, questionData) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.addPendingQuestion(qId, questionData);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const updatePendingQuestion = useCallback(async (qId, updates) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.updatePendingQuestion(qId, updates);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getPendingQuestion = useCallback(async (qId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getPendingQuestion(qId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getAllPendingQuestions = useCallback(async (sessionId = null) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getAllPendingQuestions(sessionId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const deletePendingQuestion = useCallback(async (qId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.deletePendingQuestion(qId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const deleteBatchBySessionId = useCallback(async (sessionId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.deleteBatchBySessionId(sessionId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  // Session operations
+  const createSession = useCallback(async (sessionId, metadata) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.createSession(sessionId, metadata);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getSession = useCallback(async (sessionId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getSession(sessionId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const updateSession = useCallback(async (sessionId, updates) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.updateSession(sessionId, updates);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const closeSession = useCallback(async (sessionId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.closeSession(sessionId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getAllSessions = useCallback(async (limit = 20) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getAllSessions(limit);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  // Validation cache operations
+  const cacheValidationResult = useCallback(async (qId, result, ttlHours = 24) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const cacheResult = await dbRef.current.cacheValidationResult(qId, result, ttlHours);
+      setError(null);
+      return cacheResult;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getValidationCache = useCallback(async (qId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getValidationCache(qId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const clearValidationCache = useCallback(async (qId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.clearValidationCache(qId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  // Maintenance operations
+  const clearExpiredCache = useCallback(async () => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.clearExpiredCache();
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const clearOldSessions = useCallback(async (daysOld = 30) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.clearOldSessions(daysOld);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const getStats = useCallback(async () => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.getStats();
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  // Export/Import operations
+  const exportSession = useCallback(async (sessionId) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.exportSession(sessionId);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const importSession = useCallback(async (data) => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.importSession(data);
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
+  const clearAll = useCallback(async () => {
+    if (!dbRef.current || !isInitialized) {
+      throw new Error('Database not initialized');
+    }
+    try {
+      setIsLoading(true);
+      const result = await dbRef.current.clearAll();
+      setError(null);
+      return result;
+    } catch (err) {
+      if (isMountedRef.current) {
+        setError(err.message);
+      }
+      throw err;
+    } finally {
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+    }
+  }, [isInitialized]);
+
   return {
-    // Status
+    // State
     isInitialized,
     isLoading,
     error,
@@ -350,7 +508,6 @@ export function useIndexedDB() {
     updatePendingQuestion,
     getPendingQuestion,
     getAllPendingQuestions,
-    getPendingQuestionsByStatus,
     deletePendingQuestion,
     deleteBatchBySessionId,
 
@@ -360,7 +517,6 @@ export function useIndexedDB() {
     updateSession,
     closeSession,
     getAllSessions,
-    getSessionsByAdmin,
 
     // Cache operations
     cacheValidationResult,
@@ -368,18 +524,14 @@ export function useIndexedDB() {
     clearValidationCache,
     clearExpiredCache,
 
-    // Cleanup operations
+    // Maintenance
     clearOldSessions,
-
-    // Import/Export
-    exportSession,
-    importSession,
-
-    // Statistics
     getStats,
 
-    // Error recovery
-    retryInit
+    // Export/Import
+    exportSession,
+    importSession,
+    clearAll
   };
 }
 
