@@ -23,6 +23,7 @@ import ParentDashboard from './components/parent/ParentDashboard';
 import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
 import AdminQuestionsPanel from './components/admin/AdminQuestionsPanel.jsx';
+import CurriculumBrowser from './components/curriculum/CurriculumBrowser';
 
 
 /**
@@ -466,7 +467,7 @@ export default function App() {
             }
           />
           <Route path="/admin/questions" element={<AdminQuestionsPanel />} />
-
+          <Route path="/curriculum" element={<CurriculumBrowser />} />
 
           {/* Catch-all: redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />

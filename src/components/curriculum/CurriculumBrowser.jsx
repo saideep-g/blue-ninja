@@ -132,9 +132,8 @@ export function CurriculumBrowser({ onSelectQuestion }) {
                   className="w-full flex items-center gap-2 p-3 hover:bg-blue-50 rounded-lg transition-all text-left group"
                 >
                   <ChevronRight
-                    className={`w-5 h-5 text-gray-400 transition-transform ${
-                      expandedModule === module.moduleid ? 'rotate-90' : ''
-                    }`}
+                    className={`w-5 h-5 text-gray-400 transition-transform ${expandedModule === module.moduleid ? 'rotate-90' : ''
+                      }`}
                   />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 group-hover:text-blue-600">
@@ -151,11 +150,10 @@ export function CurriculumBrowser({ onSelectQuestion }) {
                       <button
                         key={atom.atomid}
                         onClick={() => handleAtomSelect(module, atom)}
-                        className={`w-full text-left p-2 rounded-lg transition-all text-sm ${
-                          selectedAtom?.atomid === atom.atomid
+                        className={`w-full text-left p-2 rounded-lg transition-all text-sm ${selectedAtom?.atomid === atom.atomid
                             ? 'bg-blue-100 text-blue-900 border-l-2 border-blue-600'
                             : 'text-gray-700 hover:bg-gray-100'
-                        }`}
+                          }`}
                       >
                         <div className="flex items-start gap-2">
                           <Target className="w-4 h-4 flex-shrink-0 mt-0.5 text-blue-500" />
@@ -229,9 +227,8 @@ export function CurriculumBrowser({ onSelectQuestion }) {
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <span
-                              className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                                getDifficultyColor(q.difficulty)
-                              }`}
+                              className={`px-2 py-1 rounded-full text-xs font-semibold ${getDifficultyColor(q.difficulty)
+                                }`}
                             >
                               L{q.difficulty}
                             </span>
@@ -241,9 +238,8 @@ export function CurriculumBrowser({ onSelectQuestion }) {
                         {/* Template Badge */}
                         <div className="mt-3">
                           <div
-                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${
-                              getTemplateColor(q.templateId)
-                            }`}
+                            className={`inline-block px-3 py-1 rounded-full text-xs font-semibold text-white bg-gradient-to-r ${getTemplateColor(q.templateId)
+                              }`}
                           >
                             {q.templateId.replace(/_/g, ' ')}
                           </div>
@@ -272,3 +268,4 @@ export function CurriculumBrowser({ onSelectQuestion }) {
     </div>
   );
 }
+export default CurriculumBrowser;
