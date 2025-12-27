@@ -88,39 +88,68 @@ export function NinjaProvider({ children }) {
      * @param {boolean} isFinal - If true, clears the local storage buffer after sync.
      */
     const syncToCloud = async (isFinal = false) => {
-        if (!auth.currentUser || localBuffer.logs.length === 0) return;
+        if (!auth.currentUser || localBuffer.logs.length === 0) {
+            console.log('[syncToCloud] No logs to sync or user not authenticated');
+            return;
+        }
 
         const batch = writeBatch(db);
         const userRef = doc(db, "students", auth.currentUser.uid);
         const logsRef = collection(db, "students", auth.currentUser.uid, "session_logs");
 
-        // Add all buffered question logs in a single transaction
-        localBuffer.logs.forEach(log => {
-            const newLogRef = doc(logsRef);
-            batch.set(newLogRef, { ...log, timestamp: serverTimestamp() });
-        });
-
-        // Update global student profile
-        batch.update(userRef, {
-            ...ninjaStats,
-            powerPoints: ninjaStats.powerPoints,
-            lastUpdated: serverTimestamp()
-        });
+        console.log('[syncToCloud] Starting batch write with', localBuffer.logs.length, 'logs');
 
         try {
+            // Add all buffered question logs in a single transaction
+            localBuffer.logs.forEach((log, idx) => {
+                const newLogRef = doc(logsRef);
+                batch.set(newLogRef, {
+                    ...log,
+                    timestamp: serverTimestamp(),
+                    syncedAt: Date.now()
+                });
+                console.log('[syncToCloud] Added log', idx + 1, 'of', localBuffer.logs.length);
+            });
+
+            // Update global student profile
+            batch.update(userRef, {
+                ...ninjaStats,
+                powerPoints: ninjaStats.powerPoints,
+                lastUpdated: serverTimestamp(),
+                lastSyncTime: serverTimestamp()
+            });
+
+            console.log('[syncToCloud] Committing batch...');
             await batch.commit();
-            // Reset buffer after successful cloud persistence
+
+            console.log('[syncToCloud] ✅ Batch committed successfully!');
+
+            // Reset buffer AFTER successful cloud persistence
             setLocalBuffer({ logs: [], pointsGained: 0 });
+            console.log('[syncToCloud] Buffer cleared');
 
             if (isFinal) {
                 localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
+                console.log('[syncToCloud] localStorage cleared (final sync)');
             }
+
             // Refresh history view after sync
-            fetchSessionLogs(auth.currentUser.uid);
+            console.log('[syncToCloud] Fetching latest logs...');
+            await fetchSessionLogs(auth.currentUser.uid);
+
+            console.log('[syncToCloud] ✅ All done!');
+
         } catch (error) {
-            console.error("Blue Ninja Sync Error:", error);
+            console.error("[syncToCloud] ❌ Batch commit failed:", error);
+            console.error('[syncToCloud] Error details:', {
+                logsCount: localBuffer.logs.length,
+                userId: auth.currentUser?.uid,
+                errorCode: error.code,
+                errorMessage: error.message
+            });
         }
     };
+
 
     /**
  * refreshSessionLogs (NEW)
@@ -377,8 +406,6 @@ export function NinjaProvider({ children }) {
                 completedMissions: (prev.completedMissions || 0) + 1
             }));
 
-            setLocalBuffer({ logs: [], pointsGained: 0 });
-            localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
 
             console.log('[updateStreak] ✅ Streak updated successfully:', {
                 newStreak,
