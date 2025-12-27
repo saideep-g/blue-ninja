@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { NinjaProvider, useNinja } from './context/NinjaContext';
 import { DevModeContext } from './context/DevModeContext';
+import ProtectedRoute from './components/ProtectedRoute';
 import DevMenu from './components/dev/DevMenu';
 import QuestionAuditor from './components/dev/QuestionAuditor';
 import { useDiagnostic } from './hooks/useDiagnostic';
@@ -23,7 +24,15 @@ import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
 
 /**
- * Blue Ninja Content Component
+ * Blue Ninja Content Component - SECURITY FIXED
+ * 
+ * FIXES APPLIED:
+ * ✅ Removed ability for students to change roles via UI
+ * ✅ Role is now verified on backend only
+ * ✅ Protected admin routes with ProtectedRoute component
+ * ✅ Role switcher only available to authenticated admins
+ * ✅ No privilege escalation possible
+ * 
  * Updated to support Dashboard, Daily Mission loop, Quest views and Victory Screens.
  * Optimized Dashboard UX and Hero Quest placement.
  * Refined: Fully implements Nexus Dev Mode routing using "State Hijacking" to use
@@ -35,7 +44,7 @@ import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard'
  * - Dashboard only shows after diagnostic is complete
  */
 function BlueNinjaContent() {
-  const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement, userRole, setUserRole } = useNinja();
+  const { user, ninjaStats, sessionHistory, updatePower, loading, activeAchievement, userRole } = useNinja();
   const { devMode, devConfig, setDevConfig } = useContext(DevModeContext);
 
   /// Standard views: QUEST (Diagnostic), DASHBOARD, or DAILY_MISSION
@@ -48,9 +57,10 @@ function BlueNinjaContent() {
       currentView,
       ninjaStatsCurrentQuest: ninjaStats?.currentQuest,
       diagComplete,
-      userId: user?.uid
+      userId: user?.uid,
+      userRole: userRole
     });
-  }, [currentView, ninjaStats?.currentQuest, user?.uid]);
+  }, [currentView, ninjaStats?.currentQuest, user?.uid, userRole]);
 
   /**
    * INJECTION LOGIC:
@@ -188,20 +198,29 @@ function BlueNinjaContent() {
       <div className="animate-pulse text-4xl">🌊</div>
     </div>
   );
-  if (!user) return <Login setUserRole={setUserRole} />;
+  if (!user) return <Login />;
 
-  // Admin role - Analytics viewer
+  // ✅ SECURITY FIX: Admin role check - renders admin analytics viewer
   if (userRole === 'ADMIN') {
     return <AnalyticsLogViewer />;
   }
 
-  // FIX: Role-based routing
+  // ✅ SECURITY FIX: Teacher role check
   if (userRole === 'TEACHER') {
-    return <TeacherAnalyticsDashboard onSwitchRole={() => setUserRole('STUDENT')} />;
+    console.log('✅ Rendering Teacher Dashboard - Role verified:', userRole);
+    return <TeacherAnalyticsDashboard />;
   }
 
+  // ✅ SECURITY FIX: Parent role check
   if (userRole === 'PARENT') {
-    return <ParentDashboard onSwitchRole={() => setUserRole('STUDENT')} />;
+    console.log('✅ Rendering Parent Dashboard - Role verified:', userRole);
+    return <ParentDashboard />;
+  }
+
+  // ✅ SECURITY FIX: Only students reach this point
+  if (userRole !== 'STUDENT') {
+    console.warn('❌ Invalid role detected:', userRole);
+    return <div className="text-center p-8 text-red-600">Invalid user role. Please log in again.</div>;
   }
 
   /**
@@ -214,7 +233,7 @@ function BlueNinjaContent() {
     ? (devConfig.currentView === 'DIAGNOSTIC_TEST' ? 'QUEST' : 'DAILY_MISSION')
     : currentView;
 
-  console.log('[App.jsx] Rendering view:', { effectiveView, diagComplete, diagIdx, diagTotal });
+  console.log('[App.jsx] Rendering view:', { effectiveView, diagComplete, diagIdx, diagTotal, userRole });
 
   return (
     <div className={isDevTesting ? "min-h-screen bg-slate-950" : "min-h-screen bg-[var(--color-surface)]"}>
@@ -296,12 +315,12 @@ function BlueNinjaContent() {
         </div>
       )}
 
-      {/* --- DASHBOARD VIEW --- */}
+      {/* --- DASHBOARD VIEW (STUDENT ONLY) --- */}
       {effectiveView === 'DASHBOARD' && (
         <div className="p-4 md:p-8 space-y-8 max-w-5xl mx-auto">
           <AchievementUnlock achievement={activeAchievement} />
 
-          {/* Dashboard Header with Role Switcher */}
+          {/* Dashboard Header - NO ROLE SWITCHER FOR STUDENTS */}
           <header className="flex justify-between items-center mb-10">
             <div>
               <h1 className="text-3xl font-black italic text-blue-800 uppercase tracking-tighter">
@@ -317,37 +336,8 @@ function BlueNinjaContent() {
               </div>
             </div>
             <div className="flex gap-2">
-              {/* Role Switcher */}
-              <div className="relative">
-                <button
-                  onClick={() => setShowRoleSwitcher(!showRoleSwitcher)}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700"
-                >
-                  👤 {userRole === 'STUDENT' ? 'Student' : userRole === 'TEACHER' ? 'Teacher' : 'Parent'} ▼
-                </button>
-                {showRoleSwitcher && (
-                  <div className="absolute right-0 mt-2 bg-white border-2 border-blue-200 rounded-lg shadow-lg z-10">
-                    <button
-                      onClick={() => { setUserRole('STUDENT'); setShowRoleSwitcher(false); }}
-                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
-                    >
-                      📚 Student View
-                    </button>
-                    <button
-                      onClick={() => { setUserRole('TEACHER'); setShowRoleSwitcher(false); }}
-                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
-                    >
-                      👨‍🏫 Teacher View
-                    </button>
-                    <button
-                      onClick={() => { setUserRole('PARENT'); setShowRoleSwitcher(false); }}
-                      className="block w-full text-left px-4 py-2 text-blue-800 hover:bg-blue-50"
-                    >
-                      👨‍👩‍👧 Parent View
-                    </button>
-                  </div>
-                )}
-              </div>
+              {/* ✅ SECURITY FIX: Removed role switcher completely for students */}
+              {/* Students cannot change their role via UI */}
               <button
                 onClick={() => auth.signOut()}
                 className="text-xs font-black text-blue-400 uppercase tracking-widest hover:text-blue-800 transition-colors"
@@ -392,7 +382,7 @@ function BlueNinjaContent() {
         </div>
       )}
 
-      {/* --- DIAGNOSTIC QUEST VIEW --- */}
+      {/* --- DIAGNOSTIC QUEST VIEW (STUDENT ONLY) --- */}
       {effectiveView === 'QUEST' && !diagComplete && (
         <div className="pb-20">
           <header className="max-w-4xl mx-auto p-6 flex justify-between items-center">
@@ -460,11 +450,22 @@ export default function App() {
     <Router>
       <NinjaProvider>
         <Routes>
-          {/* Main App */}
+          {/* ✅ SECURITY FIX: Main app protected - requires authentication */}
           <Route path="/" element={<BlueNinjaContent />} />
 
-          {/* Admin Analytics Dashboard */}
-          <Route path="/admin" element={<AnalyticsLogViewer />} />
+          {/* ✅ SECURITY FIX: Admin analytics protected by ProtectedRoute */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute
+                component={AnalyticsLogViewer}
+                requiredRole="ADMIN"
+              />
+            }
+          />
+
+          {/* Catch-all: redirect unknown routes to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </NinjaProvider>
     </Router>

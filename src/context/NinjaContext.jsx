@@ -160,37 +160,37 @@ export function NinjaProvider({ children }) {
                 // Identity
                 questionId: logData.questionId || '',
                 studentAnswer: logData.studentAnswer || '',
-                
+
                 // Performance
                 isCorrect: logData.isCorrect !== undefined ? logData.isCorrect : false,
                 isRecovered: logData.isRecovered !== undefined ? logData.isRecovered : false,
-                
+
                 // ✅ FIXED: recoveryVelocity (was missing)
                 recoveryVelocity: logData.recoveryVelocity !== undefined ? logData.recoveryVelocity : 0,
-                
+
                 // Learning Target
                 diagnosticTag: logData.diagnosticTag || null,
-                
+
                 // Timing
                 timeSpent: logData.timeSpent || 0,
-                
+
                 // ✅ FIXED: cappedThinkingTime (was missing)
                 // Cap thinking time at 60 seconds to prevent outlier skewing
                 cappedThinkingTime: logData.timeSpent ? Math.min(logData.timeSpent, 60) : 0,
-                
+
                 // Speed Analysis
                 speedRating: logData.speedRating || 'NORMAL',
-                
+
                 // Mastery Tracking
                 masteryBefore: logData.masteryBefore !== undefined ? logData.masteryBefore : 0,
                 masteryAfter: logData.masteryAfter !== undefined ? logData.masteryAfter : 0,
-                
+
                 // Curriculum
                 atomId: logData.atomId || '',
-                
+
                 // Context
                 mode: logData.mode || 'DAILY',
-                
+
                 // Server timestamp will be added by Firestore
             };
 
