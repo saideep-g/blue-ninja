@@ -1,15 +1,16 @@
 /**
  * MissionCard.jsx
  * 
- * Enhanced mission question card for 14+ template daily missions.
- * Integrates TemplateRouter for dynamic template rendering.
- * Displays phase info, difficulty, and template metadata.
- * 
- * Replaces original MissionCard.jsx
+ * REDESIGNED: World-class mission experience optimized for young learners
+ * - Content-first layout (question is the hero)
+ * - Minimal metadata (remove cognitive overload)
+ * - Clean, spacious design
+ * - Encouraging, anxiety-free experience
+ * - Perfect for 13-year-old students
  */
 
 import React, { useState, useEffect } from 'react';
-import { Clock, AlertCircle, TrendingUp, Zap } from 'lucide-react';
+import { CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
 import { TemplateRouter } from '../templates/TemplateRouter';
 
 const MissionCard = ({
@@ -21,128 +22,91 @@ const MissionCard = ({
 }) => {
   const [timeSpent, setTimeSpent] = useState(0);
   const [hasAnswered, setHasAnswered] = useState(false);
-  const [speedRating, setSpeedRating] = useState(null);
 
   // Track time spent on question
   useEffect(() => {
     const startTime = Date.now();
     const interval = setInterval(() => {
-      setTimeSpent((Date.now() - startTime) / 1000);
-    }, 100);
+      setTimeSpent(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [question?.questionId]);
 
-  // Calculate speed rating based on time
-  useEffect(() => {
-    if (hasAnswered) return;
-    
-    const expectedTime = (question?.difficulty || 2) * 8; // difficulty * 8 seconds
-    if (timeSpent < expectedTime * 0.6) {
-      setSpeedRating('SPRINT');
-    } else if (timeSpent < expectedTime * 1.2) {
-      setSpeedRating('STEADY');
-    } else {
-      setSpeedRating('DEEP');
-    }
-  }, [timeSpent, question?.difficulty, hasAnswered]);
-
   if (!question) {
     return (
-      <div className="bg-gray-100 rounded-lg p-8 text-center">
-        <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-        <p className="text-gray-500">No question available</p>
+      <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+        <AlertCircle className="w-8 h-8 text-gray-400 mx-auto mb-3" />
+        <p className="text-gray-500 text-lg">Loading your next question...</p>
       </div>
     );
   }
 
   const handleSubmit = async (answer) => {
     setHasAnswered(true);
-    const result = await onSubmit(answer, timeSpent, speedRating);
+    const result = await onSubmit(answer, timeSpent, null);
     return result;
   };
 
-  const difficultyColor = question.difficulty === 1 ? 'green' : question.difficulty === 2 ? 'yellow' : 'red';
-  const difficultyLabel = question.difficulty === 1 ? 'Easy' : question.difficulty === 2 ? 'Medium' : 'Hard';
+  // Progress percentage
+  const progress = ((currentIndex + 1) / totalQuestions) * 100;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-      {/* Header with phase and metadata */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-xl font-bold mb-1">Question {currentIndex + 1} of {totalQuestions}</h2>
-            <div className="flex gap-2">
-              <span className="inline-flex items-center gap-1 bg-blue-500 bg-opacity-50 px-3 py-1 rounded-full text-sm font-medium">
-                <Zap className="w-4 h-4" />
-                {question.phase || 'UNKNOWN'}
-              </span>
-              {question.templateId && (
-                <span className="inline-flex items-center gap-1 bg-blue-500 bg-opacity-50 px-3 py-1 rounded-full text-sm font-medium">
-                  {question.templateId.replace(/_/g, ' ')}
-                </span>
-              )}
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50 flex flex-col">
+      {/* ========== ULTRA-MINIMAL TOP BAR ========== */}
+      <div className="bg-white border-b border-blue-100 sticky top-0 z-10 py-3 px-6 flex justify-between items-center">
+        {/* Left: Question number */}
+        <div className="flex items-center gap-2">
+          <div className="text-sm font-semibold text-blue-600">
+            Question {currentIndex + 1}
           </div>
-          <div className="text-right">
-            <div className="text-3xl font-bold mb-1">{Math.floor(timeSpent)}s</div>
-            <div className={`text-sm font-semibold px-2 py-1 rounded bg-${difficultyColor}-100 text-${difficultyColor}-700`}>
-              {difficultyLabel}
-            </div>
-          </div>
+          <div className="text-xs text-gray-400">of {totalQuestions}</div>
         </div>
 
-        {/* Metadata row */}
-        <div className="grid grid-cols-2 gap-2 text-xs opacity-90">
-          <div>
-            <div className="opacity-75">Atom</div>
-            <div className="font-semibold truncate">{question.atomName || question.atomId}</div>
-          </div>
-          <div>
-            <div className="opacity-75">Module</div>
-            <div className="font-semibold truncate">{question.moduleName || 'N/A'}</div>
-          </div>
+        {/* Right: Time counter (subtle) */}
+        <div className="text-sm text-gray-500 font-mono">
+          {timeSpent}s
         </div>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-1 bg-gray-200">
+      {/* ========== PROGRESS BAR (THIN, ELEGANT) ========== */}
+      <div className="h-1 bg-blue-100">
         <div
-          className="h-full bg-blue-600 transition-all duration-500"
-          style={{ width: `${((currentIndex + 1) / totalQuestions) * 100}%` }}
+          className="h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-700 ease-out"
+          style={{ width: `${progress}%` }}
         />
       </div>
 
-      {/* Question content */}
-      <div className="p-8">
-        <TemplateRouter
-          question={question}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />
-      </div>
-
-      {/* Footer with analytics */}
-      <div className="bg-gray-50 px-8 py-4 border-t border-gray-200">
-        <div className="grid grid-cols-3 gap-4 text-xs">
-          <div>
-            <div className="text-gray-500 mb-1">Speed</div>
-            <div className="font-bold text-gray-700">{speedRating || '-'}</div>
-          </div>
-          <div>
-            <div className="text-gray-500 mb-1">Mastery</div>
-            <div className="font-bold text-gray-700">
-              {Math.round((question.masteryBefore || 0) * 100)}%
-            </div>
-          </div>
-          <div>
-            <div className="text-gray-500 mb-1">Outcomes</div>
-            <div className="font-bold text-gray-700">
-              {(question.outcomes || []).length} linked
-            </div>
+      {/* ========== MAIN CONTENT AREA ========== */}
+      <div className="flex-1 flex flex-col px-4 py-8 md:py-12">
+        <div className="max-w-3xl mx-auto w-full flex-1 flex flex-col">
+          {/* ========== QUESTION AREA (HERO) ========== */}
+          <div className="bg-white rounded-2xl shadow-md p-8 md:p-12 flex-1">
+            {/* Template content rendered by TemplateRouter */}
+            <TemplateRouter
+              question={question}
+              onSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+            />
           </div>
         </div>
       </div>
+
+      {/* ========== BOTTOM INFO BAR (OPTIONAL) ========== */}
+      {!hasAnswered && (
+        <div className="bg-blue-50 border-t border-blue-200 px-6 py-4">
+          <div className="max-w-3xl mx-auto flex justify-between items-center text-xs text-gray-600">
+            <div>
+              <span className="font-semibold text-gray-700">Take your time</span>
+              <span className="text-gray-500"> — there's no rush</span>
+            </div>
+            <div className="flex items-center gap-2 text-blue-600 font-semibold">
+              <span>Keep going</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
