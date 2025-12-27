@@ -24,6 +24,7 @@ import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
 import AdminQuestionsPanel from './components/admin/AdminQuestionsPanel.jsx';
 import CurriculumBrowser from './components/curriculum/CurriculumBrowser';
+import MissionPage from './components/daily-mission/MissionPage.jsx';
 
 
 /**
@@ -468,6 +469,7 @@ export default function App() {
           />
           <Route path="/admin/questions" element={<AdminQuestionsPanel />} />
           <Route path="/curriculum" element={<CurriculumBrowser />} />
+          <Route path="/v2" element={<MissionPage />} />
 
           {/* Catch-all: redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
