@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db, auth } from '../firebase/config';
-import { doc, getDoc, getDocs, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy, limit, addDoc } from 'firebase/firestore';
+import { doc, getDoc, getDocs, setDoc, updateDoc, collection, writeBatch, serverTimestamp, query, orderBy, limit, addDoc, onSnapshot } from 'firebase/firestore';
 import { nexusDB } from '../services/nexusSync'; //;
 
 const NinjaContext = createContext();
@@ -121,6 +121,34 @@ export function NinjaProvider({ children }) {
             console.error("Blue Ninja Sync Error:", error);
         }
     };
+
+    /**
+ * refreshSessionLogs (NEW)
+ * Explicitly fetches the latest session logs from Firestore.
+ * Should be called after mission completion to display new analytics.
+ */
+    const refreshSessionLogs = async () => {
+        if (!auth.currentUser) return;
+
+        try {
+            const logRef = collection(db, "students", auth.currentUser.uid, "session_logs");
+            const q = query(logRef, orderBy("timestamp", "desc"), limit(50));
+            const querySnapshot = await getDocs(q);
+            const logs = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+                timestamp: doc.data().timestamp?.toDate?.() || new Date(doc.data().timestamp)
+            }));
+
+            console.log('[refreshSessionLogs] Fetched logs:', logs.length);
+            setSessionHistory(logs);
+            return logs;
+        } catch (error) {
+            console.error("[refreshSessionLogs] Failed to fetch session logs:", error);
+            return [];
+        }
+    };
+
 
     /**
  * fetchSessionLogs (Phase 2.2)
@@ -319,29 +347,83 @@ export function NinjaProvider({ children }) {
      * Increments the daily streak if a mission is completed.
      */
     const updateStreak = async () => {
-        if (!auth.currentUser) return;
+        if (!auth.currentUser) {
+            console.warn('[updateStreak] No authenticated user');
+            return false;
+        }
+
         const today = new Date().toISOString().split('T')[0];
 
-        if (ninjaStats.lastMissionDate === today) return; // Already updated today
+        if (ninjaStats.lastMissionDate === today) {
+            console.log('[updateStreak] Streak already updated today:', today);
+            return true;
+        }
 
-        const newStreak = (ninjaStats.streakCount || 0) + 1;
-
-        setNinjaStats(prev => ({
-            ...prev,
-            streakCount: newStreak,
-            lastMissionDate: today
-        }));
-
-        // Streaks are high-importance, so we update cloud immediately
         const userRef = doc(db, "students", auth.currentUser.uid);
+        const newStreak = (ninjaStats.streakCount || 0) + 1;
 
         try {
             await updateDoc(userRef, {
                 streakCount: newStreak,
-                lastMissionDate: today
+                lastMissionDate: today,
+                lastStreakUpdate: serverTimestamp(),
+                completedMissions: ((ninjaStats.completedMissions || 0) + 1)
             });
+
+            setNinjaStats(prev => ({
+                ...prev,
+                streakCount: newStreak,
+                lastMissionDate: today,
+                completedMissions: (prev.completedMissions || 0) + 1
+            }));
+
+            setLocalBuffer({ logs: [], pointsGained: 0 });
+            localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
+
+            console.log('[updateStreak] ✅ Streak updated successfully:', {
+                newStreak,
+                today,
+                userId: auth.currentUser.uid
+            });
+
+            return true;
+
         } catch (error) {
-            console.error("Error updating streak:", error);
+            console.error('[updateStreak] ❌ Failed to update streak:', error);
+            console.log('[updateStreak] 🔄 Retrying streak update...');
+
+            await new Promise(r => setTimeout(r, 1000));
+
+            try {
+                await updateDoc(userRef, {
+                    streakCount: newStreak,
+                    lastMissionDate: today,
+                    lastStreakUpdate: serverTimestamp()
+                });
+
+                setNinjaStats(prev => ({
+                    ...prev,
+                    streakCount: newStreak,
+                    lastMissionDate: today,
+                    completedMissions: (prev.completedMissions || 0) + 1
+                }));
+
+                console.log('[updateStreak] ✅ Streak updated successfully (retry):', {
+                    newStreak,
+                    today
+                });
+
+                return true;
+
+            } catch (retryError) {
+                console.error('[updateStreak] ❌ Streak update failed permanently:', retryError);
+                localStorage.setItem(`pending_streak_${auth.currentUser.uid}`, JSON.stringify({
+                    streakCount: newStreak,
+                    lastMissionDate: today,
+                    timestamp: Date.now()
+                }));
+                return false;
+            }
         }
     };
 
@@ -356,6 +438,7 @@ export function NinjaProvider({ children }) {
             logQuestionResultLocal,
             updateStreak,
             syncToCloud,
+            refreshSessionLogs,
             loading,
             activeAchievement,
             userRole,

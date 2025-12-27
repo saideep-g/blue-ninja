@@ -13,7 +13,7 @@ import { useNinja } from '../context/NinjaContext';
  * Allows testing the Daily 10 loop with 1-2 questions.
  */
 export function useDailyMission(devQuestions = null) {
-    const { ninjaStats, setNinjaStats, logQuestionResultLocal, updatePower, updateStreak, syncToCloud } = useNinja();
+    const { ninjaStats, setNinjaStats, logQuestionResultLocal, updatePower, updateStreak, syncToCloud, refreshSessionLogs } = useNinja();
     const [missionQuestions, setMissionQuestions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
@@ -218,16 +218,39 @@ export function useDailyMission(devQuestions = null) {
         // Handle Session Progression
         if (currentIndex >= missionQuestions.length - 1) {
             setIsComplete(true);
+
             if (!isTestUser) {
-                updateStreak();
+                try {
+                    const streakUpdateSuccess = await updateStreak();
+
+                    if (streakUpdateSuccess) {
+                        console.log('[useDailyMission] ✅ Streak updated, syncing to cloud...');
+                        await syncToCloud(true);
+                    } else {
+                        console.warn('[useDailyMission] ⚠️ Streak update failed, but syncing logs anyway...');
+                        await syncToCloud(true);
+                    }
+
+                    console.log('[useDailyMission] Refreshing analytics...');
+                    await refreshSessionLogs();
+
+                } catch (error) {
+                    console.error('[useDailyMission] Error during completion:', error);
+                    try {
+                        await refreshSessionLogs();
+                    } catch (refreshError) {
+                        console.error('[useDailyMission] Failed to refresh logs:', refreshError);
+                    }
+                }
             } else {
-                // For test users, we force a sync now to verify the final payload
-                syncToCloud(true);
+                await syncToCloud(true);
+                await refreshSessionLogs();
             }
         } else {
             setCurrentIndex(prev => prev + 1);
-            setQuestionStartTime(Date.now()); // Reset timer for the next question
+            setQuestionStartTime(Date.now());
         }
+
     };
 
     return {

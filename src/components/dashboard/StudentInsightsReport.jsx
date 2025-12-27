@@ -1,19 +1,74 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNinja } from '../../context/NinjaContext';
 import { generateStudentInsights } from '../../services/insightGenerator';
 
 /**
- * STUDENT INSIGHTS REPORT
+ * STUDENT INSIGHTS REPORT (FIXED)
  * Beautiful display of actionable insights for the student
  * Shows performance, hurdles, and next steps
+ * 
+ * FIXES:
+ * ✅ Falls back to context logs if props logs are stale
+ * ✅ Adds manual refresh button for user
+ * ✅ Properly monitors log updates
  */
 export default function StudentInsightsReport({ logs, sessionHistory }) {
-    const insights = generateStudentInsights(logs || sessionHistory || []);
+    const { sessionHistory: contextLogs, refreshSessionLogs } = useNinja();
+    const [isRefreshing, setIsRefreshing] = useState(false);
+
+    // Use context logs as fallback if props logs are not provided
+    const activeLogs = logs || contextLogs || [];
+
+    useEffect(() => {
+        console.log('[StudentInsightsReport] Logs updated:', activeLogs.length);
+    }, [activeLogs]);
+
+    const handleManualRefresh = async () => {
+        setIsRefreshing(true);
+        try {
+            await refreshSessionLogs();
+            console.log('[StudentInsightsReport] ✅ Manually refreshed analytics');
+        } catch (error) {
+            console.error('[StudentInsightsReport] Refresh failed:', error);
+        } finally {
+            setIsRefreshing(false);
+        }
+    };
+
+    const insights = generateStudentInsights(activeLogs);
 
     if (insights.status === 'NO_DATA') {
         return (
             <div className="ninja-card bg-blue-50 text-center py-12">
                 <div className="text-4xl mb-4">🌊</div>
                 <p className="text-blue-800 font-bold">{insights.message}</p>
+                <button
+                    onClick={handleManualRefresh}
+                    disabled={isRefreshing}
+                    className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50"
+                >
+                    {isRefreshing ? 'Refreshing...' : 'Refresh Analytics'}
+                </button>
+            </div>
+        );
+    }
+
+    if (!activeLogs || activeLogs.length === 0) {
+        return (
+            <div className="ninja-card">
+                <h2 className="text-2xl font-black text-blue-800 mb-4">📊 Your Insights</h2>
+                <div className="text-center py-10">
+                    <div className="text-4xl mb-3">📈</div>
+                    <p className="text-blue-600 font-bold">Complete more missions to see your insights</p>
+                    <p className="text-xs text-gray-500 mt-2">Insights appear after 5+ questions</p>
+                    <button
+                        onClick={handleManualRefresh}
+                        disabled={isRefreshing}
+                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 disabled:opacity-50"
+                    >
+                        {isRefreshing ? 'Refreshing...' : 'Try Refreshing'}
+                    </button>
+                </div>
             </div>
         );
     }
@@ -27,25 +82,9 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
         nextActions,
     } = insights;
 
-
-    // Add at top:
-    if (!logs || logs.length === 0) {
-        return (
-            <div className="ninja-card">
-                <h2 className="text-2xl font-black text-blue-800 mb-4">📊 Your Insights</h2>
-                <div className="text-center py-10">
-                    <div className="text-4xl mb-3">📈</div>
-                    <p className="text-blue-600 font-bold">Complete more missions to see your insights</p>
-                    <p className="text-xs text-gray-500 mt-2">Insights appear after 5+ questions</p>
-                </div>
-            </div>
-        );
-    }
-
-
     return (
         <div className="space-y-6">
-            {/* Header */}
+            {/* Header with Refresh Button */}
             <div className="ninja-card bg-gradient-to-r from-blue-600 to-blue-800 text-white">
                 <div className="flex items-center justify-between">
                     <div>
@@ -54,11 +93,20 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
                         </h2>
                         <p className="text-blue-100">Personalized analysis based on your practice</p>
                     </div>
-                    <div className="text-right">
-                        <div className="text-4xl font-black">{semanticScore}</div>
-                        <div className="text-[10px] uppercase font-black text-blue-100">
-                            Data Quality
+                    <div className="flex flex-col items-end gap-2">
+                        <div>
+                            <div className="text-4xl font-black">{semanticScore}</div>
+                            <div className="text-[10px] uppercase font-black text-blue-100">
+                                Data Quality
+                            </div>
                         </div>
+                        <button
+                            onClick={handleManualRefresh}
+                            disabled={isRefreshing}
+                            className="text-xs bg-white/20 hover:bg-white/30 px-2 py-1 rounded font-bold disabled:opacity-50"
+                        >
+                            {isRefreshing ? '⟳' : '🔄'}
+                        </button>
                     </div>
                 </div>
             </div>
@@ -208,7 +256,7 @@ export default function StudentInsightsReport({ logs, sessionHistory }) {
                 </div>
             )}
 
-            {/* Next Actions - Step by Step */}
+            {/* Next Actions */}
             <div className="ninja-card bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200">
                 <h3 className="text-lg font-black text-green-800 mb-4 uppercase tracking-tight">
                     ✅ Your Step-by-Step Path Forward
