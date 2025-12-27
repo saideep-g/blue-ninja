@@ -9,6 +9,7 @@ Complete redesign of the learning platform to support:
 - World-class error handling UI
 - Curriculum-first architecture
 - AI-friendly validation feedback
+- Gradual rollout with feature flags
 
 ---
 
