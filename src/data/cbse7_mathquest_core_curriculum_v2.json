@@ -6,10 +6,37 @@
   "board": "CBSE (NCERT)",
   "country": "India",
   "grade_level": 7,
-  "age_range": [12, 14],
+  "age_range": [
+    12,
+    14
+  ],
   "language": "en-IN",
   "generated_at": "2025-12-27T12:00:00+00:00",
-  "design_principles": [],
-  "tracks": [],
+  "design_principles": [
+    "Learning first: interactivity must reveal thinking, not just decorate answers.",
+    "Every atom has at least one transfer-style check (novel context) and one misconception probe.",
+    "Multiple representations (number line, area model, equation, table) are built into the item mix.",
+    "Short feedback loops: wrong answers map to repair items, not just 'try again'."
+  ],
+  "tracks": [
+    {
+      "track_id": "CBSE_CORE",
+      "name": "CBSE Core",
+      "focus": "NCERT mastery, school exams, conceptual clarity",
+      "weekly_minutes_target": 180
+    },
+    {
+      "track_id": "OLYMPIAD_ENRICH",
+      "name": "Olympiad Enrichment",
+      "focus": "Non-routine reasoning, patterns, number theory, counting",
+      "weekly_minutes_target": 90
+    },
+    {
+      "track_id": "ADVANCED_FOUND",
+      "name": "Advanced Foundation",
+      "focus": "Speed + accuracy + algebra/geometry fluency foundations",
+      "weekly_minutes_target": 60
+    }
+  ],
   "modules": []
 }
