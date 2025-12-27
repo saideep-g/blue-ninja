@@ -1,22 +1,25 @@
 /**
  * src/components/admin/AdminQuestionsPanel.jsx
- * Main admin interface for managing bulk question uploads
+ * ============================================
+ * Admin interface for managing bulk question uploads.
+ * 
+ * UPDATED FOR V2 FORMAT:
+ * - Accepts V2 JSON format (items array with item_id, template_id, etc.)
+ * - Validates using new questionValidatorV2.js
+ * - Supports 14 template types
+ * - Handles both old and new formats (auto-detection)
+ * 
  * Features: file upload, real-time validation, interactive review, batch publishing
  * Production-ready with comprehensive state management and error handling
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { validateBulkUpload, generateValidationReport } from '../../services/bulkUploadValidator.js';
+import { validateBulkUploadV2 } from '../../services/bulkUploadValidatorV2.js';
 import { useIndexedDB } from '../../hooks/useIndexedDB.js';
 import FileUploadZone from './FileUploadZone.jsx';
 import ValidationReportPanel from './ValidationReportPanel.jsx';
 import QuestionReviewer from './QuestionReviewer.jsx';
 import PublishSummary from './PublishSummary.jsx';
-/**
- * FIX: Removed 'import { v4 as uuidv4 } from "crypto"'.
- * WHY: 'crypto' is a Node.js built-in and not available in browsers under Vite.
- * Modern browsers provide 'crypto.randomUUID()' natively.
- */
 import {
   Upload,
   CheckCircle,
@@ -50,12 +53,13 @@ export default function AdminQuestionsPanel() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState(new Set());
   const [validationProgress, setValidationProgress] = useState(0);
+  const [formatDetected, setFormatDetected] = useState(null); // 'V2' or 'LEGACY'
 
   // Database hook
   const db = useIndexedDB();
 
   /**
-   * Handle file upload
+   * Handle file upload and format detection
    */
   const handleFileUpload = useCallback(
     async (file) => {
@@ -63,74 +67,119 @@ export default function AdminQuestionsPanel() {
         setError(null);
         setStep(UPLOAD_STEPS.VALIDATING);
 
-        /**
-         * FIX: Use native browser crypto.randomUUID()
-         * This avoids dependencies on Node-only modules.
-         */
         const newSessionId = window.crypto.randomUUID();
         setSessionId(newSessionId);
 
         // Parse JSON file
         const text = await file.text();
-        let parsedQuestions;
+        let parsedData;
 
         try {
-          parsedQuestions = JSON.parse(text);
+          parsedData = JSON.parse(text);
         } catch (parseError) {
           throw new Error(`Invalid JSON: ${parseError.message}`);
         }
 
-        // Handle both array and object with questions property
-        if (!Array.isArray(parsedQuestions)) {
-          if (parsedQuestions.questions && Array.isArray(parsedQuestions.questions)) {
-            parsedQuestions = parsedQuestions.questions;
+        // ================================================================
+        // FORMAT DETECTION
+        // ================================================================
+
+        let items = [];
+        let detectedFormat = 'UNKNOWN';
+
+        // Check for V2 format (has schema_version and items)
+        if (
+          parsedData.schema_version &&
+          parsedData.document_type === 'mathquest_gold_standard_questions'
+        ) {
+          detectedFormat = 'V2';
+          if (Array.isArray(parsedData.items)) {
+            items = parsedData.items;
           } else {
-            throw new Error('JSON must be an array or object with "questions" property');
+            throw new Error(
+              'V2 format detected but no items array found'
+            );
           }
         }
-
-        if (parsedQuestions.length === 0) {
-          throw new Error('No questions found in file');
+        // Check for V2 items array directly
+        else if (Array.isArray(parsedData)) {
+          // Check if it looks like V2 format items
+          if (
+            parsedData.length > 0 &&
+            parsedData[0].item_id &&
+            parsedData[0].template_id
+          ) {
+            detectedFormat = 'V2';
+            items = parsedData;
+          } else {
+            throw new Error(
+              'Unknown format: items appear to be legacy format. Please use V2 format with item_id and template_id fields.'
+            );
+          }
+        }
+        // Check for legacy format with questions property
+        else if (
+          parsedData.questions &&
+          Array.isArray(parsedData.questions)
+        ) {
+          throw new Error(
+            'Legacy format detected. Please convert to V2 format with items array containing item_id, template_id, etc.'
+          );
+        } else {
+          throw new Error(
+            'Unrecognized format. Expected: V2 format with items array or V2 document with schema_version.'
+          );
         }
 
-        setQuestions(parsedQuestions);
-        setSelectedQuestionIds(new Set(parsedQuestions.map(q => q.id)));
+        if (items.length === 0) {
+          throw new Error('No items found in file');
+        }
+
+        setFormatDetected(detectedFormat);
+        setQuestions(items);
+        setSelectedQuestionIds(new Set(items.map((q, idx) => q.item_id || idx)));
 
         // Create session in IndexedDB
         try {
           await db.createSession(newSessionId, {
             fileName: file.name,
             fileSize: file.size,
-            totalQuestions: parsedQuestions.length,
-            adminId: 'current-admin', // TODO: Get from auth context
-            adminEmail: 'admin@example.com', // TODO: Get from auth context
+            totalQuestions: items.length,
+            format: detectedFormat,
+            adminId: 'current-admin',
+            adminEmail: 'admin@example.com',
             uploadedAt: Date.now()
           });
         } catch (dbError) {
           console.warn('Failed to store session in IndexedDB:', dbError);
-          // Continue anyway - validation can still happen
         }
 
-        // Store each question in IndexedDB
-        for (const question of parsedQuestions) {
+        // Store each item in IndexedDB
+        for (const item of items) {
           try {
-            await db.addPendingQuestion(question.id, {
+            await db.addPendingQuestion(item.item_id || item.id, {
               sessionId: newSessionId,
-              originalData: question,
+              originalData: item,
               editedData: null,
-              status: 'VALIDATING'
+              status: 'VALIDATING',
+              format: detectedFormat
             });
           } catch (dbError) {
-            console.warn(`Failed to store question ${question.id}:`, dbError);
+            console.warn(
+              `Failed to store item ${item.item_id}:`,
+              dbError
+            );
           }
         }
 
         // Move to validation step
         setStep(UPLOAD_STEPS.REVIEW);
-        setSuccessMessage(`Loaded ${parsedQuestions.length} questions. Starting validation...`);
+        setSuccessMessage(
+          `✅ Loaded ${items.length} items in ${detectedFormat} format. Starting validation...`
+        );
 
         // Start validation automatically
-        setTimeout(() => handleValidate(parsedQuestions), 500);
+        setTimeout(() => handleValidate(items), 500);
       } catch (err) {
         setError(err.message || 'Failed to upload file');
         setStep(UPLOAD_STEPS.UPLOAD);
@@ -154,10 +203,9 @@ export default function AdminQuestionsPanel() {
         setError(null);
         setValidationProgress(0);
 
-        // Run bulk validation with progress tracking
-        const results = await validateBulkUpload(questionsToValidate, {
+        // Run bulk validation V2
+        const results = await validateBulkUploadV2(questionsToValidate, {
           sessionId,
-          curriculum: null, // TODO: Load from context
           progressCallback: (progress) => {
             setValidationProgress(progress.percentComplete);
           },
@@ -171,31 +219,34 @@ export default function AdminQuestionsPanel() {
         if (sessionId) {
           try {
             await db.updateSession(sessionId, {
-              questionsProcessed: results.questionResults.length,
-              questionsWithErrors: results.summary.totalWithErrors,
-              questionsValidated: results.summary.totalValid
+              itemsProcessed: results.itemResults.length,
+              itemsWithErrors: results.summary.invalidItems,
+              itemsValidated: results.summary.validItems
             });
           } catch (dbError) {
             console.warn('Failed to update session:', dbError);
           }
         }
 
-        // Update each question's validation result
-        for (const result of results.questionResults) {
+        // Update each item's validation result
+        for (const result of results.itemResults) {
           try {
-            await db.updatePendingQuestion(result.questionId, {
+            await db.updatePendingQuestion(result.itemId, {
               validationResult: result,
               status: result.isValid ? 'READY_TO_PUBLISH' : 'NEEDS_REVIEW',
               errors: result.errors,
-              warnings: result.warnings
+              warnings: result.warnings,
+              qualityGrade: result.qualityGrade
             });
           } catch (dbError) {
-            console.warn(`Failed to update question ${result.questionId}:`, dbError);
+            console.warn(`Failed to update item ${result.itemId}:`, dbError);
           }
         }
 
+        const successCount = results.summary.validItems;
+        const errorCount = results.summary.invalidItems;
         setSuccessMessage(
-          `Validation complete: ${results.summary.totalValid}/${results.totalQuestions} questions valid`
+          `Validation complete: ${successCount} valid, ${errorCount} with errors`
         );
       } catch (err) {
         setError(`Validation failed: ${err.message}`);
@@ -223,11 +274,15 @@ export default function AdminQuestionsPanel() {
 
         // Determine which questions to publish
         const idsToPublish = selectedIds || selectedQuestionIds;
-        const questionsToPublish = questions.filter(q => idsToPublish.has(q.id));
+        const questionsToPublish = questions.filter((q) =>
+          idsToPublish.has(q.item_id || q.id)
+        );
 
         // Filter for only valid questions
-        const validQuestions = questionsToPublish.filter(q => {
-          const result = validationResults.questionResults.find(r => r.questionId === q.id);
+        const validQuestions = questionsToPublish.filter((q) => {
+          const result = validationResults.itemResults.find(
+            (r) => r.itemId === q.item_id || r.itemId === q.id
+          );
           return result && result.isValid;
         });
 
@@ -243,7 +298,7 @@ export default function AdminQuestionsPanel() {
         if (sessionId) {
           await db.closeSession(sessionId);
           await db.updateSession(sessionId, {
-            questionsPublished: publishedCount,
+            itemsPublished: publishedCount,
             status: 'COMPLETED'
           });
         }
@@ -256,7 +311,9 @@ export default function AdminQuestionsPanel() {
         });
 
         setStep(UPLOAD_STEPS.COMPLETED);
-        setSuccessMessage(`Successfully published ${publishedCount} questions!`);
+        setSuccessMessage(
+          `✅ Successfully published ${publishedCount} items!`
+        );
       } catch (err) {
         setError(`Publishing failed: ${err.message}`);
       } finally {
@@ -272,7 +329,7 @@ export default function AdminQuestionsPanel() {
   const simulatePublishToFirestore = async (questionsToPublish) => {
     return new Promise((resolve) => {
       setTimeout(() => {
-        console.log('Publishing', questionsToPublish.length, 'questions');
+        console.log('Publishing', questionsToPublish.length, 'items');
         resolve(questionsToPublish.length);
       }, 1000);
     });
@@ -291,6 +348,7 @@ export default function AdminQuestionsPanel() {
     setSuccessMessage(null);
     setSelectedQuestionIds(new Set());
     setValidationProgress(0);
+    setFormatDetected(null);
   }, []);
 
   return (
@@ -299,9 +357,18 @@ export default function AdminQuestionsPanel() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <FileJson className="w-8 h-8 text-blue-600" />
-          <h1 className="text-3xl font-bold text-slate-900">Admin Question Upload</h1>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Admin Question Upload
+          </h1>
+          {formatDetected && (
+            <span className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+              {formatDetected}
+            </span>
+          )}
         </div>
-        <p className="text-slate-600">Upload, validate, review, and publish bulk questions</p>
+        <p className="text-slate-600">
+          Upload, validate, review, and publish bulk questions (V2 format)
+        </p>
       </div>
 
       {/* Status Messages */}
@@ -327,30 +394,51 @@ export default function AdminQuestionsPanel() {
 
       {/* Step Indicators */}
       <div className="mb-8 flex items-center gap-2 text-sm">
-        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.UPLOAD, UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
-            ? 'bg-blue-600 text-white'
-            : 'bg-slate-200 text-slate-600'
-          }`}>
+        <div
+          className={`px-3 py-1 rounded-full ${
+            [UPLOAD_STEPS.UPLOAD, UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(
+              step
+            ) >= 0
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-600'
+          }`}
+        >
           1. Upload
         </div>
-        <div className={`w-8 h-0.5 ${[UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
-            ? 'bg-blue-600'
-            : 'bg-slate-200'
-          }`} />
-        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
-            ? 'bg-blue-600 text-white'
-            : 'bg-slate-200 text-slate-600'
-          }`}>
+        <div
+          className={`w-8 h-0.5 ${
+            [UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(
+              step
+            ) >= 0
+              ? 'bg-blue-600'
+              : 'bg-slate-200'
+          }`}
+        />
+        <div
+          className={`px-3 py-1 rounded-full ${
+            [UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(
+              step
+            ) >= 0
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-600'
+          }`}
+        >
           2. Review
         </div>
-        <div className={`w-8 h-0.5 ${[UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
-            ? 'bg-blue-600'
-            : 'bg-slate-200'
-          }`} />
-        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
-            ? 'bg-blue-600 text-white'
-            : 'bg-slate-200 text-slate-600'
-          }`}>
+        <div
+          className={`w-8 h-0.5 ${
+            [UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+              ? 'bg-blue-600'
+              : 'bg-slate-200'
+          }`}
+        />
+        <div
+          className={`px-3 py-1 rounded-full ${
+            [UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+              ? 'bg-blue-600 text-white'
+              : 'bg-slate-200 text-slate-600'
+          }`}
+        >
           3. Publish
         </div>
       </div>
@@ -365,7 +453,9 @@ export default function AdminQuestionsPanel() {
           <div className="p-8">
             <div className="flex flex-col items-center justify-center gap-4">
               <Loader className="w-12 h-12 text-blue-600 animate-spin" />
-              <h2 className="text-xl font-semibold text-slate-900">Validating Questions</h2>
+              <h2 className="text-xl font-semibold text-slate-900">
+                Validating V2 Questions
+              </h2>
               <div className="w-full max-w-md">
                 <div className="bg-slate-200 h-2 rounded-full overflow-hidden">
                   <div
@@ -373,7 +463,9 @@ export default function AdminQuestionsPanel() {
                     style={{ width: `${validationProgress}%` }}
                   />
                 </div>
-                <p className="text-center text-sm text-slate-600 mt-2">{validationProgress}%</p>
+                <p className="text-center text-sm text-slate-600 mt-2">
+                  {validationProgress}%
+                </p>
               </div>
             </div>
           </div>
@@ -403,10 +495,10 @@ export default function AdminQuestionsPanel() {
               </button>
               <button
                 onClick={() => handlePublish()}
-                disabled={isPublishing || validationResults.summary.totalWithErrors > 0}
+                disabled={isPublishing || validationResults.summary.invalidItems > 0}
                 className="ml-auto px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 rounded-lg font-medium transition"
               >
-                {isPublishing ? 'Publishing...' : 'Publish Valid Questions'}
+                {isPublishing ? 'Publishing...' : 'Publish Valid Items'}
               </button>
             </div>
           </div>
@@ -425,26 +517,33 @@ export default function AdminQuestionsPanel() {
       {step === UPLOAD_STEPS.UPLOAD && (
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 bg-blue-50 rounded-lg">
-            <h3 className="font-semibold text-blue-900 mb-2">Supported Formats</h3>
+            <h3 className="font-semibold text-blue-900 mb-2">
+              V2 Format Requirements
+            </h3>
             <ul className="text-sm text-blue-700 space-y-1">
-              <li>• JSON array of questions</li>
-              <li>• JSON object with "questions" property</li>
+              <li>• item_id, template_id, prompt</li>
+              <li>• interaction config, answer_key</li>
+              <li>• 14 template types supported</li>
             </ul>
           </div>
           <div className="p-4 bg-green-50 rounded-lg">
-            <h3 className="font-semibold text-green-900 mb-2">Required Fields</h3>
+            <h3 className="font-semibold text-green-900 mb-2">
+              Supported Templates
+            </h3>
             <ul className="text-sm text-green-700 space-y-1">
-              <li>• id, atom, type</li>
-              <li>• content, options, correctAnswer</li>
-              <li>• diagnosticTags</li>
+              <li>• MCQ_CONCEPT, NUMERIC_INPUT</li>
+              <li>• TWO_TIER, ERROR_ANALYSIS</li>
+              <li>• WORKED_EXAMPLE_COMPLETE, + 9 more</li>
             </ul>
           </div>
           <div className="p-4 bg-purple-50 rounded-lg">
-            <h3 className="font-semibold text-purple-900 mb-2">Validation</h3>
+            <h3 className="font-semibold text-purple-900 mb-2">
+              Validation Steps
+            </h3>
             <ul className="text-sm text-purple-700 space-y-1">
-              <li>• 4-tier schema validation</li>
-              <li>• Duplicate detection</li>
-              <li>• Quality metrics</li>
+              <li>✓ Schema validation</li>
+              <li>✓ Duplicate detection</li>
+              <li>✓ Quality metrics</li>
             </ul>
           </div>
         </div>
