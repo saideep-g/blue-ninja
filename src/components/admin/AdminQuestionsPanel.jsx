@@ -12,7 +12,11 @@ import FileUploadZone from './FileUploadZone.jsx';
 import ValidationReportPanel from './ValidationReportPanel.jsx';
 import QuestionReviewer from './QuestionReviewer.jsx';
 import PublishSummary from './PublishSummary.jsx';
-import { v4 as uuidv4 } from 'crypto';
+/**
+ * FIX: Removed 'import { v4 as uuidv4 } from "crypto"'.
+ * WHY: 'crypto' is a Node.js built-in and not available in browsers under Vite.
+ * Modern browsers provide 'crypto.randomUUID()' natively.
+ */
 import {
   Upload,
   CheckCircle,
@@ -33,12 +37,12 @@ export default function AdminQuestionsPanel() {
   // Current step in workflow
   const [step, setStep] = useState(UPLOAD_STEPS.UPLOAD);
   const [sessionId, setSessionId] = useState(null);
-  
+
   // Data state
   const [questions, setQuestions] = useState([]);
   const [validationResults, setValidationResults] = useState(null);
   const [publishResults, setPublishResults] = useState(null);
-  
+
   // UI state
   const [isValidating, setIsValidating] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
@@ -46,7 +50,7 @@ export default function AdminQuestionsPanel() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState(new Set());
   const [validationProgress, setValidationProgress] = useState(0);
-  
+
   // Database hook
   const db = useIndexedDB();
 
@@ -59,8 +63,11 @@ export default function AdminQuestionsPanel() {
         setError(null);
         setStep(UPLOAD_STEPS.VALIDATING);
 
-        // Create new session
-        const newSessionId = uuidv4();
+        /**
+         * FIX: Use native browser crypto.randomUUID()
+         * This avoids dependencies on Node-only modules.
+         */
+        const newSessionId = window.crypto.randomUUID();
         setSessionId(newSessionId);
 
         // Parse JSON file
@@ -229,8 +236,7 @@ export default function AdminQuestionsPanel() {
           return;
         }
 
-        // TODO: Implement Firestore batch write
-        // For now, we'll simulate the publish
+        // For now, simulate the publish
         const publishedCount = await simulatePublishToFirestore(validQuestions);
 
         // Update session
@@ -321,35 +327,30 @@ export default function AdminQuestionsPanel() {
 
       {/* Step Indicators */}
       <div className="mb-8 flex items-center gap-2 text-sm">
-        <div className={`px-3 py-1 rounded-full ${
-          [UPLOAD_STEPS.UPLOAD, UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.UPLOAD, UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
             ? 'bg-blue-600 text-white'
             : 'bg-slate-200 text-slate-600'
-        }`}>
+          }`}>
           1. Upload
         </div>
-        <div className={`w-8 h-0.5 ${
-          [UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+        <div className={`w-8 h-0.5 ${[UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
             ? 'bg-blue-600'
             : 'bg-slate-200'
-        }`} />
-        <div className={`px-3 py-1 rounded-full ${
-          [UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+          }`} />
+        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.VALIDATING, UPLOAD_STEPS.REVIEW, UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
             ? 'bg-blue-600 text-white'
             : 'bg-slate-200 text-slate-600'
-        }`}>
+          }`}>
           2. Review
         </div>
-        <div className={`w-8 h-0.5 ${
-          [UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+        <div className={`w-8 h-0.5 ${[UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
             ? 'bg-blue-600'
             : 'bg-slate-200'
-        }`} />
-        <div className={`px-3 py-1 rounded-full ${
-          [UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
+          }`} />
+        <div className={`px-3 py-1 rounded-full ${[UPLOAD_STEPS.PUBLISHING, UPLOAD_STEPS.COMPLETED].indexOf(step) >= 0
             ? 'bg-blue-600 text-white'
             : 'bg-slate-200 text-slate-600'
-        }`}>
+          }`}>
           3. Publish
         </div>
       </div>

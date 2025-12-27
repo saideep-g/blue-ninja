@@ -22,6 +22,8 @@ import TeacherAnalyticsDashboard from './components/admin/TeacherAnalyticsDashbo
 import ParentDashboard from './components/parent/ParentDashboard';
 import AnalyticsLogViewer from './components/admin/AnalyticsLogViewer';
 import AdminAnalyticsDashboard from './components/admin/AdminAnalyticsDashboard';
+import AdminQuestionsPanel from './components/admin/AdminQuestionsPanel.jsx';
+
 
 /**
  * Blue Ninja Content Component - SECURITY FIXED
@@ -463,6 +465,8 @@ export default function App() {
               />
             }
           />
+          <Route path="/admin/questions" element={<AdminQuestionsPanel />} />
+
 
           {/* Catch-all: redirect unknown routes to home */}
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -21,7 +21,13 @@ const ValidationReportPanel = ({ results }) => {
     return null;
   }
 
-  const { summary, statistics, globalIssues, performanceMetrics } = results;
+  /**
+   * FIX: Destructuring mismatch
+   * The validator service returns 'coverage' and 'summary' (which contains quality distribution).
+   * 'statistics' was undefined in the original code, causing the crash.
+   */
+  const { summary, coverage, globalIssues, performanceMetrics } = results;
+
   const validPercentage = results.totalQuestions > 0
     ? Math.round((summary.totalValid / results.totalQuestions) * 100)
     : 0;
@@ -37,6 +43,18 @@ const ValidationReportPanel = ({ results }) => {
     return colors[grade] || colors.F;
   };
 
+  /**
+   * FIX: Calculate Quality Score
+   * Since the service doesn't provide a pre-calculated average, we compute it 
+   * here based on the grade distribution (A=4, B=3, C=2, D=1, F=0).
+   */
+  const calculateAverageQuality = () => {
+    const dist = summary.qualityGradeDistribution || {};
+    const total = results.totalQuestions || 1;
+    const score = (dist.A * 4) + (dist.B * 3) + (dist.C * 2) + (dist.D * 1);
+    return (score / total).toFixed(2);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Summary */}
@@ -44,13 +62,11 @@ const ValidationReportPanel = ({ results }) => {
         <h2 className="text-2xl font-bold mb-6">Validation Summary</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          {/* Total Questions */}
           <div className="bg-white/10 rounded-lg p-4">
             <p className="text-sm text-slate-300 mb-1">Total Questions</p>
             <p className="text-3xl font-bold">{results.totalQuestions}</p>
           </div>
 
-          {/* Valid Questions */}
           <div className="bg-green-500/20 rounded-lg p-4 border border-green-500/30">
             <p className="text-sm text-slate-300 mb-1">Valid</p>
             <p className="text-3xl font-bold">
@@ -59,23 +75,20 @@ const ValidationReportPanel = ({ results }) => {
             </p>
           </div>
 
-          {/* Needs Review */}
           <div className="bg-yellow-500/20 rounded-lg p-4 border border-yellow-500/30">
             <p className="text-sm text-slate-300 mb-1">Needs Review</p>
             <p className="text-3xl font-bold">
               {summary.totalWithErrors}
-              <span className="text-lg ml-2">({summary.totalWithCriticalErrors} critical)</span>
+              <span className="text-lg ml-2">({summary.totalWithCriticalErrors || 0} critical)</span>
             </p>
           </div>
 
-          {/* Warnings */}
           <div className="bg-blue-500/20 rounded-lg p-4 border border-blue-500/30">
             <p className="text-sm text-slate-300 mb-1">Warnings</p>
             <p className="text-3xl font-bold">{summary.totalWithWarnings}</p>
           </div>
         </div>
 
-        {/* Progress Bar */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium">Validation Progress</p>
@@ -90,20 +103,18 @@ const ValidationReportPanel = ({ results }) => {
         </div>
       </div>
 
-      {/* Quality Metrics Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Quality Grade Distribution */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">
           <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
             <BarChart3 className="w-5 h-5 text-blue-600" />
             Quality Grades
           </h3>
           <div className="space-y-2">
-            {Object.entries(statistics.qualityGradeBreakdown || {}).map(([grade, count]) => (
+            {/** FIX: Mapped to summary.qualityGradeDistribution instead of statistics.qualityGradeBreakdown */}
+            {Object.entries(summary.qualityGradeDistribution || {}).map(([grade, count]) => (
               <div key={grade} className="flex items-center gap-3">
-                <span className={`inline-block px-3 py-1 rounded font-semibold text-sm border ${
-                  getGradeColor(grade)
-                }`}>
+                <span className={`inline-block px-3 py-1 rounded font-semibold text-sm border ${getGradeColor(grade)
+                  }`}>
                   {grade}
                 </span>
                 <div className="flex-1 bg-slate-100 h-2 rounded-full overflow-hidden">
@@ -118,12 +129,11 @@ const ValidationReportPanel = ({ results }) => {
           </div>
           <div className="mt-4 p-3 bg-blue-50 rounded">
             <p className="text-sm text-blue-900">
-              <span className="font-semibold">Average Quality Score:</span> {statistics.averageQualityScore}
+              <span className="font-semibold">Average Quality Score:</span> {calculateAverageQuality()}
             </p>
           </div>
         </div>
 
-        {/* Coverage Stats */}
         <div className="bg-white border border-slate-200 rounded-lg p-6">
           <h3 className="font-semibold text-slate-900 mb-4 flex items-center gap-2">
             <Info className="w-5 h-5 text-purple-600" />
@@ -133,13 +143,14 @@ const ValidationReportPanel = ({ results }) => {
             <div>
               <p className="text-sm text-slate-600 mb-1">Atoms Covered</p>
               <p className="text-2xl font-bold text-slate-900">
-                {Object.keys(statistics.atomCoverage || {}).length}
+                {/** FIX: Mapped to 'coverage' object directly */}
+                {Object.keys(coverage || {}).length}
               </p>
             </div>
             <div>
               <p className="text-sm text-slate-600 mb-2">Top Atoms by Questions</p>
               <div className="space-y-1">
-                {(Object.entries(statistics.atomCoverage || {}))
+                {(Object.entries(coverage || {}))
                   .sort((a, b) => b[1] - a[1])
                   .slice(0, 5)
                   .map(([atom, count]) => (
@@ -154,11 +165,11 @@ const ValidationReportPanel = ({ results }) => {
         </div>
       </div>
 
-      {/* Question Type Distribution */}
       <div className="bg-white border border-slate-200 rounded-lg p-6">
         <h3 className="font-semibold text-slate-900 mb-4">Question Types</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
-          {Object.entries(statistics.typeDistribution || {}).map(([type, count]) => (
+          {/** Note: Ensure your validator calculates typeDistribution in summary or results */}
+          {Object.entries(summary.typeDistribution || {}).map(([type, count]) => (
             <div key={type} className="bg-slate-50 rounded-lg p-4 text-center">
               <p className="text-2xl font-bold text-blue-600 mb-1">{count}</p>
               <p className="text-xs text-slate-600 break-words">{type}</p>
@@ -167,7 +178,6 @@ const ValidationReportPanel = ({ results }) => {
         </div>
       </div>
 
-      {/* Global Issues */}
       {globalIssues && globalIssues.length > 0 && (
         <div className="bg-white border border-slate-200 rounded-lg overflow-hidden">
           <div className="bg-slate-50 px-6 py-4 border-b border-slate-200">
@@ -210,18 +220,6 @@ const ValidationReportPanel = ({ results }) => {
                         <span className="font-semibold">Impact:</span> {issue.impact}
                       </p>
                     )}
-                    {issue.duplicateIds && (
-                      <div>
-                        <p className="font-semibold mb-2">Duplicate IDs:</p>
-                        <ul className="list-disc list-inside space-y-1">
-                          {issue.duplicateIds.map((dup, i) => (
-                            <li key={i}>
-                              <code className="bg-white px-1 rounded">{dup.id}</code> ({dup.count}x)
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
                   </div>
                 )}
               </div>
@@ -230,17 +228,22 @@ const ValidationReportPanel = ({ results }) => {
         </div>
       )}
 
-      {/* Performance Metrics */}
       <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
         <h4 className="font-semibold text-slate-900 mb-3 text-sm">Performance Metrics</h4>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
             <p className="text-slate-600">Total Duration</p>
-            <p className="font-mono text-slate-900">{performanceMetrics.totalDuration}ms</p>
+            <p className="font-mono text-slate-900">
+              {/** FIX: Mapped to totalTimeMs from results object */}
+              {Math.round(performanceMetrics?.totalTimeMs || 0)}ms
+            </p>
           </div>
           <div>
             <p className="text-slate-600">Avg per Question</p>
-            <p className="font-mono text-slate-900">{performanceMetrics.averagePerQuestion}ms</p>
+            <p className="font-mono text-slate-900">
+              {/** FIX: Mapped to averageTimePerQuestionMs from results object */}
+              {Math.round(performanceMetrics?.averageTimePerQuestionMs || 0)}ms
+            </p>
           </div>
           <div>
             <p className="text-slate-600">Validated At</p>
@@ -250,11 +253,10 @@ const ValidationReportPanel = ({ results }) => {
           </div>
           <div>
             <p className="text-slate-600">Status</p>
-            <p className={`font-semibold ${
-              validPercentage === 100 ? 'text-green-600' :
-              validPercentage >= 80 ? 'text-blue-600' :
-              'text-amber-600'
-            }`}>
+            <p className={`font-semibold ${validPercentage === 100 ? 'text-green-600' :
+                validPercentage >= 80 ? 'text-blue-600' :
+                  'text-amber-600'
+              }`}>
               {validPercentage === 100 ? 'Ready' : 'Review Needed'}
             </p>
           </div>

@@ -24,16 +24,16 @@
  * const result = await db.getValidationCache('Q1');
  */
 
-import Dexie, { type Table } from 'dexie';
+import Dexie from 'dexie';
 
 // ============================================================================
 // DATABASE SCHEMA
 // ============================================================================
 
 export class AdminPanelDB extends Dexie {
-  pendingQuestions: Table;
-  uploadSessions: Table;
-  validationCache: Table;
+  pendingQuestions;
+  uploadSessions;
+  validationCache;
 
   constructor() {
     super('AdminPanelDB');
