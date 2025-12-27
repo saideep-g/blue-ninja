@@ -1,0 +1,1179 @@
+{
+  "schema_version": "2.0",
+  "document_type": "template_library",
+  "library_id": "MATHQUEST_TEMPLATES",
+  "generated_at": "2025-12-27T12:00:00+00:00",
+  "design_notes": [
+    "Templates are UI contracts: they specify what data the generator must produce and what telemetry the app must log.",
+    "A template should expose learner thinking (strategy, representation, estimation, checks). Avoid templates that only test recognition unless paired with explanation/transfer."
+  ],
+  "templates": [
+    {
+      "template_id": "BALANCE_OPS",
+      "name": "Algebra Balance (operation-based, not guess-slider)",
+      "best_for": [
+        "equations",
+        "inverse operations",
+        "equivalence"
+      ],
+      "avoid_when": [],
+      "evidence_type": "mental_model",
+      "grading": {
+        "model": "process",
+        "details": "sequence of valid operations"
+      },
+      "ui": {
+        "input_mode": "tap",
+        "components": [
+          "scale_visual",
+          "operation_buttons",
+          "step_log"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "invalid move explanation",
+          "principle: do to both sides"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "BALANCE_SLIDER",
+      "name": "Algebra Balance Slider",
+      "best_for": [
+        "linear equations",
+        "inverse operations",
+        "conceptual balance metaphor"
+      ],
+      "avoid_when": [
+        "equations needing multi-step symbolic manipulation beyond slider range"
+      ],
+      "evidence_type": "procedural+conceptual",
+      "grading": {
+        "auto": "exact_on_target_or_within_tolerance"
+      },
+      "ui": {
+        "primary_interaction": "slider",
+        "a11y": "keyboard increment/decrement + numeric entry backup"
+      },
+      "feedback": {
+        "immediate": "tilt_visual + highlight inverse operation",
+        "after_submit": "worked steps"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "equation",
+          "target_value"
+        ],
+        "optional_fields": [
+          "range",
+          "solution_steps"
+        ],
+        "answer_format": "interactive_balance"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "CLASSIFY_SORT",
+      "name": "Classify / Sort (drag into bins)",
+      "best_for": [
+        "properties",
+        "types",
+        "number sets",
+        "angles",
+        "symmetry"
+      ],
+      "avoid_when": [],
+      "evidence_type": "concept+process",
+      "grading": {
+        "model": "set_membership"
+      },
+      "ui": {
+        "input_mode": "drag",
+        "components": [
+          "items",
+          "bins",
+          "drag_drop"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "why item belongs",
+          "counterexample"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "DRAG_DROP_MATCH",
+      "name": "Match Pairs",
+      "best_for": [
+        "properties to examples",
+        "terms to definitions",
+        "equivalent fractions"
+      ],
+      "avoid_when": [
+        "when guessing is too easy; add explanation follow-up"
+      ],
+      "evidence_type": "conceptual+procedural",
+      "grading": {
+        "auto": "matching set"
+      },
+      "ui": {
+        "primary_interaction": "drag+drop",
+        "a11y": "select source then target"
+      },
+      "feedback": {
+        "immediate": "show incorrect links, keep correct ones"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "left_items",
+          "right_items",
+          "correct_matches"
+        ],
+        "optional_fields": [
+          "distractors",
+          "solution_steps"
+        ],
+        "answer_format": "matching"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "ERROR_ANALYSIS",
+      "name": "Spot-the-Error",
+      "best_for": [
+        "misconceptions",
+        "careless errors",
+        "concept check through critique"
+      ],
+      "avoid_when": [
+        "very early intro when student lacks baseline model"
+      ],
+      "evidence_type": "logical",
+      "grading": {
+        "auto": "error_type + corrected step"
+      },
+      "ui": {
+        "primary_interaction": "highlight step + choose error type",
+        "a11y": "text-based highlight list"
+      },
+      "feedback": {
+        "after_submit": "explain why it's wrong and a repair mini-item"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "worked_solution",
+          "error_type_options",
+          "correct_error_type",
+          "fix_prompt"
+        ],
+        "optional_fields": [
+          "solution_steps"
+        ],
+        "answer_format": "diagnose_error"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "EXPRESSION_INPUT",
+      "name": "Expression Input (equivalence-checked)",
+      "best_for": [
+        "algebra",
+        "simplification",
+        "generalization"
+      ],
+      "avoid_when": [],
+      "evidence_type": "retrieval",
+      "grading": {
+        "model": "equivalence"
+      },
+      "ui": {
+        "input_mode": "math_input",
+        "components": [
+          "math_keyboard_optional",
+          "latex_preview_optional"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "equivalence reason",
+          "simplify hint"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "GEOMETRY_TAP",
+      "name": "Tap the Region",
+      "best_for": [
+        "angles",
+        "symmetry",
+        "triangles",
+        "congruence criteria"
+      ],
+      "avoid_when": [
+        "figures too complex without zoom"
+      ],
+      "evidence_type": "spatial reasoning",
+      "grading": {
+        "auto": "region id"
+      },
+      "ui": {
+        "primary_interaction": "tap region",
+        "a11y": "list of regions"
+      },
+      "feedback": {
+        "after_submit": "overlay and explanation"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "figure_spec",
+          "correct_regions"
+        ],
+        "optional_fields": [
+          "solution_steps"
+        ],
+        "answer_format": "spatial_selection"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "GRAPH_PLOT",
+      "name": "Plot on Grid",
+      "best_for": [
+        "coordinate plane",
+        "data handling",
+        "functions foundations"
+      ],
+      "avoid_when": [
+        "no reliable touch precision on small screens without zoom"
+      ],
+      "evidence_type": "representation",
+      "grading": {
+        "auto": "distance/tolerance"
+      },
+      "ui": {
+        "primary_interaction": "tap/drag points",
+        "a11y": "alternative table entry"
+      },
+      "feedback": {
+        "immediate": "snap-to-grid + show error distance"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "axes",
+          "target_points_or_curve"
+        ],
+        "optional_fields": [
+          "tolerance",
+          "solution_steps"
+        ],
+        "answer_format": "graphing"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "MATCHING",
+      "name": "Matching Pairs",
+      "best_for": [
+        "representation shifts",
+        "word ↔ expression",
+        "graph ↔ table"
+      ],
+      "avoid_when": [],
+      "evidence_type": "representation",
+      "grading": {
+        "model": "set_membership"
+      },
+      "ui": {
+        "input_mode": "match",
+        "components": [
+          "left_cards",
+          "right_cards"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "why match is correct"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "MCQ_CONCEPT",
+      "name": "Concept MCQ (with misconception tags)",
+      "best_for": [
+        "concept discrimination",
+        "vocabulary",
+        "quick checks"
+      ],
+      "avoid_when": [
+        "mastery decisions alone",
+        "procedures prone to guessing"
+      ],
+      "evidence_type": "recognition",
+      "grading": {
+        "model": "exact"
+      },
+      "ui": {
+        "input_mode": "choice",
+        "components": [
+          "prompt",
+          "options",
+          "one_tap_select"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "why correct",
+          "why common wrong options fail"
+        ],
+        "recommended_followup": "TRANSFER_MINI"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "stem",
+          "options",
+          "correct_option_id"
+        ],
+        "optional_fields": [
+          "misconception_option_map",
+          "explanation",
+          "solution_steps"
+        ],
+        "answer_format": "single_choice"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "MULTI_STEP_WORD",
+      "name": "Multi-step Word Problem (structured entry)",
+      "best_for": [
+        "transfer",
+        "modeling",
+        "real-life math"
+      ],
+      "avoid_when": [],
+      "evidence_type": "transfer",
+      "grading": {
+        "model": "process+exact",
+        "details": "check intermediate steps + final"
+      },
+      "ui": {
+        "input_mode": "multi_part",
+        "components": [
+          "story_prompt",
+          "step_fields",
+          "final_field"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "where reasoning broke",
+          "unit sense",
+          "estimation check"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "NUMBER_LINE_PLACE",
+      "name": "Number Line Placement",
+      "best_for": [
+        "magnitude",
+        "fractions/decimals",
+        "integers",
+        "inequalities"
+      ],
+      "avoid_when": [],
+      "evidence_type": "representation",
+      "grading": {
+        "model": "tolerance",
+        "default_tolerance": 0.02
+      },
+      "ui": {
+        "input_mode": "drag",
+        "components": [
+          "number_line",
+          "draggable_point"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "nearest benchmark",
+          "reasoning prompt"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "line_min",
+          "line_max",
+          "target_value"
+        ],
+        "optional_fields": [
+          "ticks",
+          "snap_points",
+          "solution_steps"
+        ],
+        "answer_format": "number_line_place"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "NUMERIC_INPUT",
+      "name": "Numeric Input",
+      "best_for": [
+        "retrieval",
+        "fluency",
+        "reduced guessing"
+      ],
+      "avoid_when": [],
+      "evidence_type": "retrieval",
+      "grading": {
+        "model": "exact",
+        "alt": [
+          "tolerance"
+        ]
+      },
+      "ui": {
+        "input_mode": "number",
+        "components": [
+          "number_field",
+          "check_button"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "units check",
+          "common wrong answer detection"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "stem",
+          "correct_value"
+        ],
+        "optional_fields": [
+          "tolerance",
+          "units",
+          "work_shown_prompt",
+          "solution_steps"
+        ],
+        "answer_format": "numeric"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "SHORT_EXPLAIN",
+      "name": "Short Explain (rubric-lite)",
+      "best_for": [
+        "justification",
+        "reasoning practice",
+        "transfer checks"
+      ],
+      "avoid_when": [],
+      "evidence_type": "reasoning",
+      "grading": {
+        "model": "rubric_lite",
+        "key_points": "template-defined"
+      },
+      "ui": {
+        "input_mode": "short_text",
+        "components": [
+          "prompt",
+          "short_answer_box",
+          "sentence_frames_optional"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "which key point missing",
+          "example sentence frame"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "SIMULATION",
+      "name": "Simulation (probability/experiments)",
+      "best_for": [
+        "probability intuition",
+        "data handling"
+      ],
+      "avoid_when": [],
+      "evidence_type": "concept+transfer",
+      "grading": {
+        "model": "set_membership",
+        "details": "interpret results"
+      },
+      "ui": {
+        "input_mode": "interact",
+        "components": [
+          "simulate_button",
+          "results_table",
+          "interpret_question"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "law of large numbers intuition",
+          "compare theoretical vs experimental"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "SORT_ORDER",
+      "name": "Order / Rank",
+      "best_for": [
+        "number ordering",
+        "steps ordering",
+        "data ranking"
+      ],
+      "avoid_when": [
+        "too many items causing working memory overload"
+      ],
+      "evidence_type": "procedural+representation",
+      "grading": {
+        "auto": "Kendall tau + exact"
+      },
+      "ui": {
+        "primary_interaction": "drag reorder",
+        "a11y": "move up/down buttons"
+      },
+      "feedback": {
+        "after_submit": "show minimal swaps to fix"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "items",
+          "correct_order"
+        ],
+        "optional_fields": [
+          "solution_steps"
+        ],
+        "answer_format": "ordering"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "SPINNER_PROB",
+      "name": "Probability Spinner",
+      "best_for": [
+        "fractions->probability",
+        "angles as fractions of 360",
+        "ratio intuition"
+      ],
+      "avoid_when": [
+        "student not yet comfortable with fractions/angles"
+      ],
+      "evidence_type": "transfer+representation",
+      "grading": {
+        "auto": "degrees within tolerance"
+      },
+      "ui": {
+        "primary_interaction": "rotate segment",
+        "a11y": "numeric degrees entry"
+      },
+      "feedback": {
+        "after_submit": "connect 1/8 to 45 degrees"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "target_probability"
+        ],
+        "optional_fields": [
+          "degrees",
+          "solution_steps"
+        ],
+        "answer_format": "interactive_probability"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "STEP_BUILDER",
+      "name": "Step Builder (Reasoned Solution)",
+      "best_for": [
+        "multi-step problems",
+        "show-your-work",
+        "Olympiad reasoning"
+      ],
+      "avoid_when": [
+        "pure recall facts"
+      ],
+      "evidence_type": "procedural+logical",
+      "grading": {
+        "auto": "per-step checks + final answer",
+        "rubric": "strategy, correctness, efficiency"
+      },
+      "ui": {
+        "primary_interaction": "drag steps or type each step",
+        "a11y": "screen-reader step list"
+      },
+      "feedback": {
+        "immediate": "per-step nudges",
+        "after_submit": "compare with optimal path"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "steps_schema",
+          "expected_steps"
+        ],
+        "optional_fields": [
+          "solution_steps",
+          "hints"
+        ],
+        "answer_format": "structured_steps"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "STEP_ORDER",
+      "name": "Order the Steps",
+      "best_for": [
+        "procedural understanding",
+        "equations",
+        "multi-step problems"
+      ],
+      "avoid_when": [],
+      "evidence_type": "process",
+      "grading": {
+        "model": "order"
+      },
+      "ui": {
+        "input_mode": "drag",
+        "components": [
+          "step_cards",
+          "drag_reorder"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "first incorrect position",
+          "why order matters"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "TABLE_FILL",
+      "name": "Fill the Table",
+      "best_for": [
+        "patterns",
+        "proportions",
+        "data",
+        "function tables"
+      ],
+      "avoid_when": [
+        "answers too open-ended without clear schema"
+      ],
+      "evidence_type": "procedural+transfer",
+      "grading": {
+        "auto": "cell-by-cell"
+      },
+      "ui": {
+        "primary_interaction": "cell input",
+        "a11y": "row/col navigation"
+      },
+      "feedback": {
+        "after_submit": "show how table encodes the rule"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "prompt",
+          "table_schema",
+          "correct_cells"
+        ],
+        "optional_fields": [
+          "solution_steps"
+        ],
+        "answer_format": "tabular_entry"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "TRANSFER_MINI",
+      "name": "Transfer Mini (same idea, different wrapper)",
+      "best_for": [
+        "retention",
+        "generalization"
+      ],
+      "avoid_when": [],
+      "evidence_type": "transfer",
+      "grading": {
+        "model": "exact"
+      },
+      "ui": {
+        "input_mode": "varies"
+      },
+      "feedback": {
+        "include": [
+          "connect back to core idea"
+        ]
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "scenario",
+          "question",
+          "correct_answer"
+        ],
+        "optional_fields": [
+          "solution_steps",
+          "reflection_prompt"
+        ],
+        "answer_format": "transfer_short"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "TWO_TIER",
+      "name": "Two-tier (Answer + Reason)",
+      "best_for": [
+        "reduce guessing",
+        "concept + justification"
+      ],
+      "avoid_when": [],
+      "evidence_type": "recognition+reason",
+      "grading": {
+        "model": "exact",
+        "combine": "both_correct_required"
+      },
+      "ui": {
+        "input_mode": "choice",
+        "components": [
+          "answer_options",
+          "reason_options"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "which tier failed",
+          "targeted hint"
+        ],
+        "recommended_followup": "ERROR_ANALYSIS"
+      },
+      "question_payload_contract": {
+        "required_fields": [
+          "stem",
+          "tier1_options",
+          "tier2_reason_options",
+          "correct_tier1_id",
+          "correct_tier2_id"
+        ],
+        "optional_fields": [
+          "misconception_reason_map",
+          "solution_steps"
+        ],
+        "answer_format": "two_stage_choice"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    },
+    {
+      "template_id": "WORKED_EXAMPLE_COMPLETE",
+      "name": "Worked Example Completion (fill blanks)",
+      "best_for": [
+        "scaffolded learning",
+        "procedures",
+        "reducing cognitive load"
+      ],
+      "avoid_when": [],
+      "evidence_type": "process",
+      "grading": {
+        "model": "exact"
+      },
+      "ui": {
+        "input_mode": "fill",
+        "components": [
+          "partially_solved_steps",
+          "blanks"
+        ]
+      },
+      "feedback": {
+        "include": [
+          "step-level feedback"
+        ],
+        "recommended_followup": "NUMERIC_INPUT"
+      },
+      "question_payload_contract": {
+        "required_fields": [],
+        "optional_fields": [],
+        "answer_format": "varies"
+      },
+      "telemetry": {
+        "events_required": [
+          "item_viewed",
+          "first_action",
+          "attempt_submitted",
+          "feedback_shown"
+        ],
+        "events_optional": [
+          "hint_used",
+          "step_added",
+          "drag_drop",
+          "undo",
+          "retry"
+        ]
+      }
+    }
+  ]
+}

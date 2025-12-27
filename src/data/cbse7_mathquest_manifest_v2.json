@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "document_type": "curriculum_manifest",
+  "curriculum_id": "mathquest-cbse7-olympiad-eapcet-foundation",
+  "title": "CBSE Grade 7 MathQuest Core Curriculum (CBSE + Olympiad + EAPCET foundation)",
+  "generated_at": "2025-12-27T12:00:00+00:00",
+  "documents": {
+    "core_curriculum": "cbse7_mathquest_core_curriculum_v2.json",
+    "template_library": "mathquest_template_library_v2.json",
+    "assessment_guide": "cbse7_mathquest_assessment_guide_v2.json"
+  },
+  "compatibility": {
+    "frontend_contract": "Question items validated against assessment_guide.json_schemas.question_item_schema",
+    "id_stability": "atom_id and template_id are treated as stable identifiers across minor versions"
+  }
+}

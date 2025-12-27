@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0",
   "document_type": "core_curriculum",
-  "curriculum_id": "mathquest-cbse7-olympiad-eapcet-foundation",
-  "title": "CBSE Grade 7 MathQuest Core Curriculum (CBSE + Olympiad + EAPCET foundation)",
+  "curriculum_id": "mathquest-cbse7-olympiad",
+  "title": "CBSE Grade 7 MathQuest Core Curriculum",
   "board": "CBSE (NCERT)",
   "country": "India",
   "grade_level": 7,
@@ -38,5 +38,4881 @@
       "weekly_minutes_target": 60
     }
   ],
-  "modules": []
+  "modules": [
+    {
+      "module_id": "CBSE7-PS-FOUNDATIONS",
+      "title": "Problem-Solving Foundations (all chapters)",
+      "domain": "Habits of Mind",
+      "big_ideas": [
+        "Good solvers represent the problem before calculating.",
+        "Checking is part of solving: estimate, use units, and reverse operations.",
+        "Explaining your reasoning makes your thinking stronger and reveals gaps."
+      ],
+      "estimated_sessions": 8,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": null,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.PS.STRAT.01",
+          "title": "Plan–Solve–Check (a repeatable routine)",
+          "core_idea": "A simple routine reduces careless errors and increases understanding.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.PS.STRAT.01.LO01",
+              "type": "conceptual",
+              "statement": "Identify what is asked, what is given, and what is unknown."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.01.LO02",
+              "type": "conceptual",
+              "statement": "Choose a representation (number line, table, diagram, equation)."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.01.LO03",
+              "type": "conceptual",
+              "statement": "Check by estimation, units, or reverse operation."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_77F26D0479",
+            "MIS_A445CB257B"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "strategy",
+            "metacognition"
+          ],
+          "mastery_profile_id": "MP_REASONING"
+        },
+        {
+          "atom_id": "CBSE7.PS.STRAT.02",
+          "title": "Estimation & Reasonableness Checks",
+          "core_idea": "Estimation is a safety net: your answer should make sense in size and units. Start with whole-number rounding; extend to decimals later.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.PS.STRAT.02.LO01",
+              "type": "conceptual",
+              "statement": "Round numbers to estimate results quickly."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.02.LO02",
+              "type": "conceptual",
+              "statement": "Detect unreasonable answers (wrong magnitude)."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.02.LO03",
+              "type": "conceptual",
+              "statement": "Use inverse operations to verify."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_E29EF07B92",
+            "MIS_534661853A"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "estimation",
+            "checking"
+          ],
+          "mastery_profile_id": "MP_REASONING"
+        },
+        {
+          "atom_id": "CBSE7.PS.STRAT.03",
+          "title": "Explain Your Reasoning (short proofs)",
+          "core_idea": "A short explanation uses a claim, evidence (math fact), and a conclusion.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.PS.STRAT.03.LO01",
+              "type": "conceptual",
+              "statement": "Write a 1–2 sentence justification using a known fact."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.03.LO02",
+              "type": "conceptual",
+              "statement": "Use sentence frames ('Because..., therefore...')."
+            },
+            {
+              "outcome_id": "CBSE7.PS.STRAT.03.LO03",
+              "type": "conceptual",
+              "statement": "Identify missing steps in an explanation."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_901B0DC5AC",
+            "MIS_4AC0309788"
+          ],
+          "template_ids": [
+            "SHORT_EXPLAIN",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "communication",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_REASONING"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH01-INTEGERS",
+      "title": "Chapter 1: Integers",
+      "domain": "Number System",
+      "big_ideas": [
+        "Integers extend whole numbers to include negatives and zero.",
+        "The number line is a map of magnitude; distance and direction matter.",
+        "Operations on integers can be understood as movement patterns, not memorized rules."
+      ],
+      "estimated_sessions": 10,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 1,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH01.INT.01",
+          "title": "Integers on the Number Line (compare & order)",
+          "core_idea": "Integers represent positions on a number line; to compare, look at who is to the right.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.01.LO01",
+              "type": "conceptual",
+              "statement": "Place positive, negative, and zero on a number line."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.01.LO02",
+              "type": "logical",
+              "statement": "Compare and order integers using >, <."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.01.LO03",
+              "type": "logical",
+              "statement": "Explain why -3 is greater than -7 using the number line."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_E5EFB3E9DF",
+            "MIS_D20B6C7611"
+          ],
+          "template_ids": [
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "number_sense",
+            "representation"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH01.INT.02",
+          "title": "Add & Subtract Integers (as movement)",
+          "core_idea": "Adding moves right/left on the number line; subtraction is adding the opposite.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.02.LO01",
+              "type": "transfer",
+              "statement": "Add integers using a number line model."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.02.LO02",
+              "type": "conceptual",
+              "statement": "Subtract integers by rewriting as addition of the opposite."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.02.LO03",
+              "type": "logical",
+              "statement": "Explain why subtracting a negative increases the value."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.01"
+          ],
+          "misconception_ids": [
+            "MIS_1B55BC1E23",
+            "MIS_09B3FB3D50"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "operations",
+            "integers"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH01.INT.03",
+          "title": "Multiply & Divide Integers (pattern + meaning)",
+          "core_idea": "Signs in multiplication/division follow a consistent pattern that preserves arithmetic structure.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.03.LO01",
+              "type": "conceptual",
+              "statement": "Multiply and divide integers correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.03.LO02",
+              "type": "logical",
+              "statement": "Justify sign rules using patterns (e.g., decreasing by 3)."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.03.LO03",
+              "type": "conceptual",
+              "statement": "Identify and correct common sign mistakes."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.02"
+          ],
+          "misconception_ids": [
+            "MIS_71204AE506",
+            "MIS_B2A9639701"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "operations",
+            "patterns"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH01.INT.04",
+          "title": "Order of Operations with Integers",
+          "core_idea": "A standard order (brackets, exponents, multiplication/division, addition/subtraction) prevents ambiguity.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.04.LO01",
+              "type": "procedural",
+              "statement": "Evaluate expressions with integers using correct order of operations."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.04.LO02",
+              "type": "conceptual",
+              "statement": "Use parentheses to change the value intentionally."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.04.LO03",
+              "type": "conceptual",
+              "statement": "Spot and correct order-of-operations mistakes."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_47024413AF",
+            "MIS_28A808D789"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "expressions"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH01.INT.05",
+          "title": "Absolute Value as Distance",
+          "core_idea": "Absolute value measures distance from zero, not 'making a number positive' as a trick.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.05.LO01",
+              "type": "conceptual",
+              "statement": "Interpret |a| as distance from 0."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.05.LO02",
+              "type": "procedural",
+              "statement": "Solve simple distance questions (e.g., distance between -3 and 5)."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.05.LO03",
+              "type": "conceptual",
+              "statement": "Avoid common absolute value misconceptions."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.01"
+          ],
+          "misconception_ids": [
+            "MIS_1CDF8A468C",
+            "MIS_D7CD6012B7"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "representation",
+            "distance"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH01.INT.06",
+          "title": "Integer Word Problems (Model + Check)",
+          "core_idea": "A good model (number line or context table) plus a reasonableness check prevents sign errors.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH01.INT.06.LO01",
+              "type": "conceptual",
+              "statement": "Translate a word situation into integer operations."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.06.LO02",
+              "type": "procedural",
+              "statement": "Choose a representation (number line/table) and solve."
+            },
+            {
+              "outcome_id": "CBSE7.CH01.INT.06.LO03",
+              "type": "conceptual",
+              "statement": "Check reasonableness using estimation or a reverse operation."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.02",
+            "CBSE7.PS.STRAT.02"
+          ],
+          "misconception_ids": [
+            "MIS_127F51E42E",
+            "MIS_655825A3EE"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "transfer",
+            "modeling"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH02-FRACTIONS-DECIMALS",
+      "title": "Chapter 2: Fractions and Decimals",
+      "domain": "Number System",
+      "big_ideas": [
+        "Fractions describe parts of a whole and ratios; equivalent fractions are the same value in different forms.",
+        "Magnitude matters: place fractions and decimals on a number line to reason, not guess.",
+        "Operations on fractions have meanings (scaling, sharing), not just rules."
+      ],
+      "estimated_sessions": 14,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 2,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH02.FRD.01",
+          "title": "Fractions: Meaning, Equivalence, Simplifying",
+          "core_idea": "Equivalent fractions represent the same point on the number line; simplifying is dividing numerator and denominator by the same non-zero number.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.01.LO01",
+              "type": "conceptual",
+              "statement": "Explain a fraction as a number (not two separate numbers)."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.01.LO02",
+              "type": "conceptual",
+              "statement": "Generate equivalent fractions using multiplication/division by the same number."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.01.LO03",
+              "type": "procedural",
+              "statement": "Simplify fractions using common factors."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_20AE8C4BF7",
+            "MIS_60FBC9FA22"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MATCHING",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "fractions",
+            "equivalence"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH02.FRD.02",
+          "title": "Compare & Order Fractions and Decimals",
+          "core_idea": "To compare, use benchmarks (0, 1/2, 1) or common denominators or convert to decimals.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.02.LO01",
+              "type": "logical",
+              "statement": "Compare two fractions using benchmarks or common denominator."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.02.LO02",
+              "type": "logical",
+              "statement": "Compare decimals using place value and number line."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.02.LO03",
+              "type": "conceptual",
+              "statement": "Order a mix of fractions and decimals."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.01"
+          ],
+          "misconception_ids": [
+            "MIS_34CD110872",
+            "MIS_D849D3B631"
+          ],
+          "template_ids": [
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "magnitude",
+            "number_sense"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH02.FRD.03",
+          "title": "Add & Subtract Fractions (including mixed numbers)",
+          "core_idea": "Fractions can only be added/subtracted when they refer to the same-sized parts (common denominator).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.03.LO01",
+              "type": "conceptual",
+              "statement": "Add/subtract fractions with like denominators."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.03.LO02",
+              "type": "conceptual",
+              "statement": "Add/subtract fractions with unlike denominators using LCM."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.03.LO03",
+              "type": "conceptual",
+              "statement": "Handle mixed numbers by converting or separating whole and fractional parts."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.01"
+          ],
+          "misconception_ids": [
+            "MIS_085AC8551F",
+            "MIS_9F82DE69F0"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "operations",
+            "fractions"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH02.FRD.04",
+          "title": "Multiply Fractions (as scaling)",
+          "core_idea": "Multiplying by a fraction scales a quantity; multiplying two fractions multiplies their parts.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.04.LO01",
+              "type": "conceptual",
+              "statement": "Multiply a fraction by a whole number and by another fraction."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.04.LO02",
+              "type": "procedural",
+              "statement": "Simplify before multiplying using common factors."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.04.LO03",
+              "type": "conceptual",
+              "statement": "Interpret multiplication by a fraction as scaling (smaller/bigger)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.01"
+          ],
+          "misconception_ids": [
+            "MIS_6A052EB6AA",
+            "MIS_6605A1F620"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "scaling",
+            "fractions"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH02.FRD.05",
+          "title": "Divide Fractions (meaning + invert-and-multiply)",
+          "core_idea": "Dividing by a fraction asks 'how many of this fraction fit in that quantity?'",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.05.LO01",
+              "type": "transfer",
+              "statement": "Interpret division of fractions with a measurement model."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.05.LO02",
+              "type": "procedural",
+              "statement": "Compute fraction division using invert-and-multiply."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.05.LO03",
+              "type": "conceptual",
+              "statement": "Check reasonableness (division by a fraction can increase the number)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.04"
+          ],
+          "misconception_ids": [
+            "MIS_3D9E164878",
+            "MIS_289127C87C"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "fractions",
+            "meaning"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH02.FRD.06",
+          "title": "Decimals: Place Value, Rounding, and Operations",
+          "core_idea": "Decimals are fractions with denominators of powers of 10; place value controls size.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH02.FRD.06.LO01",
+              "type": "procedural",
+              "statement": "Convert between fractions (denominator 10/100/1000) and decimals."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.06.LO02",
+              "type": "conceptual",
+              "statement": "Add/subtract decimals using alignment of place value."
+            },
+            {
+              "outcome_id": "CBSE7.CH02.FRD.06.LO03",
+              "type": "conceptual",
+              "statement": "Multiply/divide decimals by powers of 10; round and estimate to check."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.02"
+          ],
+          "misconception_ids": [
+            "MIS_F7B22A82EF",
+            "MIS_93771D1276"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MATCHING",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "decimals",
+            "place_value"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH03-DATA-HANDLING",
+      "title": "Chapter 3: Data Handling",
+      "domain": "Data",
+      "big_ideas": [
+        "Data tells a story; representation choices affect what you see.",
+        "Measures of center (mean/median/mode) summarize differently.",
+        "Good reasoning includes questioning misleading graphs."
+      ],
+      "estimated_sessions": 12,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 3,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH03.DATA.01",
+          "title": "Collect, Organize, and Read Data (frequency tables)",
+          "core_idea": "A frequency table organizes counts and supports graphing and analysis.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.01.LO01",
+              "type": "conceptual",
+              "statement": "Create a frequency table from raw data."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.01.LO02",
+              "type": "conceptual",
+              "statement": "Read values from a table accurately."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.01.LO03",
+              "type": "procedural",
+              "statement": "Compute totals from frequencies."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_49F389671A",
+            "MIS_635A69E773"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "WORKED_EXAMPLE_COMPLETE"
+          ],
+          "tags": [
+            "data",
+            "tables"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH03.DATA.02",
+          "title": "Bar Graphs and Double Bar Graphs",
+          "core_idea": "Bar graphs compare categories; double bars compare two groups on same categories.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.02.LO01",
+              "type": "conceptual",
+              "statement": "Read and interpret bar graphs and double bar graphs."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.02.LO02",
+              "type": "conceptual",
+              "statement": "Create a simple bar graph from a table (conceptually)."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.02.LO03",
+              "type": "conceptual",
+              "statement": "Answer comparison questions using the graph."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH03.DATA.01"
+          ],
+          "misconception_ids": [
+            "MIS_40394F1D2C",
+            "MIS_8DDC5FC2FF"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "graphs",
+            "interpretation"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH03.DATA.03",
+          "title": "Mean, Median, Mode (and when to use which)",
+          "core_idea": "Different averages summarize different aspects; choose based on context and outliers.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.03.LO01",
+              "type": "procedural",
+              "statement": "Compute mean, median, and mode for small data sets."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.03.LO02",
+              "type": "conceptual",
+              "statement": "Explain when median might be better than mean."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.03.LO03",
+              "type": "conceptual",
+              "statement": "Detect how an outlier changes mean vs median."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH03.DATA.01",
+            "CBSE7.CH02.FRD.03"
+          ],
+          "misconception_ids": [
+            "MIS_6D0456042E",
+            "MIS_963499EFB4"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "averages",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH03.DATA.04",
+          "title": "Range and Simple Interpretation",
+          "core_idea": "Range captures spread; interpretation answers what the data suggests, not what you wish it said.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.04.LO01",
+              "type": "logical",
+              "statement": "Compute range and compare spreads."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.04.LO02",
+              "type": "conceptual",
+              "statement": "Make simple inferences from graphs/tables."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.04.LO03",
+              "type": "conceptual",
+              "statement": "Distinguish observation from opinion."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH03.DATA.02"
+          ],
+          "misconception_ids": [
+            "MIS_90634565CF",
+            "MIS_03E2A2F24E"
+          ],
+          "template_ids": [
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "interpretation",
+            "spread"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH03.DATA.05",
+          "title": "Pie Charts (fractions of a whole)",
+          "core_idea": "A pie chart represents parts of a whole; angle/sector size matches fraction/percent.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.05.LO01",
+              "type": "conceptual",
+              "statement": "Read fractions/percents from a pie chart."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.05.LO02",
+              "type": "procedural",
+              "statement": "Convert between fraction/percent for pie slices."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.05.LO03",
+              "type": "conceptual",
+              "statement": "Create (conceptually) a pie chart from data."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH08.PCT.01"
+          ],
+          "misconception_ids": [
+            "MIS_B0386EEA07",
+            "MIS_4639A1D293"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "pie_chart",
+            "fractions_percent"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH03.DATA.06",
+          "title": "Misleading Graphs (critical thinking)",
+          "core_idea": "Graphs can mislead through scale tricks or missing context; check axes and totals.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH03.DATA.06.LO01",
+              "type": "conceptual",
+              "statement": "Spot misleading scales and truncated axes."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.06.LO02",
+              "type": "conceptual",
+              "statement": "Explain how the graph could mislead."
+            },
+            {
+              "outcome_id": "CBSE7.CH03.DATA.06.LO03",
+              "type": "conceptual",
+              "statement": "Suggest a corrected graph."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH03.DATA.02"
+          ],
+          "misconception_ids": [
+            "MIS_8FE65C77FD",
+            "MIS_71886F3674"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "critical_thinking"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH04-SIMPLE-EQUATIONS",
+      "title": "Chapter 4: Simple Equations",
+      "domain": "Algebra",
+      "big_ideas": [
+        "An equation states two expressions are equal; solving means finding the value that makes it true.",
+        "Valid moves preserve equality by doing the same operation to both sides.",
+        "Checking is part of solving, not an optional extra."
+      ],
+      "estimated_sessions": 14,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 4,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH04.EQ.01",
+          "title": "Equation as Balance (what 'solve' means)",
+          "core_idea": "An equation is a balance; every legal move keeps both sides equal.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH04.EQ.01.LO01",
+              "type": "procedural",
+              "statement": "Explain what it means to solve an equation."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.01.LO02",
+              "type": "conceptual",
+              "statement": "Identify whether a value satisfies an equation (check by substitution)."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.01.LO03",
+              "type": "conceptual",
+              "statement": "Distinguish expression vs equation."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.01"
+          ],
+          "misconception_ids": [
+            "MIS_65DC9CE155",
+            "MIS_5C330E4012"
+          ],
+          "template_ids": [
+            "BALANCE_OPS",
+            "TRANSFER_MINI",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "equivalence",
+            "conceptual"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH04.EQ.02",
+          "title": "Solve One-step Equations (x ± a = b)",
+          "core_idea": "Undo addition/subtraction with the inverse operation on both sides.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH04.EQ.02.LO01",
+              "type": "procedural",
+              "statement": "Solve x + a = b and x − a = b."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.02.LO02",
+              "type": "conceptual",
+              "statement": "Explain the inverse operation used."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.02.LO03",
+              "type": "conceptual",
+              "statement": "Check the solution."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH04.EQ.01",
+            "CBSE7.CH01.INT.02"
+          ],
+          "misconception_ids": [
+            "MIS_9E8B6236AA",
+            "MIS_090B344871"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "equations",
+            "inverse"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH04.EQ.03",
+          "title": "Solve One-step Equations (ax = b, x/a = b)",
+          "core_idea": "Undo multiplication/division with inverse operation; keep equality by applying to both sides.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH04.EQ.03.LO01",
+              "type": "procedural",
+              "statement": "Solve ax = b and x/a = b (including negative a)."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.03.LO02",
+              "type": "conceptual",
+              "statement": "Use division/multiplication correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.03.LO03",
+              "type": "conceptual",
+              "statement": "Check solutions."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH04.EQ.02",
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_BB313C0AF7",
+            "MIS_AFCF456F25"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "equations",
+            "multiplicative"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH04.EQ.04",
+          "title": "Solve Two-step Equations (ax + b = c)",
+          "core_idea": "Undo operations in reverse order: first remove b, then divide by a.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH04.EQ.04.LO01",
+              "type": "procedural",
+              "statement": "Solve ax + b = c (including negatives)."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.04.LO02",
+              "type": "logical",
+              "statement": "Choose the correct undo order and justify it."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.04.LO03",
+              "type": "conceptual",
+              "statement": "Check solutions."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH04.EQ.03",
+            "CBSE7.CH12.ALG.03"
+          ],
+          "misconception_ids": [
+            "MIS_52E80A7EAB",
+            "MIS_E643E74EF0"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT",
+            "STEP_ORDER"
+          ],
+          "tags": [
+            "equations",
+            "procedure"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH04.EQ.05",
+          "title": "Inequalities (intro) and Number Line Graphing",
+          "core_idea": "An inequality describes a range of values; the number line shows the set of solutions.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH04.EQ.05.LO01",
+              "type": "conceptual",
+              "statement": "Interpret symbols <, ≤, >, ≥."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.05.LO02",
+              "type": "conceptual",
+              "statement": "Represent solutions on a number line."
+            },
+            {
+              "outcome_id": "CBSE7.CH04.EQ.05.LO03",
+              "type": "conceptual",
+              "statement": "Check whether a value satisfies an inequality."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.01"
+          ],
+          "misconception_ids": [
+            "MIS_7ECBDC87FF",
+            "MIS_017238C681"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMBER_LINE_PLACE",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "inequalities",
+            "representation"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH05-LINES-ANGLES",
+      "title": "Chapter 5: Lines and Angles",
+      "domain": "Geometry",
+      "big_ideas": [
+        "Angle facts come from a few invariants (straight line 180°, around a point 360°).",
+        "Vertical angles are equal; linear pairs sum to 180°.",
+        "Diagram reasoning is about relationships, not guessing."
+      ],
+      "estimated_sessions": 12,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 5,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH05.ANG.01",
+          "title": "Angle Types and Measuring",
+          "core_idea": "Angles measure turn; benchmark angles build estimation and sense-making.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH05.ANG.01.LO01",
+              "type": "conceptual",
+              "statement": "Identify acute, right, obtuse, straight, reflex angles."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.01.LO02",
+              "type": "conceptual",
+              "statement": "Estimate and measure angles."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.01.LO03",
+              "type": "conceptual",
+              "statement": "Use 90°, 180°, 360° as benchmarks."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_F77CFE8E39",
+            "MIS_58A85F5A01"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "geometry",
+            "measurement"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH05.ANG.02",
+          "title": "Angles on a Straight Line and Around a Point",
+          "core_idea": "Angles on a straight line sum to 180°; around a point sum to 360°.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH05.ANG.02.LO01",
+              "type": "procedural",
+              "statement": "Solve missing angle problems using 180° and 360° facts."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.02.LO02",
+              "type": "conceptual",
+              "statement": "Explain reasoning using sum facts."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.02.LO03",
+              "type": "conceptual",
+              "statement": "Check by substitution (do sums)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_A9309CD3DF",
+            "MIS_2ACA197113"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "angle_sums"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH05.ANG.03",
+          "title": "Vertical Angles and Linear Pairs",
+          "core_idea": "Vertical angles are equal; a linear pair sums to 180°.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH05.ANG.03.LO01",
+              "type": "conceptual",
+              "statement": "Identify vertical angles and linear pairs in diagrams."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.03.LO02",
+              "type": "procedural",
+              "statement": "Compute unknown angles using equality/sum relations."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain which relationship you used."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.02"
+          ],
+          "misconception_ids": [
+            "MIS_3CE791F072",
+            "MIS_12F9B27031"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "relationships",
+            "geometry"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH05.ANG.04",
+          "title": "Complementary and Supplementary Angles",
+          "core_idea": "Complementary angles sum to 90°; supplementary sum to 180°.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH05.ANG.04.LO01",
+              "type": "conceptual",
+              "statement": "Determine complements and supplements of given angles."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.04.LO02",
+              "type": "conceptual",
+              "statement": "Use these relationships in simple problems."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.04.LO03",
+              "type": "conceptual",
+              "statement": "Avoid mixing up 90° and 180°."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_D34E59A7A1",
+            "MIS_F09C02064F"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "benchmarks"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH05.ANG.05",
+          "title": "Angle Problem Solving (multi-step diagrams)",
+          "core_idea": "Complex diagrams are solved by chaining small facts: equal angles, sums, and known benchmarks.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH05.ANG.05.LO01",
+              "type": "procedural",
+              "statement": "Solve multi-step angle problems with 2–3 relations."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.05.LO02",
+              "type": "conceptual",
+              "statement": "Write a short explanation of the chain of reasoning."
+            },
+            {
+              "outcome_id": "CBSE7.CH05.ANG.05.LO03",
+              "type": "conceptual",
+              "statement": "Check with total sums."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.03",
+            "CBSE7.CH05.ANG.04"
+          ],
+          "misconception_ids": [
+            "MIS_70108497AB",
+            "MIS_267D9B409D"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "WORKED_EXAMPLE_COMPLETE"
+          ],
+          "tags": [
+            "geometry_problems",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH06-TRIANGLE-PROPERTIES",
+      "title": "Chapter 6: The Triangle and its Properties",
+      "domain": "Geometry",
+      "big_ideas": [
+        "Triangle properties (angle sum 180°, side relationships) unlock many geometry problems.",
+        "Classifying triangles helps choose the right facts quickly.",
+        "Reasoning beats memorizing: justify every step."
+      ],
+      "estimated_sessions": 12,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 6,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH06.TRI.01",
+          "title": "Classify Triangles (by sides and angles)",
+          "core_idea": "Triangles can be classified by side equality and angle type; classification reveals properties.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH06.TRI.01.LO01",
+              "type": "conceptual",
+              "statement": "Classify triangles as scalene/isosceles/equilateral and acute/right/obtuse."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.01.LO02",
+              "type": "conceptual",
+              "statement": "Identify triangle type from a diagram or measurements."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.01.LO03",
+              "type": "conceptual",
+              "statement": "State one property of isosceles/equilateral triangles."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_98D62BEB7D",
+            "MIS_B65CBFBEC6"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "classification",
+            "geometry"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH06.TRI.02",
+          "title": "Angle Sum of a Triangle",
+          "core_idea": "The interior angles of any triangle add to 180°.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH06.TRI.02.LO01",
+              "type": "procedural",
+              "statement": "Find missing angle in a triangle using 180° sum."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.02.LO02",
+              "type": "procedural",
+              "statement": "Solve problems involving two or more triangles."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.02.LO03",
+              "type": "conceptual",
+              "statement": "Explain reasoning using angle sum."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.02"
+          ],
+          "misconception_ids": [
+            "MIS_D8010D64A2",
+            "MIS_101785805E"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "angle_sum",
+            "triangles"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH06.TRI.03",
+          "title": "Exterior Angle of a Triangle (intro)",
+          "core_idea": "An exterior angle equals the sum of the two remote interior angles (and forms a linear pair with its adjacent interior angle).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH06.TRI.03.LO01",
+              "type": "conceptual",
+              "statement": "Identify an exterior angle in a triangle."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.03.LO02",
+              "type": "procedural",
+              "statement": "Use linear pair (180°) to compute exterior/interior."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.03.LO03",
+              "type": "conceptual",
+              "statement": "Use exterior angle property in simple problems."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH06.TRI.02",
+            "CBSE7.CH05.ANG.02"
+          ],
+          "misconception_ids": [
+            "MIS_F0E3CFB5C3",
+            "MIS_FB97D2F62B"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "geometry_reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH06.TRI.04",
+          "title": "Isosceles Triangle Base Angles",
+          "core_idea": "In an isosceles triangle, angles opposite equal sides are equal.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH06.TRI.04.LO01",
+              "type": "conceptual",
+              "statement": "Use equal sides to infer equal base angles."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.04.LO02",
+              "type": "procedural",
+              "statement": "Solve missing angle problems in isosceles triangles."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.04.LO03",
+              "type": "conceptual",
+              "statement": "Explain 'opposite equal sides' clearly."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH06.TRI.02",
+            "CBSE7.CH06.TRI.01"
+          ],
+          "misconception_ids": [
+            "MIS_9AEF347F7C",
+            "MIS_4AC4225EA1"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "isosceles",
+            "properties"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH06.TRI.05",
+          "title": "Triangle Inequality (intro)",
+          "core_idea": "Three lengths form a triangle only if the sum of any two sides is greater than the third.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH06.TRI.05.LO01",
+              "type": "conceptual",
+              "statement": "Determine if three lengths can form a triangle."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.05.LO02",
+              "type": "conceptual",
+              "statement": "Explain using 'two sides must reach'."
+            },
+            {
+              "outcome_id": "CBSE7.CH06.TRI.05.LO03",
+              "type": "conceptual",
+              "statement": "Generate a valid third side range given two sides."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.01",
+            "CBSE7.CH02.FRD.02"
+          ],
+          "misconception_ids": [
+            "MIS_2970B7DE1C",
+            "MIS_C4C946ECCA"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "inequality",
+            "geometry"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH07-CONGRUENCE",
+      "title": "Chapter 7: Congruence of Triangles",
+      "domain": "Geometry",
+      "big_ideas": [
+        "Congruence means 'same shape and size' (superimposable).",
+        "Triangle congruence criteria (SSS, SAS, ASA, RHS) let you prove equality without measuring everything.",
+        "CPCTC connects congruence to solving for unknown sides/angles."
+      ],
+      "estimated_sessions": 7,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 7,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": false
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH07.CON.01",
+          "title": "Congruent vs equal vs similar (superimposition idea)",
+          "core_idea": "Congruent figures can be placed exactly on top of each other by rigid moves (slide/turn/flip).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH07.CON.01.LO01",
+              "type": "logical",
+              "statement": "Identify congruent shapes in a set and justify why."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.01.LO02",
+              "type": "conceptual",
+              "statement": "Distinguish 'equal length/angle' from 'congruent figure'."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.01.LO03",
+              "type": "conceptual",
+              "statement": "Use rigid motions to explain congruence (no resizing)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH14.SYM.01"
+          ],
+          "misconception_ids": [
+            "MIS_D3CC617AD0"
+          ],
+          "template_ids": [
+            "TWO_TIER"
+          ],
+          "tags": [
+            "geometry",
+            "congruence",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH07.CON.02",
+          "title": "Triangle congruence: SSS and SAS",
+          "core_idea": "Three sides determine a triangle; two sides and included angle also determine it uniquely.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH07.CON.02.LO01",
+              "type": "transfer",
+              "statement": "Apply SSS and SAS criteria to decide if triangles are congruent."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.02.LO02",
+              "type": "conceptual",
+              "statement": "Identify 'included angle' correctly for SAS."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.02.LO03",
+              "type": "conceptual",
+              "statement": "Use congruence criteria language in a proof outline."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH06.TRI.01",
+            "CBSE7.CH05.ANG.03"
+          ],
+          "misconception_ids": [
+            "MIS_CC3F33BC35"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "geometry",
+            "congruence",
+            "proof"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH07.CON.03",
+          "title": "Triangle congruence: ASA and RHS",
+          "core_idea": "Two angles + a side fix a triangle; for right triangles, hypotenuse + one side (RHS) is enough.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH07.CON.03.LO01",
+              "type": "transfer",
+              "statement": "Apply ASA and RHS criteria correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.03.LO02",
+              "type": "conceptual",
+              "statement": "Recognize right triangles and identify hypotenuse."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.03.LO03",
+              "type": "logical",
+              "statement": "Explain why AAA does NOT prove congruence."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH06.TRI.02",
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_BDC70D6604",
+            "MIS_903A073B33"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "geometry",
+            "congruence",
+            "right-triangles"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH07.CON.04",
+          "title": "CPCTC: Use congruence to find unknown parts",
+          "core_idea": "Once triangles are congruent, corresponding sides/angles are equal (CPCTC).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH07.CON.04.LO01",
+              "type": "conceptual",
+              "statement": "Match corresponding vertices correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.04.LO02",
+              "type": "procedural",
+              "statement": "Compute missing sides/angles using CPCTC."
+            },
+            {
+              "outcome_id": "CBSE7.CH07.CON.04.LO03",
+              "type": "conceptual",
+              "statement": "Avoid mixing up correspondence order."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH07.CON.02",
+            "CBSE7.CH07.CON.03"
+          ],
+          "misconception_ids": [
+            "MIS_32D6058A91"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "geometry",
+            "cpctc",
+            "problem-solving"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH08-COMPARING-QUANTITIES",
+      "title": "Chapter 8: Comparing Quantities",
+      "domain": "Arithmetic / Applications",
+      "big_ideas": [
+        "Percent is 'out of 100' and connects fractions and decimals.",
+        "Ratios compare quantities multiplicatively; unit rate simplifies comparisons.",
+        "Successive percent changes are not additive; order matters."
+      ],
+      "estimated_sessions": 16,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 8,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH08.PCT.01",
+          "title": "Percent, Fraction, Decimal Conversions",
+          "core_idea": "Percent, fractions, and decimals are three forms of the same value; choose the form that makes thinking easiest.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.PCT.01.LO01",
+              "type": "procedural",
+              "statement": "Convert between percent, fraction, and decimal."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.01.LO02",
+              "type": "conceptual",
+              "statement": "Use benchmarks (10%, 25%, 50%, 75%) for quick mental conversions."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.01.LO03",
+              "type": "conceptual",
+              "statement": "Explain conversions using 'per 100'."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.06"
+          ],
+          "misconception_ids": [
+            "MIS_EAD8D5C9A9",
+            "MIS_757E388479"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "percent",
+            "conversion"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH08.PCT.02",
+          "title": "Find Percent of a Quantity",
+          "core_idea": "A percent of a quantity is scaling: value × (percent/100).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.PCT.02.LO01",
+              "type": "procedural",
+              "statement": "Compute p% of a number using multiplication."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.02.LO02",
+              "type": "conceptual",
+              "statement": "Use benchmark decomposition (e.g., 35% = 10% + 10% + 10% + 5%)."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.02.LO03",
+              "type": "conceptual",
+              "statement": "Estimate to check reasonableness."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH08.PCT.01"
+          ],
+          "misconception_ids": [
+            "MIS_F5BF26E101",
+            "MIS_22F1E12FE2"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "percent",
+            "scaling"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH08.PCT.03",
+          "title": "Increase/Decrease, Discount, Tax, Successive Changes",
+          "core_idea": "Percent change scales the original: new = original × (1 ± p/100). Successive changes compound.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.PCT.03.LO01",
+              "type": "procedural",
+              "statement": "Calculate final price after discount or increase."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.03.LO02",
+              "type": "conceptual",
+              "statement": "Handle discount then tax (order matters)."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.PCT.03.LO03",
+              "type": "logical",
+              "statement": "Explain why 10% increase then 10% decrease is not 'back to original'."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH08.PCT.02"
+          ],
+          "misconception_ids": [
+            "MIS_15EE377699",
+            "MIS_14163D6EEF"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "percent_change",
+            "transfer"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH08.RAT.01",
+          "title": "Ratios and Rates (including unit rate)",
+          "core_idea": "Ratios compare quantities multiplicatively; unit rate answers 'per 1'.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.RAT.01.LO01",
+              "type": "conceptual",
+              "statement": "Write ratios in multiple forms (a:b, a/b, 'a to b')."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.RAT.01.LO02",
+              "type": "logical",
+              "statement": "Compute unit rate and compare options."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.RAT.01.LO03",
+              "type": "conceptual",
+              "statement": "Use ratios to scale recipes or maps."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.06"
+          ],
+          "misconception_ids": [
+            "MIS_57B95E3199",
+            "MIS_841DC5C893"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "ratio",
+            "rate"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH08.RAT.02",
+          "title": "Proportion (missing value) and Scaling",
+          "core_idea": "Proportional relationships keep the same multiplicative factor; scaling multiplies both terms by the same factor.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.RAT.02.LO01",
+              "type": "procedural",
+              "statement": "Solve missing-value proportion problems using scaling or cross-multiplication (later)."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.RAT.02.LO02",
+              "type": "conceptual",
+              "statement": "Decide if two ratios are equivalent."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.RAT.02.LO03",
+              "type": "conceptual",
+              "statement": "Explain scaling factor in words."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH08.RAT.01",
+            "CBSE7.CH02.FRD.01"
+          ],
+          "misconception_ids": [
+            "MIS_7D2A3DD76A",
+            "MIS_1C569509EC"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "proportion",
+            "scaling"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH08.APPL.01",
+          "title": "Percent & Ratio Applications (choose the right model)",
+          "core_idea": "Pick a model (percent multiplier, ratio table, unit rate) based on what the story is asking.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH08.APPL.01.LO01",
+              "type": "conceptual",
+              "statement": "Identify whether a situation is percent, ratio, or rate."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.APPL.01.LO02",
+              "type": "procedural",
+              "statement": "Solve mixed application problems using an appropriate representation."
+            },
+            {
+              "outcome_id": "CBSE7.CH08.APPL.01.LO03",
+              "type": "transfer",
+              "statement": "Explain why your chosen model fits."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH08.PCT.03",
+            "CBSE7.CH08.RAT.02",
+            "CBSE7.PS.STRAT.01"
+          ],
+          "misconception_ids": [
+            "MIS_793F6CC5E2",
+            "MIS_E1FC5A8E6A"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD"
+          ],
+          "tags": [
+            "applications",
+            "strategy_choice"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH09-RATIONAL-NUMBERS",
+      "title": "Chapter 9: Rational Numbers",
+      "domain": "Number System",
+      "big_ideas": [
+        "Rational numbers include all numbers that can be written as p/q where q ≠ 0.",
+        "The number line organizes all rational numbers; between any two rationals there are infinitely many.",
+        "Properties (commutative, associative, distributive) help simplify and reason."
+      ],
+      "estimated_sessions": 14,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 9,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH09.RAT.01",
+          "title": "Rational Numbers on the Number Line",
+          "core_idea": "Rational numbers include negative fractions and decimals; place them by magnitude, not by numerator/denominator separately.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH09.RAT.01.LO01",
+              "type": "conceptual",
+              "statement": "Represent rational numbers (fractions/decimals) on the number line."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.01.LO02",
+              "type": "logical",
+              "statement": "Compare and order negative fractions and decimals."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.01.LO03",
+              "type": "procedural",
+              "statement": "Convert between forms when helpful."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.01",
+            "CBSE7.CH02.FRD.02"
+          ],
+          "misconception_ids": [
+            "MIS_45E5AC3C80",
+            "MIS_C4E23CED88"
+          ],
+          "template_ids": [
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "rational",
+            "magnitude"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH09.RAT.02",
+          "title": "Add/Subtract Rational Numbers",
+          "core_idea": "Rational addition/subtraction follows the same structure as integers; common denominators align parts.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH09.RAT.02.LO01",
+              "type": "conceptual",
+              "statement": "Add/subtract rational numbers including negatives."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.02.LO02",
+              "type": "conceptual",
+              "statement": "Use common denominators and sign reasoning correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.02.LO03",
+              "type": "conceptual",
+              "statement": "Check answers by estimating magnitude."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH09.RAT.01",
+            "CBSE7.CH02.FRD.03"
+          ],
+          "misconception_ids": [
+            "MIS_EE36BAACAF",
+            "MIS_0AC2F78659"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "operations",
+            "rational"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH09.RAT.03",
+          "title": "Multiply/Divide Rational Numbers",
+          "core_idea": "Multiplication scales; division asks 'how many of this quantity fit'. Signs follow integer rules.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH09.RAT.03.LO01",
+              "type": "conceptual",
+              "statement": "Multiply/divide rational numbers including negatives."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.03.LO02",
+              "type": "procedural",
+              "statement": "Simplify efficiently using cancellation."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain sign outcome using parity of negatives."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH09.RAT.02",
+            "CBSE7.CH02.FRD.05",
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_8F69C71754",
+            "MIS_DEF0102777"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "operations",
+            "signs"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH09.RAT.04",
+          "title": "Properties of Operations (with examples & counterexamples)",
+          "core_idea": "Properties (commutative/associative/distributive) are tools: use them when they simplify thinking.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH09.RAT.04.LO01",
+              "type": "conceptual",
+              "statement": "Identify commutative and associative properties for + and ×."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.04.LO02",
+              "type": "procedural",
+              "statement": "Use distributive property to simplify computations."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.04.LO03",
+              "type": "transfer",
+              "statement": "Recognize operations where a property does NOT apply (subtraction/division)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.04",
+            "CBSE7.CH09.RAT.02"
+          ],
+          "misconception_ids": [
+            "MIS_63E161ADED",
+            "MIS_9C543341CF"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "properties",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH09.RAT.05",
+          "title": "Density of Rational Numbers (find a number between)",
+          "core_idea": "Between any two different rational numbers, there exists another rational number (in fact, infinitely many).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH09.RAT.05.LO01",
+              "type": "procedural",
+              "statement": "Find a rational number between two rational numbers (using average or common denominators)."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.05.LO02",
+              "type": "logical",
+              "statement": "Explain why there are infinitely many between."
+            },
+            {
+              "outcome_id": "CBSE7.CH09.RAT.05.LO03",
+              "type": "conceptual",
+              "statement": "Use this idea to refine estimates on a number line."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH09.RAT.01"
+          ],
+          "misconception_ids": [
+            "MIS_05AA7CB520",
+            "MIS_A1672A5AA9"
+          ],
+          "template_ids": [
+            "NUMBER_LINE_PLACE",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "number_line",
+            "conceptual"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH10-PRACTICAL-GEOMETRY",
+      "title": "Chapter 10: Practical Geometry (Constructions)",
+      "domain": "Geometry / Constructions",
+      "big_ideas": [
+        "Construction is not measurement: it uses rules (compass + straightedge) to create exact objects.",
+        "Parallel lines and triangle constructions rely on congruence ideas and angle properties.",
+        "Knowing the construction steps builds strong geometric thinking for higher grades."
+      ],
+      "estimated_sessions": 6,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 10,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": false
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH10.CONSTR.01",
+          "title": "Construction mindset: exactness, notation, and steps",
+          "core_idea": "A construction is a sequence of justified steps; diagrams show intent, not artistic skill.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.01.LO01",
+              "type": "conceptual",
+              "statement": "Distinguish construction vs drawing vs measurement."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.01.LO02",
+              "type": "conceptual",
+              "statement": "Read common construction marks (arcs, equal segments, equal angles)."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.01.LO03",
+              "type": "conceptual",
+              "statement": "Write/choose the correct ordered steps for a simple construction."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01",
+            "CBSE7.CH07.CON.01"
+          ],
+          "misconception_ids": [
+            "MIS_A13D0467B9"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "STEP_ORDER"
+          ],
+          "tags": [
+            "geometry",
+            "constructions"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH10.CONSTR.02",
+          "title": "Construct a line parallel to a given line through a point",
+          "core_idea": "Parallel construction uses equal corresponding/alternate angles built from arcs.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.02.LO01",
+              "type": "conceptual",
+              "statement": "Choose the correct method (copy an angle / use transversal)."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.02.LO02",
+              "type": "conceptual",
+              "statement": "Identify which angles must be equal to ensure parallel lines."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.02.LO03",
+              "type": "logical",
+              "statement": "Order and justify steps."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.04"
+          ],
+          "misconception_ids": [
+            "MIS_D706C01326"
+          ],
+          "template_ids": [
+            "SHORT_EXPLAIN",
+            "STEP_ORDER"
+          ],
+          "tags": [
+            "geometry",
+            "parallel-lines"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH10.CONSTR.03",
+          "title": "Construct a triangle (SSS and SAS)",
+          "core_idea": "Some sets of measurements determine a unique triangle; construction mirrors congruence logic.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.03.LO01",
+              "type": "conceptual",
+              "statement": "Order the steps for SSS and SAS triangle constructions."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.03.LO02",
+              "type": "conceptual",
+              "statement": "Identify 'included angle' for SAS construction."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain when a triangle cannot be constructed."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH07.CON.02"
+          ],
+          "misconception_ids": [
+            "MIS_2FE48FC220"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "STEP_ORDER"
+          ],
+          "tags": [
+            "geometry",
+            "triangles",
+            "constructions"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH10.CONSTR.04",
+          "title": "Construct a triangle (ASA and RHS)",
+          "core_idea": "Angles plus a side fix a triangle; for right triangles, hypotenuse + one leg is enough.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.04.LO01",
+              "type": "conceptual",
+              "statement": "Order steps for ASA construction."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.04.LO02",
+              "type": "procedural",
+              "statement": "Construct a right triangle given hypotenuse and one leg (RHS)."
+            },
+            {
+              "outcome_id": "CBSE7.CH10.CONSTR.04.LO03",
+              "type": "conceptual",
+              "statement": "Identify when data is insufficient/ambiguous."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH07.CON.03"
+          ],
+          "misconception_ids": [
+            "MIS_49DC8E5D73"
+          ],
+          "template_ids": [
+            "SHORT_EXPLAIN",
+            "STEP_ORDER"
+          ],
+          "tags": [
+            "geometry",
+            "constructions",
+            "right-triangles"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH11-PERIMETER-AREA",
+      "title": "Chapter 11: Perimeter and Area",
+      "domain": "Mensuration",
+      "big_ideas": [
+        "Perimeter measures boundary length; area measures covered surface.",
+        "Formulas come from decomposing shapes into known parts.",
+        "Units are part of the answer; converting units is scaling."
+      ],
+      "estimated_sessions": 14,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 11,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH11.MEA.01",
+          "title": "Perimeter of Polygons",
+          "core_idea": "Perimeter is the total distance around a shape; add side lengths carefully with units.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH11.MEA.01.LO01",
+              "type": "procedural",
+              "statement": "Compute perimeter of rectangles and general polygons."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.01.LO02",
+              "type": "procedural",
+              "statement": "Find unknown side lengths when perimeter is given."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.01.LO03",
+              "type": "conceptual",
+              "statement": "Explain the difference between perimeter and area."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.03"
+          ],
+          "misconception_ids": [
+            "MIS_A9FD16E578",
+            "MIS_24F70C8B2D"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "measurement",
+            "perimeter"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH11.MEA.02",
+          "title": "Area of Rectangle and Square (meaning + formula)",
+          "core_idea": "Area counts unit squares; rectangle area = length × breadth.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH11.MEA.02.LO01",
+              "type": "conceptual",
+              "statement": "Explain area as counting unit squares."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.02.LO02",
+              "type": "procedural",
+              "statement": "Compute area of rectangles/squares."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.02.LO03",
+              "type": "procedural",
+              "statement": "Solve for missing dimension given area."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_DBDEADA5F9",
+            "MIS_86A924CA56"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "area",
+            "units"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH11.MEA.03",
+          "title": "Area of Triangle and Parallelogram (decompose)",
+          "core_idea": "Triangle area is half a rectangle/parallelogram with same base and height; parallelogram area = base × height.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH11.MEA.03.LO01",
+              "type": "procedural",
+              "statement": "Compute area of a parallelogram using base and height."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.03.LO02",
+              "type": "procedural",
+              "statement": "Compute area of a triangle using 1/2 × base × height."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.03.LO03",
+              "type": "conceptual",
+              "statement": "Identify base and height (perpendicular) correctly."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH11.MEA.02",
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_F3B7D3449E",
+            "MIS_116CD7DA0D"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "area",
+            "geometry"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH11.MEA.04",
+          "title": "Composite Figures (add/subtract areas)",
+          "core_idea": "Break complex shapes into rectangles/triangles; add or subtract areas carefully.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH11.MEA.04.LO01",
+              "type": "conceptual",
+              "statement": "Decompose composite shapes into known parts."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.04.LO02",
+              "type": "procedural",
+              "statement": "Compute area of composite figures."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.04.LO03",
+              "type": "conceptual",
+              "statement": "Explain your decomposition strategy."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH11.MEA.03"
+          ],
+          "misconception_ids": [
+            "MIS_F1D2BD9B49",
+            "MIS_5F26BB85E0"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "WORKED_EXAMPLE_COMPLETE"
+          ],
+          "tags": [
+            "decomposition",
+            "applications"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH11.MEA.05",
+          "title": "Unit Conversions (length and area)",
+          "core_idea": "Converting units is scaling; area conversions scale by the square of the length factor.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH11.MEA.05.LO01",
+              "type": "procedural",
+              "statement": "Convert between mm, cm, m, km (length)."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.05.LO02",
+              "type": "procedural",
+              "statement": "Convert between cm² and m² (area) with correct scaling."
+            },
+            {
+              "outcome_id": "CBSE7.CH11.MEA.05.LO03",
+              "type": "conceptual",
+              "statement": "Detect unreasonable conversions with estimation."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.06",
+            "CBSE7.CH11.MEA.02"
+          ],
+          "misconception_ids": [
+            "MIS_BA68685584",
+            "MIS_6C07879D02"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "units",
+            "scaling"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH12-ALGEBRAIC-EXPRESSIONS",
+      "title": "Chapter 12: Algebraic Expressions",
+      "domain": "Algebra",
+      "big_ideas": [
+        "Variables stand for numbers; algebra is generalized arithmetic.",
+        "Like terms can be combined because they represent the same 'unit'.",
+        "The distributive property links multiplication and addition, enabling expansion and factoring."
+      ],
+      "estimated_sessions": 14,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 12,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH12.ALG.01",
+          "title": "Variables & Translating Words to Expressions",
+          "core_idea": "Translate situations into expressions by identifying the quantity and how it changes.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH12.ALG.01.LO01",
+              "type": "conceptual",
+              "statement": "Represent an unknown with a variable."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.01.LO02",
+              "type": "conceptual",
+              "statement": "Translate verbal statements to algebraic expressions."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.01.LO03",
+              "type": "conceptual",
+              "statement": "Distinguish expression vs equation."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.PS.STRAT.01"
+          ],
+          "misconception_ids": [
+            "MIS_5AF59FB3C9",
+            "MIS_ACFC9D73C5"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "EXPRESSION_INPUT",
+            "MATCHING"
+          ],
+          "tags": [
+            "translation",
+            "algebra"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH12.ALG.02",
+          "title": "Terms, Coefficients, and Like Terms",
+          "core_idea": "Like terms share the same variable part; you can combine only like with like.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH12.ALG.02.LO01",
+              "type": "conceptual",
+              "statement": "Identify terms, coefficients, and constants."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.02.LO02",
+              "type": "conceptual",
+              "statement": "Combine like terms correctly."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.02.LO03",
+              "type": "logical",
+              "statement": "Explain why 3x + 2x works but 3x + 2 does not combine."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.01"
+          ],
+          "misconception_ids": [
+            "MIS_563E6C70BD",
+            "MIS_01DE480827"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "ERROR_ANALYSIS",
+            "EXPRESSION_INPUT"
+          ],
+          "tags": [
+            "simplify",
+            "structure"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH12.ALG.03",
+          "title": "Distributive Property (Expand and Factor basics)",
+          "core_idea": "Distribute multiplication across addition: a(b+c)=ab+ac; factoring reverses it.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH12.ALG.03.LO01",
+              "type": "conceptual",
+              "statement": "Expand expressions like 3(x+4)."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.03.LO02",
+              "type": "conceptual",
+              "statement": "Factor simple expressions like 6x+12."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain distributive property using area/tiles."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.02",
+            "CBSE7.CH09.RAT.04"
+          ],
+          "misconception_ids": [
+            "MIS_3C1808EABD",
+            "MIS_C0692FD2C7"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "EXPRESSION_INPUT",
+            "MULTI_STEP_WORD"
+          ],
+          "tags": [
+            "distributive",
+            "algebra"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH12.ALG.04",
+          "title": "Evaluate Expressions (Substitution)",
+          "core_idea": "To evaluate, substitute the given value for the variable and follow order of operations.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH12.ALG.04.LO01",
+              "type": "conceptual",
+              "statement": "Substitute values into expressions correctly (with parentheses)."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.04.LO02",
+              "type": "procedural",
+              "statement": "Evaluate using order of operations."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.04.LO03",
+              "type": "conceptual",
+              "statement": "Check reasonableness."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.01",
+            "CBSE7.CH01.INT.04"
+          ],
+          "misconception_ids": [
+            "MIS_06A3653607",
+            "MIS_A1205673C0"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "substitution",
+            "order_of_operations"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH12.ALG.05",
+          "title": "Patterns → Expressions (Generalization)",
+          "core_idea": "A pattern can be described by a rule; algebra expresses the rule for any step number n.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH12.ALG.05.LO01",
+              "type": "conceptual",
+              "statement": "Describe a pattern in words and as an expression in n."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.05.LO02",
+              "type": "conceptual",
+              "statement": "Use a table to connect n to output."
+            },
+            {
+              "outcome_id": "CBSE7.CH12.ALG.05.LO03",
+              "type": "conceptual",
+              "statement": "Check the rule using multiple values."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.01"
+          ],
+          "misconception_ids": [
+            "MIS_C00ABB8490",
+            "MIS_20B1401535"
+          ],
+          "template_ids": [
+            "EXPRESSION_INPUT",
+            "MULTI_STEP_WORD",
+            "WORKED_EXAMPLE_COMPLETE"
+          ],
+          "tags": [
+            "generalization",
+            "functions_pre"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH13-EXPONENTS-POWERS",
+      "title": "Chapter 13: Exponents and Powers",
+      "domain": "Number System",
+      "big_ideas": [
+        "Exponents compress repeated multiplication into a powerful notation.",
+        "Exponent laws describe patterns; they are not arbitrary rules.",
+        "Powers of 10 connect to place value and estimation."
+      ],
+      "estimated_sessions": 10,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 13,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH13.EXP.01",
+          "title": "Meaning of Exponents (repeated multiplication)",
+          "core_idea": "a^n means multiply a by itself n times; the exponent counts factors, not the value.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH13.EXP.01.LO01",
+              "type": "conceptual",
+              "statement": "Write repeated multiplication using exponent notation and expand powers."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.01.LO02",
+              "type": "procedural",
+              "statement": "Evaluate small powers accurately."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.01.LO03",
+              "type": "conceptual",
+              "statement": "Distinguish base and exponent."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.04"
+          ],
+          "misconception_ids": [
+            "MIS_94DC533DF6",
+            "MIS_E7835CCFA8"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MATCHING",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "notation",
+            "powers"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH13.EXP.02",
+          "title": "Powers of 10 and Place Value",
+          "core_idea": "10^n shifts place value; it explains how decimals move when multiplying/dividing by powers of 10.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH13.EXP.02.LO01",
+              "type": "procedural",
+              "statement": "Evaluate powers of 10 and express numbers using them."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.02.LO02",
+              "type": "conceptual",
+              "statement": "Multiply/divide by 10^n using place value reasoning."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.02.LO03",
+              "type": "conceptual",
+              "statement": "Estimate large numbers using powers of 10."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.06",
+            "CBSE7.CH13.EXP.01"
+          ],
+          "misconception_ids": [
+            "MIS_4CD56D6CC4",
+            "MIS_453C5DC3D6"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "place_value",
+            "estimation"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH13.EXP.03",
+          "title": "Exponent Laws (same base)",
+          "core_idea": "Exponent laws follow from counting factors: multiplying adds exponents; dividing subtracts.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH13.EXP.03.LO01",
+              "type": "conceptual",
+              "statement": "Use product and quotient laws: a^m × a^n, a^m ÷ a^n (a≠0)."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.03.LO02",
+              "type": "conceptual",
+              "statement": "Use power of a power: (a^m)^n."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain laws using factor expansion for small cases."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH13.EXP.01"
+          ],
+          "misconception_ids": [
+            "MIS_D817443FC4",
+            "MIS_46BF14E08A"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "EXPRESSION_INPUT",
+            "TRANSFER_MINI"
+          ],
+          "tags": [
+            "algebra_rules",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        },
+        {
+          "atom_id": "CBSE7.CH13.EXP.04",
+          "title": "Zero Exponent and Exponent 1 (why it works)",
+          "core_idea": "To keep the quotient law consistent, a^0 must equal 1 (for a≠0); a^1 equals a.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH13.EXP.04.LO01",
+              "type": "conceptual",
+              "statement": "State and use a^0 = 1 (a≠0) and a^1 = a."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.04.LO02",
+              "type": "conceptual",
+              "statement": "Explain a^0 using patterns/quotient law."
+            },
+            {
+              "outcome_id": "CBSE7.CH13.EXP.04.LO03",
+              "type": "conceptual",
+              "statement": "Avoid the '0 means 0' misconception."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH13.EXP.03"
+          ],
+          "misconception_ids": [
+            "MIS_4D1AEAAA2D",
+            "MIS_940A20EA2A"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "conceptual",
+            "exponents"
+          ],
+          "mastery_profile_id": "MP_CORE_FLUENCY"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH14-SYMMETRY",
+      "title": "Chapter 14: Symmetry",
+      "domain": "Geometry",
+      "big_ideas": [
+        "Symmetry is an invariant: some things stay the same under a transformation.",
+        "Transformations (reflect, rotate, translate) build spatial reasoning and proof habits.",
+        "Counting symmetry builds classification skills for shapes."
+      ],
+      "estimated_sessions": 10,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 14,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH14.SYM.01",
+          "title": "Line Symmetry (identify and draw)",
+          "core_idea": "A line of symmetry splits a figure into mirror halves.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH14.SYM.01.LO01",
+              "type": "conceptual",
+              "statement": "Identify lines of symmetry in common shapes."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.SYM.01.LO02",
+              "type": "procedural",
+              "statement": "Draw a line of symmetry when it exists."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.SYM.01.LO03",
+              "type": "conceptual",
+              "statement": "Recognize when a shape has no line symmetry."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_4D40E07B3F",
+            "MIS_F6971A33CB"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "symmetry",
+            "visual"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH14.SYM.02",
+          "title": "Rotational Symmetry (order)",
+          "core_idea": "A figure has rotational symmetry if it matches itself after a rotation; the order counts how many matches in a full turn.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH14.SYM.02.LO01",
+              "type": "conceptual",
+              "statement": "Identify if a shape has rotational symmetry."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.SYM.02.LO02",
+              "type": "conceptual",
+              "statement": "Determine the order of rotational symmetry."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.SYM.02.LO03",
+              "type": "conceptual",
+              "statement": "Connect order to rotation angle (360°/order)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_C9577A8E0D",
+            "MIS_50D1E919B7"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "symmetry",
+            "angles"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH14.TRANS.01",
+          "title": "Reflections on a Grid (coordinate-free)",
+          "core_idea": "Reflection flips a figure across a mirror line; corresponding points are the same distance from the mirror.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.01.LO01",
+              "type": "conceptual",
+              "statement": "Reflect a point/shape across a given line on a grid."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.01.LO02",
+              "type": "conceptual",
+              "statement": "Identify corresponding points and equal distances."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.01.LO03",
+              "type": "conceptual",
+              "statement": "Spot reflection errors (wrong distance or wrong side)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH14.SYM.01"
+          ],
+          "misconception_ids": [
+            "MIS_9EF9BC7457",
+            "MIS_21FF091745"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "MATCHING"
+          ],
+          "tags": [
+            "transformations",
+            "grid"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH14.TRANS.02",
+          "title": "Translations and Rotations (grid moves)",
+          "core_idea": "Translation slides without turning; rotation turns around a center point.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.02.LO01",
+              "type": "conceptual",
+              "statement": "Translate shapes by a given vector (up/down/left/right)."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.02.LO02",
+              "type": "conceptual",
+              "statement": "Rotate shapes by 90° multiples on a grid (optional)."
+            },
+            {
+              "outcome_id": "CBSE7.CH14.TRANS.02.LO03",
+              "type": "conceptual",
+              "statement": "Describe transformations in words."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.01"
+          ],
+          "misconception_ids": [
+            "MIS_55053D33E3",
+            "MIS_D811433BD1"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT"
+          ],
+          "tags": [
+            "transformations",
+            "spatial"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "CBSE7-CH15-VISUALISING-SOLIDS",
+      "title": "Chapter 15: Visualising Solid Shapes",
+      "domain": "Geometry / Spatial",
+      "big_ideas": [
+        "3D solids can be understood through nets (unfolding) and views (projection).",
+        "Counting faces/edges/vertices builds structure awareness.",
+        "Volume measures how much space a solid occupies; for a cuboid, it's L×B×H."
+      ],
+      "estimated_sessions": 10,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": 15,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "CBSE_CORE"
+      ],
+      "atoms": [
+        {
+          "atom_id": "CBSE7.CH15.SOL.01",
+          "title": "Faces, Edges, Vertices (classify solids)",
+          "core_idea": "A solid is described by faces (surfaces), edges (line segments), and vertices (corners).",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH15.SOL.01.LO01",
+              "type": "conceptual",
+              "statement": "Identify and count faces, edges, vertices for common solids."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.01.LO02",
+              "type": "conceptual",
+              "statement": "Match nets to solids (intro)."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.01.LO03",
+              "type": "conceptual",
+              "statement": "Use precise vocabulary."
+            }
+          ],
+          "prerequisites": [],
+          "misconception_ids": [
+            "MIS_0DB0BB1958",
+            "MIS_6E068B381D"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "3d",
+            "vocabulary"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH15.SOL.02",
+          "title": "Nets of Cubes and Cuboids",
+          "core_idea": "A net is a 2D pattern that folds into a 3D solid; edges must match and faces must not overlap when folded.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH15.SOL.02.LO01",
+              "type": "conceptual",
+              "statement": "Identify valid nets of a cube/cuboid."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.02.LO02",
+              "type": "conceptual",
+              "statement": "Predict which faces become adjacent when folded."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.02.LO03",
+              "type": "conceptual",
+              "statement": "Spot invalid nets (overlap or mismatch)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH15.SOL.01"
+          ],
+          "misconception_ids": [
+            "MIS_56D00EE58A",
+            "MIS_60F85A9E01"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "GEOMETRY_TAP",
+            "MCQ_CONCEPT"
+          ],
+          "tags": [
+            "nets",
+            "spatial_reasoning"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH15.SOL.03",
+          "title": "Views of Solids (top/front/side)",
+          "core_idea": "Different views show different faces; combining views reconstructs the solid.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH15.SOL.03.LO01",
+              "type": "conceptual",
+              "statement": "Match a solid to its top/front/side views."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.03.LO02",
+              "type": "conceptual",
+              "statement": "Count cubes from views in simple cases."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.03.LO03",
+              "type": "conceptual",
+              "statement": "Explain ambiguity when views are insufficient."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH15.SOL.01"
+          ],
+          "misconception_ids": [
+            "MIS_D496859548",
+            "MIS_BE757EEDC9"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "MCQ_CONCEPT",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "views",
+            "3d"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        },
+        {
+          "atom_id": "CBSE7.CH15.SOL.04",
+          "title": "Volume of Cuboid (intro)",
+          "core_idea": "Volume counts unit cubes; for a cuboid, volume = length × breadth × height.",
+          "outcomes": [
+            {
+              "outcome_id": "CBSE7.CH15.SOL.04.LO01",
+              "type": "conceptual",
+              "statement": "Explain volume as counting unit cubes."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.04.LO02",
+              "type": "procedural",
+              "statement": "Compute volume of cuboids."
+            },
+            {
+              "outcome_id": "CBSE7.CH15.SOL.04.LO03",
+              "type": "procedural",
+              "statement": "Solve for a missing dimension given volume."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH11.MEA.02",
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_F3BE79050F",
+            "MIS_1F80368666"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "volume",
+            "measurement"
+          ],
+          "mastery_profile_id": "MP_CORE_CONCEPT"
+        }
+      ]
+    },
+    {
+      "module_id": "OLY7-PROBABILITY-INTRO",
+      "title": "Olympiad Enrichment: Probability (intro)",
+      "domain": "Olympiad Enrichment",
+      "big_ideas": [
+        "Probability measures how likely an event is, from 0 (impossible) to 1 (certain).",
+        "For equally likely outcomes: P(event)=favorable/total.",
+        "Experimental probability approaches theoretical probability with more trials."
+      ],
+      "estimated_sessions": 10,
+      "alignment": {
+        "board": "CBSE",
+        "textbook": "NCERT Mathematics Class 7",
+        "ncert_chapter": null,
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "OLYMPIAD_ENRICH"
+      ],
+      "atoms": [
+        {
+          "atom_id": "OLY7.PROB.PROB.01",
+          "title": "Outcomes and Sample Space",
+          "core_idea": "A sample space lists all possible outcomes; events are subsets of outcomes.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.PROB.PROB.01.LO01",
+              "type": "conceptual",
+              "statement": "List outcomes for simple experiments (coin, die, spinner)."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.01.LO02",
+              "type": "conceptual",
+              "statement": "Identify events as sets of outcomes."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.01.LO03",
+              "type": "conceptual",
+              "statement": "Count outcomes accurately."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH03.DATA.01"
+          ],
+          "misconception_ids": [
+            "MIS_F475A3CF79",
+            "MIS_32C4C64D58"
+          ],
+          "template_ids": [
+            "CLASSIFY_SORT",
+            "NUMERIC_INPUT",
+            "WORKED_EXAMPLE_COMPLETE"
+          ],
+          "tags": [
+            "sample_space"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.PROB.PROB.02",
+          "title": "Probability as a Fraction (equally likely)",
+          "core_idea": "Probability is the fraction of outcomes that satisfy the event, when outcomes are equally likely.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.PROB.PROB.02.LO01",
+              "type": "procedural",
+              "statement": "Compute probability of simple events."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.02.LO02",
+              "type": "conceptual",
+              "statement": "Express probability as fraction, decimal, or percent."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.02.LO03",
+              "type": "transfer",
+              "statement": "Interpret 0, 1, and 1/2 in context."
+            }
+          ],
+          "prerequisites": [
+            "OLY7.PROB.PROB.01",
+            "CBSE7.CH08.PCT.01"
+          ],
+          "misconception_ids": [
+            "MIS_355DA9E5E5",
+            "MIS_0DD4B90FB5"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "probability",
+            "fractions"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.PROB.PROB.03",
+          "title": "Complementary Events",
+          "core_idea": "P(not A) = 1 − P(A).",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.PROB.PROB.03.LO01",
+              "type": "procedural",
+              "statement": "Find probability of 'not event'."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.03.LO02",
+              "type": "procedural",
+              "statement": "Solve problems where complement is easier than direct counting."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.03.LO03",
+              "type": "logical",
+              "statement": "Explain why probabilities add to 1."
+            }
+          ],
+          "prerequisites": [
+            "OLY7.PROB.PROB.02"
+          ],
+          "misconception_ids": [
+            "MIS_6A2B7F6BAB",
+            "MIS_76A3545F6C"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "complement"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.PROB.PROB.04",
+          "title": "Experimental Probability (simulate and interpret)",
+          "core_idea": "Experimental probability = successes/trials; more trials usually stabilizes the estimate.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.PROB.PROB.04.LO01",
+              "type": "procedural",
+              "statement": "Run a simple simulation (coin/spinner) and compute experimental probability."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.04.LO02",
+              "type": "logical",
+              "statement": "Compare experimental to theoretical probability."
+            },
+            {
+              "outcome_id": "OLY7.PROB.PROB.04.LO03",
+              "type": "conceptual",
+              "statement": "Explain variation in small samples."
+            }
+          ],
+          "prerequisites": [
+            "OLY7.PROB.PROB.02",
+            "CBSE7.CH03.DATA.02"
+          ],
+          "misconception_ids": [
+            "MIS_5CFEA2EE71",
+            "MIS_DEB296F5B3"
+          ],
+          "template_ids": [
+            "SIMULATION",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "simulation",
+            "intuition"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        }
+      ]
+    },
+    {
+      "module_id": "OLY7-NUMBER-THEORY",
+      "title": "Olympiad Enrichment: Number Theory Foundations",
+      "domain": "Olympiad Enrichment",
+      "big_ideas": [
+        "Divisibility, primes, and remainders create patterns you can reason about (not memorize).",
+        "Parity (odd/even) and modular thinking are powerful 'shortcut' tools.",
+        "Many Olympiad problems become easy when you look for invariants and constraints."
+      ],
+      "estimated_sessions": 8,
+      "alignment": {
+        "goal": "Class 7 Olympiad style reasoning",
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "OLYMPIAD_ENRICH"
+      ],
+      "atoms": [
+        {
+          "atom_id": "OLY7.NT.01",
+          "title": "Divisibility tests and smart factor spotting",
+          "core_idea": "Divisibility rules are pattern tools; factor spotting makes calculations lighter.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.NT.01.LO01",
+              "type": "conceptual",
+              "statement": "Use divisibility tests for 2,3,4,5,8,9,11 in reasoning."
+            },
+            {
+              "outcome_id": "OLY7.NT.01.LO02",
+              "type": "procedural",
+              "statement": "Find HCF/LCM via prime factorisation and via reasoning shortcuts."
+            },
+            {
+              "outcome_id": "OLY7.NT.01.LO03",
+              "type": "logical",
+              "statement": "Explain why a divisibility test works for at least one rule (e.g., 3 or 9)."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.03"
+          ],
+          "misconception_ids": [
+            "MIS_C6F20B95B3"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "olympiad",
+            "number-theory",
+            "divisibility"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.NT.02",
+          "title": "Parity (odd/even) and quick contradiction checks",
+          "core_idea": "Odd/even reasoning rules out impossible cases fast.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.NT.02.LO01",
+              "type": "conceptual",
+              "statement": "Predict parity of sums/products without calculating fully."
+            },
+            {
+              "outcome_id": "OLY7.NT.02.LO02",
+              "type": "logical",
+              "statement": "Use parity to prove something cannot happen."
+            },
+            {
+              "outcome_id": "OLY7.NT.02.LO03",
+              "type": "conceptual",
+              "statement": "Spot hidden assumptions in 'always/never' claims."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH01.INT.02"
+          ],
+          "misconception_ids": [
+            "MIS_3862202C61"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "olympiad",
+            "parity",
+            "proof"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.NT.03",
+          "title": "Remainders and modular patterns (intro)",
+          "core_idea": "Remainders repeat in cycles; spotting cycles prevents long computation.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.NT.03.LO01",
+              "type": "procedural",
+              "statement": "Find remainders of large powers using cycles (mod 2,3,4,5,8,9,10)."
+            },
+            {
+              "outcome_id": "OLY7.NT.03.LO02",
+              "type": "conceptual",
+              "statement": "Explain the idea of 'mod' as remainder class."
+            },
+            {
+              "outcome_id": "OLY7.NT.03.LO03",
+              "type": "procedural",
+              "statement": "Solve simple remainder puzzles."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH13.EXP.02",
+            "CBSE7.CH01.INT.04"
+          ],
+          "misconception_ids": [
+            "MIS_E8ADC2891F"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "olympiad",
+            "remainders",
+            "patterns"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        }
+      ]
+    },
+    {
+      "module_id": "OLY7-COUNTING",
+      "title": "Olympiad Enrichment: Counting & Combinatorics (intro)",
+      "domain": "Olympiad Enrichment",
+      "big_ideas": [
+        "Count systematically: cases, tables, and 'fix one thing, vary the rest'.",
+        "Avoid double counting by being explicit about order and uniqueness.",
+        "Many problems are easiest when you draw a small complete list and then generalise."
+      ],
+      "estimated_sessions": 8,
+      "alignment": {
+        "goal": "Class 7 Olympiad style counting",
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "OLYMPIAD_ENRICH"
+      ],
+      "atoms": [
+        {
+          "atom_id": "OLY7.CNT.01",
+          "title": "Systematic listing and casework",
+          "core_idea": "A clean list beats clever guessing.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.CNT.01.LO01",
+              "type": "conceptual",
+              "statement": "Create a case table for a counting problem."
+            },
+            {
+              "outcome_id": "OLY7.CNT.01.LO02",
+              "type": "logical",
+              "statement": "Explain why your list is complete and non-overlapping."
+            },
+            {
+              "outcome_id": "OLY7.CNT.01.LO03",
+              "type": "conceptual",
+              "statement": "Use symmetry to reduce cases when appropriate."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.PS.STRAT.01"
+          ],
+          "misconception_ids": [
+            "MIS_F230A2FE70"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "olympiad",
+            "counting"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.CNT.02",
+          "title": "Basic permutations vs combinations (sense-making, not formulas)",
+          "core_idea": "Order matters sometimes; the story decides.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.CNT.02.LO01",
+              "type": "conceptual",
+              "statement": "Decide if order matters in a situation."
+            },
+            {
+              "outcome_id": "OLY7.CNT.02.LO02",
+              "type": "procedural",
+              "statement": "Solve small problems by reasoning and listing, then generalise patterns."
+            },
+            {
+              "outcome_id": "OLY7.CNT.02.LO03",
+              "type": "conceptual",
+              "statement": "Avoid applying formulas blindly."
+            }
+          ],
+          "prerequisites": [
+            "OLY7.CNT.01"
+          ],
+          "misconception_ids": [
+            "MIS_CC830DDFAD"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "olympiad",
+            "combinatorics"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        }
+      ]
+    },
+    {
+      "module_id": "OLY7-GEOMETRY-CHALLENGES",
+      "title": "Olympiad Enrichment: Geometry Challenges (angle chase & area reasoning)",
+      "domain": "Olympiad Enrichment",
+      "big_ideas": [
+        "Angle chasing is logic: use parallel lines, triangles, and straight lines strategically.",
+        "Area problems often simplify using cutting/rearranging and equal-height arguments.",
+        "A clean diagram and labeled information is half the solution."
+      ],
+      "estimated_sessions": 7,
+      "alignment": {
+        "goal": "Class 7 Olympiad geometry reasoning",
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "OLYMPIAD_ENRICH"
+      ],
+      "atoms": [
+        {
+          "atom_id": "OLY7.GEO.01",
+          "title": "Angle chase toolkit (repeatable moves)",
+          "core_idea": "A small set of facts solves many Olympiad angle problems.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.GEO.01.LO01",
+              "type": "conceptual",
+              "statement": "Use parallel-line angle relationships confidently."
+            },
+            {
+              "outcome_id": "OLY7.GEO.01.LO02",
+              "type": "conceptual",
+              "statement": "Use triangle angle-sum and exterior angles."
+            },
+            {
+              "outcome_id": "OLY7.GEO.01.LO03",
+              "type": "conceptual",
+              "statement": "Spot isosceles/equilateral cues and use them."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH05.ANG.04",
+            "CBSE7.CH06.TRI.02"
+          ],
+          "misconception_ids": [
+            "MIS_87E7B530E7"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "olympiad",
+            "geometry",
+            "angles"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.GEO.02",
+          "title": "Area reasoning (equal base/height, cut & rearrange)",
+          "core_idea": "Areas compare easily when heights or bases match; rearranging shapes reveals equality.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.GEO.02.LO01",
+              "type": "logical",
+              "statement": "Compare areas without calculating full units."
+            },
+            {
+              "outcome_id": "OLY7.GEO.02.LO02",
+              "type": "conceptual",
+              "statement": "Use equal height arguments for triangles/parallelograms."
+            },
+            {
+              "outcome_id": "OLY7.GEO.02.LO03",
+              "type": "procedural",
+              "statement": "Solve puzzle-like area problems with rearrangement."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH11.MEA.03"
+          ],
+          "misconception_ids": [
+            "MIS_1C633324B6"
+          ],
+          "template_ids": [
+            "MULTI_STEP_WORD",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "olympiad",
+            "geometry",
+            "area"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        }
+      ]
+    },
+    {
+      "module_id": "OLY7-ALGEBRA-PATTERNS",
+      "title": "Olympiad Enrichment: Algebra & Patterns (non-routine)",
+      "domain": "Olympiad Enrichment",
+      "big_ideas": [
+        "Patterns become solvable when you translate them into tables, expressions, or invariants.",
+        "Algebra is a language for structure, not just 'x'.",
+        "Many Olympiad problems are about choosing a smart representation."
+      ],
+      "estimated_sessions": 7,
+      "alignment": {
+        "goal": "Class 7 Olympiad algebra reasoning",
+        "variant_inclusion": {
+          "NCERT_FULL": true,
+          "NCERT_RATIONALISED": true
+        }
+      },
+      "track_tags": [
+        "OLYMPIAD_ENRICH"
+      ],
+      "atoms": [
+        {
+          "atom_id": "OLY7.ALG.01",
+          "title": "Build and test rules for sequences (table → expression)",
+          "core_idea": "Use input-output thinking to describe patterns.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.ALG.01.LO01",
+              "type": "logical",
+              "statement": "Generate the next terms from a rule and justify it."
+            },
+            {
+              "outcome_id": "OLY7.ALG.01.LO02",
+              "type": "conceptual",
+              "statement": "Create a rule from a table (simple linear patterns)."
+            },
+            {
+              "outcome_id": "OLY7.ALG.01.LO03",
+              "type": "conceptual",
+              "statement": "Check a rule with multiple values."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.02",
+            "CBSE7.CH04.EQ.01"
+          ],
+          "misconception_ids": [
+            "MIS_B6D37C9DAF"
+          ],
+          "template_ids": [
+            "NUMERIC_INPUT",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "olympiad",
+            "algebra",
+            "patterns"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        },
+        {
+          "atom_id": "OLY7.ALG.02",
+          "title": "Inequality sense (bounds, not exact answers)",
+          "core_idea": "Sometimes you only need a range; bounds are powerful.",
+          "outcomes": [
+            {
+              "outcome_id": "OLY7.ALG.02.LO01",
+              "type": "conceptual",
+              "statement": "Use estimate bounds for sums/products."
+            },
+            {
+              "outcome_id": "OLY7.ALG.02.LO02",
+              "type": "logical",
+              "statement": "Reason about min/max under simple constraints."
+            },
+            {
+              "outcome_id": "OLY7.ALG.02.LO03",
+              "type": "logical",
+              "statement": "Explain why a value is impossible."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.PS.STRAT.02"
+          ],
+          "misconception_ids": [
+            "MIS_16DD9EA28A"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "olympiad",
+            "inequalities",
+            "reasoning"
+          ],
+          "mastery_profile_id": "MP_OLYMPIAD"
+        }
+      ]
+    },
+    {
+      "module_id": "ENG7-COORDINATE-FOUNDATION",
+      "title": "Engineering Foundation: Coordinate Thinking (early)",
+      "domain": "Engineering Foundation",
+      "big_ideas": [
+        "Coordinates are addresses; graphs are stories of relationships.",
+        "Many engineering entrance topics later rely on comfort with the coordinate plane.",
+        "You can start with simple plotting and patterns without formal 'functions'."
+      ],
+      "estimated_sessions": 6,
+      "alignment": {
+        "goal": "Long-run bridge toward coordinate geometry used in higher classes."
+      },
+      "track_tags": [
+        "ADVANCED_FOUND"
+      ],
+      "atoms": [
+        {
+          "atom_id": "ENG7.COORD.01",
+          "title": "Plot and read points in the coordinate plane (Quadrant I first)",
+          "core_idea": "A point (x,y) means 'x along, y up'.",
+          "outcomes": [
+            {
+              "outcome_id": "ENG7.COORD.01.LO01",
+              "type": "conceptual",
+              "statement": "Plot points with positive coordinates accurately."
+            },
+            {
+              "outcome_id": "ENG7.COORD.01.LO02",
+              "type": "conceptual",
+              "statement": "Read coordinates from a grid."
+            },
+            {
+              "outcome_id": "ENG7.COORD.01.LO03",
+              "type": "conceptual",
+              "statement": "Connect coordinate changes to movement."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH11.MEA.01"
+          ],
+          "misconception_ids": [
+            "MIS_E9ECE46605"
+          ],
+          "template_ids": [
+            "GEOMETRY_TAP",
+            "NUMERIC_INPUT"
+          ],
+          "tags": [
+            "engineering-foundation",
+            "coordinate"
+          ],
+          "mastery_profile_id": "MP_ADVANCED_FOUND"
+        },
+        {
+          "atom_id": "ENG7.COORD.02",
+          "title": "See linear patterns on a table and on a graph",
+          "core_idea": "Tables and graphs show the same relationship in different clothes.",
+          "outcomes": [
+            {
+              "outcome_id": "ENG7.COORD.02.LO01",
+              "type": "conceptual",
+              "statement": "From a table, spot constant add pattern."
+            },
+            {
+              "outcome_id": "ENG7.COORD.02.LO02",
+              "type": "conceptual",
+              "statement": "Plot the table as points and describe the trend."
+            },
+            {
+              "outcome_id": "ENG7.COORD.02.LO03",
+              "type": "logical",
+              "statement": "Predict the next value and justify."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH12.ALG.02",
+            "ENG7.COORD.01"
+          ],
+          "misconception_ids": [
+            "MIS_C1C8AC60DE"
+          ],
+          "template_ids": [
+            "MATCHING",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "engineering-foundation",
+            "linear-thinking"
+          ],
+          "mastery_profile_id": "MP_ADVANCED_FOUND"
+        }
+      ]
+    },
+    {
+      "module_id": "ENG7-CALC-FLUENCY",
+      "title": "Engineering Foundation: Calculation Fluency (smart, not speed)",
+      "domain": "Engineering Foundation",
+      "big_ideas": [
+        "Entrance exams reward accuracy and efficiency; efficiency comes from strategies, not rushing.",
+        "Mental math shortcuts reduce cognitive load so you can think.",
+        "Estimation prevents silly mistakes."
+      ],
+      "estimated_sessions": 6,
+      "alignment": {
+        "goal": "Build fluency that supports later competitive prep without increasing anxiety."
+      },
+      "track_tags": [
+        "ADVANCED_FOUND"
+      ],
+      "atoms": [
+        {
+          "atom_id": "ENG7.FL.01",
+          "title": "Estimation and sanity-checks (units, order of magnitude)",
+          "core_idea": "A quick estimate catches many wrong answers.",
+          "outcomes": [
+            {
+              "outcome_id": "ENG7.FL.01.LO01",
+              "type": "conceptual",
+              "statement": "Estimate products/quotients using rounding."
+            },
+            {
+              "outcome_id": "ENG7.FL.01.LO02",
+              "type": "conceptual",
+              "statement": "Check if an answer is reasonable using units and magnitude."
+            },
+            {
+              "outcome_id": "ENG7.FL.01.LO03",
+              "type": "conceptual",
+              "statement": "Use reverse operation to check equations."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.PS.STRAT.01"
+          ],
+          "misconception_ids": [
+            "MIS_7AFFFF8B85"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "TWO_TIER"
+          ],
+          "tags": [
+            "engineering-foundation",
+            "estimation",
+            "accuracy"
+          ],
+          "mastery_profile_id": "MP_ADVANCED_FOUND"
+        },
+        {
+          "atom_id": "ENG7.FL.02",
+          "title": "Strategy toolkit: distributive, factoring, fraction sense",
+          "core_idea": "Algebraic thinking starts as arithmetic strategy.",
+          "outcomes": [
+            {
+              "outcome_id": "ENG7.FL.02.LO01",
+              "type": "conceptual",
+              "statement": "Use distributive property for mental multiplication (e.g., 17×6 = (10+7)×6)."
+            },
+            {
+              "outcome_id": "ENG7.FL.02.LO02",
+              "type": "procedural",
+              "statement": "Simplify fraction calculations before multiplying/dividing."
+            },
+            {
+              "outcome_id": "ENG7.FL.02.LO03",
+              "type": "conceptual",
+              "statement": "Explain your shortcut."
+            }
+          ],
+          "prerequisites": [
+            "CBSE7.CH02.FRD.04",
+            "CBSE7.CH12.ALG.04"
+          ],
+          "misconception_ids": [
+            "MIS_680B55BE2D"
+          ],
+          "template_ids": [
+            "ERROR_ANALYSIS",
+            "SHORT_EXPLAIN"
+          ],
+          "tags": [
+            "engineering-foundation",
+            "fluency",
+            "algebraic-thinking"
+          ],
+          "mastery_profile_id": "MP_ADVANCED_FOUND"
+        }
+      ]
+    }
+  ],
+  "misconception_index": [
+    {
+      "misconception_id": "MIS_017238C681",
+      "tag": "MIS_REVERSING_MEANING_OF_SYMBOLS"
+    },
+    {
+      "misconception_id": "MIS_01DE480827",
+      "tag": "MIS_ADDING_COEFFICIENTS_BUT_CHANGING_VARIABL"
+    },
+    {
+      "misconception_id": "MIS_03E2A2F24E",
+      "tag": "MIS_MAKING_CLAIMS_NOT_SUPPORTED_BY_DATA"
+    },
+    {
+      "misconception_id": "MIS_05AA7CB520",
+      "tag": "MIS_THINKING_THERE_IS_ONLY_ONE_NUMBER_BETWEE"
+    },
+    {
+      "misconception_id": "MIS_06A3653607",
+      "tag": "MIS_DROPPING_PARENTHESES_EVALUATING_3X_2_WIT"
+    },
+    {
+      "misconception_id": "MIS_085AC8551F",
+      "tag": "MIS_ADDING_NUMERATORS_AND_DENOMINATORS_A_B_C"
+    },
+    {
+      "misconception_id": "MIS_090B344871",
+      "tag": "MIS_FORGETTING_TO_CHECK"
+    },
+    {
+      "misconception_id": "MIS_09B3FB3D50",
+      "tag": "MIS_THINKING_SUBTRACTION_ALWAYS_MAKES_NUMBER"
+    },
+    {
+      "misconception_id": "MIS_0AC2F78659",
+      "tag": "MIS_ASSUMING_SUBTRACTION_ALWAYS_DECREASES"
+    },
+    {
+      "misconception_id": "MIS_0DB0BB1958",
+      "tag": "MIS_COUNTING_CURVED_SURFACES_INCORRECTLY_E_G"
+    },
+    {
+      "misconception_id": "MIS_0DD4B90FB5",
+      "tag": "MIS_ASSUMING_NON_EQUALLY_LIKELY_OUTCOMES_ARE"
+    },
+    {
+      "misconception_id": "MIS_101785805E",
+      "tag": "MIS_ASSUMING_TRIANGLE_TYPE_CHANGES_THE_SUM"
+    },
+    {
+      "misconception_id": "MIS_116CD7DA0D",
+      "tag": "MIS_FORGETTING_THE_1_2_FACTOR_FOR_TRIANGLES"
+    },
+    {
+      "misconception_id": "MIS_127F51E42E",
+      "tag": "MIS_PICKING_THE_WRONG_OPERATION_BECAUSE_OF_K"
+    },
+    {
+      "misconception_id": "MIS_12F9B27031",
+      "tag": "MIS_ASSUMING_ANY_OPPOSITE_LOOKING_ANGLES_ARE"
+    },
+    {
+      "misconception_id": "MIS_14163D6EEF",
+      "tag": "MIS_ADDING_PERCENTS_INSTEAD_OF_MULTIPLYING_S"
+    },
+    {
+      "misconception_id": "MIS_15EE377699",
+      "tag": "MIS_APPLYING_TAX_DISCOUNT_ON_THE_WRONG_BASE_"
+    },
+    {
+      "misconception_id": "MIS_16DD9EA28A",
+      "tag": "NEEDS_EXACT_ALWAYS"
+    },
+    {
+      "misconception_id": "MIS_1B55BC1E23",
+      "tag": "MIS_MIXING_UP_SIGNS_WHEN_SUBTRACTING_NEGATIV"
+    },
+    {
+      "misconception_id": "MIS_1C569509EC",
+      "tag": "MIS_CROSS_MULTIPLYING_BLINDLY_WITHOUT_UNDERS"
+    },
+    {
+      "misconception_id": "MIS_1C633324B6",
+      "tag": "AREA_NEEDS_FORMULA_ALWAYS"
+    },
+    {
+      "misconception_id": "MIS_1CDF8A468C",
+      "tag": "MIS_THINKING_5_5"
+    },
+    {
+      "misconception_id": "MIS_1F80368666",
+      "tag": "MIS_USING_SQUARE_UNITS_INSTEAD_OF_CUBIC_UNIT"
+    },
+    {
+      "misconception_id": "MIS_20AE8C4BF7",
+      "tag": "MIS_ADDING_SAME_NUMBER_TO_TOP_AND_BOTTOM_KEE"
+    },
+    {
+      "misconception_id": "MIS_20B1401535",
+      "tag": "MIS_CONFUSING_N_WITH_THE_OUTPUT"
+    },
+    {
+      "misconception_id": "MIS_21FF091745",
+      "tag": "MIS_MEASURING_DISTANCE_INCORRECTLY_FROM_THE_"
+    },
+    {
+      "misconception_id": "MIS_22F1E12FE2",
+      "tag": "MIS_CONFUSING_OF_WITH_ADDITION"
+    },
+    {
+      "misconception_id": "MIS_24F70C8B2D",
+      "tag": "MIS_FORGETTING_UNITS_OR_MIXING_UNITS"
+    },
+    {
+      "misconception_id": "MIS_267D9B409D",
+      "tag": "MIS_IGNORING_GIVEN_INFORMATION_IN_DIAGRAM"
+    },
+    {
+      "misconception_id": "MIS_289127C87C",
+      "tag": "MIS_THINKING_DIVISION_ALWAYS_MAKES_NUMBERS_S"
+    },
+    {
+      "misconception_id": "MIS_28A808D789",
+      "tag": "MIS_IGNORING_PARENTHESES_OR_TREATING_THEM_AS"
+    },
+    {
+      "misconception_id": "MIS_2970B7DE1C",
+      "tag": "MIS_USING_INSTEAD_OF"
+    },
+    {
+      "misconception_id": "MIS_2ACA197113",
+      "tag": "MIS_ASSUMING_ANGLES_ARE_EQUAL_WITHOUT_REASON"
+    },
+    {
+      "misconception_id": "MIS_2FE48FC220",
+      "tag": "TRIANGLE_INEQUALITY"
+    },
+    {
+      "misconception_id": "MIS_32C4C64D58",
+      "tag": "MIS_TREATING_OUTCOMES_AS_ORDERED_UNORDERED_I"
+    },
+    {
+      "misconception_id": "MIS_32D6058A91",
+      "tag": "CORRESPONDENCE_SWAP"
+    },
+    {
+      "misconception_id": "MIS_34CD110872",
+      "tag": "MIS_COMPARING_FRACTIONS_BY_COMPARING_DENOMIN"
+    },
+    {
+      "misconception_id": "MIS_355DA9E5E5",
+      "tag": "MIS_USING_FAVORABLE_TOTAL_INSTEAD_OF_FAVORAB"
+    },
+    {
+      "misconception_id": "MIS_3862202C61",
+      "tag": "PARITY_CONFUSE_SUM_PRODUCT"
+    },
+    {
+      "misconception_id": "MIS_3C1808EABD",
+      "tag": "MIS_DISTRIBUTING_INCORRECTLY_3_X_4_3X_4"
+    },
+    {
+      "misconception_id": "MIS_3CE791F072",
+      "tag": "MIS_CONFUSING_ADJACENT_ANGLES_WITH_VERTICAL_"
+    },
+    {
+      "misconception_id": "MIS_3D9E164878",
+      "tag": "MIS_DIVIDING_NUMERATORS_AND_DENOMINATORS_DIR"
+    },
+    {
+      "misconception_id": "MIS_40394F1D2C",
+      "tag": "MIS_READING_BAR_WIDTH_INSTEAD_OF_HEIGHT"
+    },
+    {
+      "misconception_id": "MIS_453C5DC3D6",
+      "tag": "MIS_CONFUSING_10_2_WITH_10_2"
+    },
+    {
+      "misconception_id": "MIS_45E5AC3C80",
+      "tag": "MIS_THINKING_1_2_IS_LESS_THAN_3_4_BECAUSE_1_"
+    },
+    {
+      "misconception_id": "MIS_4639A1D293",
+      "tag": "MIS_FORGETTING_TOTAL_MUST_BE_100"
+    },
+    {
+      "misconception_id": "MIS_46BF14E08A",
+      "tag": "MIS_MULTIPLYING_EXPONENTS_INCORRECTLY_A_M_N_"
+    },
+    {
+      "misconception_id": "MIS_47024413AF",
+      "tag": "MIS_WORKING_STRICTLY_LEFT_TO_RIGHT_ALWAYS"
+    },
+    {
+      "misconception_id": "MIS_49DC8E5D73",
+      "tag": "ASA_SIDE_POSITION"
+    },
+    {
+      "misconception_id": "MIS_49F389671A",
+      "tag": "MIS_MIXING_UP_FREQUENCY_WITH_THE_DATA_VALUE"
+    },
+    {
+      "misconception_id": "MIS_4AC0309788",
+      "tag": "MIS_WRITING_TOO_MUCH_WITHOUT_REFERENCING_A_M"
+    },
+    {
+      "misconception_id": "MIS_4AC4225EA1",
+      "tag": "MIS_MIXING_UP_WHICH_ANGLES_CORRESPOND"
+    },
+    {
+      "misconception_id": "MIS_4CD56D6CC4",
+      "tag": "MIS_MOVING_DECIMAL_THE_WRONG_DIRECTION"
+    },
+    {
+      "misconception_id": "MIS_4D1AEAAA2D",
+      "tag": "MIS_BELIEVING_A_0_0"
+    },
+    {
+      "misconception_id": "MIS_4D40E07B3F",
+      "tag": "MIS_ASSUMING_EVERY_SHAPE_HAS_AT_LEAST_ONE_LI"
+    },
+    {
+      "misconception_id": "MIS_50D1E919B7",
+      "tag": "MIS_THINKING_ANY_ROTATION_COUNTS_EVEN_IF_IT_"
+    },
+    {
+      "misconception_id": "MIS_52E80A7EAB",
+      "tag": "MIS_DIVIDING_BEFORE_SUBTRACTING_B_WRONG_ORDE"
+    },
+    {
+      "misconception_id": "MIS_534661853A",
+      "tag": "MIS_ONLY_CHECKING_THE_FINAL_STEP_NOT_THE_MOD"
+    },
+    {
+      "misconception_id": "MIS_55053D33E3",
+      "tag": "MIS_ROTATING_WHEN_TRANSLATION_IS_REQUIRED_OR"
+    },
+    {
+      "misconception_id": "MIS_563E6C70BD",
+      "tag": "MIS_COMBINING_UNLIKE_TERMS_X_Y_XY_OR_3X_2_5X"
+    },
+    {
+      "misconception_id": "MIS_56D00EE58A",
+      "tag": "MIS_ASSUMING_ANY_ARRANGEMENT_OF_6_SQUARES_MA"
+    },
+    {
+      "misconception_id": "MIS_57B95E3199",
+      "tag": "MIS_TREATING_RATIO_AS_SUBTRACTION_DIFFERENCE"
+    },
+    {
+      "misconception_id": "MIS_58A85F5A01",
+      "tag": "MIS_THINKING_A_LARGER_DRAWN_ANGLE_ARM_MEANS_"
+    },
+    {
+      "misconception_id": "MIS_5AF59FB3C9",
+      "tag": "MIS_TREATING_X_AS_A_MULTIPLICATION_SIGN"
+    },
+    {
+      "misconception_id": "MIS_5C330E4012",
+      "tag": "MIS_CHANGING_ONLY_ONE_SIDE"
+    },
+    {
+      "misconception_id": "MIS_5CFEA2EE71",
+      "tag": "MIS_EXPECTING_SMALL_SAMPLES_TO_MATCH_THEORET"
+    },
+    {
+      "misconception_id": "MIS_5F26BB85E0",
+      "tag": "MIS_MISSING_A_PART_OR_USING_WRONG_DIMENSIONS"
+    },
+    {
+      "misconception_id": "MIS_60F85A9E01",
+      "tag": "MIS_NOT_CONSIDERING_OVERLAP_ON_FOLDING"
+    },
+    {
+      "misconception_id": "MIS_60FBC9FA22",
+      "tag": "MIS_THINKING_LARGER_DENOMINATOR_ALWAYS_MEANS"
+    },
+    {
+      "misconception_id": "MIS_635A69E773",
+      "tag": "MIS_FORGETTING_THAT_FREQUENCIES_MUST_SUM_TO_"
+    },
+    {
+      "misconception_id": "MIS_63E161ADED",
+      "tag": "MIS_ASSUMING_SUBTRACTION_IS_COMMUTATIVE_ASSO"
+    },
+    {
+      "misconception_id": "MIS_655825A3EE",
+      "tag": "MIS_NOT_CHECKING_IF_THE_SIGN_MAKES_SENSE_IN_"
+    },
+    {
+      "misconception_id": "MIS_65DC9CE155",
+      "tag": "MIS_THINKING_MEANS_THE_ANSWER_COMES_NEXT_RAT"
+    },
+    {
+      "misconception_id": "MIS_6605A1F620",
+      "tag": "MIS_MULTIPLYING_DENOMINATORS_AND_NUMERATORS_"
+    },
+    {
+      "misconception_id": "MIS_680B55BE2D",
+      "tag": "CANCEL_WRONG"
+    },
+    {
+      "misconception_id": "MIS_6A052EB6AA",
+      "tag": "MIS_THINKING_MULTIPLICATION_ALWAYS_MAKES_NUM"
+    },
+    {
+      "misconception_id": "MIS_6A2B7F6BAB",
+      "tag": "MIS_ADDING_PROBABILITIES_INCORRECTLY"
+    },
+    {
+      "misconception_id": "MIS_6C07879D02",
+      "tag": "MIS_MOVING_DECIMAL_RANDOMLY_WITHOUT_FACTOR_R"
+    },
+    {
+      "misconception_id": "MIS_6D0456042E",
+      "tag": "MIS_THINKING_MEAN_AND_MEDIAN_ARE_ALWAYS_EQUA"
+    },
+    {
+      "misconception_id": "MIS_6E068B381D",
+      "tag": "MIS_MIXING_EDGES_WITH_VERTICES"
+    },
+    {
+      "misconception_id": "MIS_70108497AB",
+      "tag": "MIS_RANDOMLY_GUESSING_EQUATIONS_WITHOUT_IDEN"
+    },
+    {
+      "misconception_id": "MIS_71204AE506",
+      "tag": "MIS_BELIEVING_TWO_NEGATIVES_MAKE_A_NEGATIVE"
+    },
+    {
+      "misconception_id": "MIS_71886F3674",
+      "tag": "MIS_IGNORING_AXIS_LABELS"
+    },
+    {
+      "misconception_id": "MIS_757E388479",
+      "tag": "MIS_CONFUSING_25_WITH_0_25_WITHOUT_CONVERTIN"
+    },
+    {
+      "misconception_id": "MIS_76A3545F6C",
+      "tag": "MIS_FORGETTING_TOTAL_PROBABILITY_EQUALS_1"
+    },
+    {
+      "misconception_id": "MIS_77F26D0479",
+      "tag": "MIS_JUMPING_STRAIGHT_TO_CALCULATIONS_WITHOUT"
+    },
+    {
+      "misconception_id": "MIS_793F6CC5E2",
+      "tag": "MIS_USING_ONE_METHOD_FOR_EVERY_PROBLEM_HAMME"
+    },
+    {
+      "misconception_id": "MIS_7AFFFF8B85",
+      "tag": "ESTIMATE_EQUALS_GUESS"
+    },
+    {
+      "misconception_id": "MIS_7D2A3DD76A",
+      "tag": "MIS_ADDING_THE_SAME_NUMBER_INSTEAD_OF_MULTIP"
+    },
+    {
+      "misconception_id": "MIS_7ECBDC87FF",
+      "tag": "MIS_TREATING_INEQUALITY_LIKE_AN_EQUATION_WIT"
+    },
+    {
+      "misconception_id": "MIS_841DC5C893",
+      "tag": "MIS_MIXING_UNITS_IN_RATES_E_G_KM_WITH_MINUTE"
+    },
+    {
+      "misconception_id": "MIS_86A924CA56",
+      "tag": "MIS_MIXING_UNITS_CM_VS_CM"
+    },
+    {
+      "misconception_id": "MIS_87E7B530E7",
+      "tag": "RANDOM_ANGLE_GUESS"
+    },
+    {
+      "misconception_id": "MIS_8DDC5FC2FF",
+      "tag": "MIS_IGNORING_SCALE_ON_THE_AXIS"
+    },
+    {
+      "misconception_id": "MIS_8F69C71754",
+      "tag": "MIS_FLIPPING_THE_WRONG_FRACTION_IN_DIVISION"
+    },
+    {
+      "misconception_id": "MIS_8FE65C77FD",
+      "tag": "MIS_ASSUMING_GRAPHS_ARE_ALWAYS_HONEST"
+    },
+    {
+      "misconception_id": "MIS_901B0DC5AC",
+      "tag": "MIS_THINKING_EXPLANATION_IS_JUST_RESTATING_T"
+    },
+    {
+      "misconception_id": "MIS_903A073B33",
+      "tag": "HYPOTENUSE_CONFUSION"
+    },
+    {
+      "misconception_id": "MIS_90634565CF",
+      "tag": "MIS_CONFUSING_RANGE_WITH_MEAN"
+    },
+    {
+      "misconception_id": "MIS_93771D1276",
+      "tag": "MIS_MOVING_DECIMAL_THE_WRONG_DIRECTION_WHEN_"
+    },
+    {
+      "misconception_id": "MIS_940A20EA2A",
+      "tag": "MIS_APPLYING_A_0_1_EVEN_WHEN_A_0_WITHOUT_DIS"
+    },
+    {
+      "misconception_id": "MIS_94DC533DF6",
+      "tag": "MIS_INTERPRETING_A_N_AS_A_N"
+    },
+    {
+      "misconception_id": "MIS_963499EFB4",
+      "tag": "MIS_FORGETTING_TO_ORDER_DATA_FOR_MEDIAN"
+    },
+    {
+      "misconception_id": "MIS_98D62BEB7D",
+      "tag": "MIS_THINKING_AN_ISOSCELES_TRIANGLE_MUST_LOOK"
+    },
+    {
+      "misconception_id": "MIS_9AEF347F7C",
+      "tag": "MIS_ASSUMING_EQUAL_ANGLES_IMPLY_ISOSCELES_WI"
+    },
+    {
+      "misconception_id": "MIS_9C543341CF",
+      "tag": "MIS_USING_DISTRIBUTIVE_PROPERTY_INCORRECTLY_"
+    },
+    {
+      "misconception_id": "MIS_9E8B6236AA",
+      "tag": "MIS_MOVING_A_TERM_ACROSS_THE_EQUALS_SIGN_WIT"
+    },
+    {
+      "misconception_id": "MIS_9EF9BC7457",
+      "tag": "MIS_SLIDING_INSTEAD_OF_FLIPPING"
+    },
+    {
+      "misconception_id": "MIS_9F82DE69F0",
+      "tag": "MIS_FORGETTING_TO_CONVERT_MIXED_NUMBERS_OR_S"
+    },
+    {
+      "misconception_id": "MIS_A1205673C0",
+      "tag": "MIS_MIXING_VARIABLE_VALUE_INTO_COEFFICIENT_I"
+    },
+    {
+      "misconception_id": "MIS_A13D0467B9",
+      "tag": "MEASURE_INSTEAD_OF_CONSTRUCT"
+    },
+    {
+      "misconception_id": "MIS_A1672A5AA9",
+      "tag": "MIS_CONFUSING_NEXT_NUMBER_LIKE_WITH_INTEGERS"
+    },
+    {
+      "misconception_id": "MIS_A445CB257B",
+      "tag": "MIS_THINKING_CHECKING_IS_ONLY_NEEDED_WHEN_UN"
+    },
+    {
+      "misconception_id": "MIS_A9309CD3DF",
+      "tag": "MIS_ADDING_ANGLES_INCORRECTLY_OR_MIXING_180_"
+    },
+    {
+      "misconception_id": "MIS_A9FD16E578",
+      "tag": "MIS_CONFUSING_PERIMETER_WITH_AREA_FORMULAS"
+    },
+    {
+      "misconception_id": "MIS_ACFC9D73C5",
+      "tag": "MIS_WRITING_EXPRESSIONS_IN_THE_WRONG_ORDER_E"
+    },
+    {
+      "misconception_id": "MIS_AFCF456F25",
+      "tag": "MIS_CONFUSING_A_X_WITH_A_X"
+    },
+    {
+      "misconception_id": "MIS_B0386EEA07",
+      "tag": "MIS_COMPARING_SLICE_PERIMETER_INSTEAD_OF_ARE"
+    },
+    {
+      "misconception_id": "MIS_B2A9639701",
+      "tag": "MIS_APPLYING_ADDITION_SIGN_RULES_TO_MULTIPLI"
+    },
+    {
+      "misconception_id": "MIS_B65CBFBEC6",
+      "tag": "MIS_CONFUSING_RIGHT_TRIANGLE_WITH_EQUILATERA"
+    },
+    {
+      "misconception_id": "MIS_B6D37C9DAF",
+      "tag": "ONE_POINT_RULE"
+    },
+    {
+      "misconception_id": "MIS_BA68685584",
+      "tag": "MIS_CONVERTING_AREA_USING_THE_SAME_FACTOR_AS"
+    },
+    {
+      "misconception_id": "MIS_BB313C0AF7",
+      "tag": "MIS_DIVIDING_ONLY_ONE_SIDE"
+    },
+    {
+      "misconception_id": "MIS_BDC70D6604",
+      "tag": "AAA_MISTAKE"
+    },
+    {
+      "misconception_id": "MIS_BE757EEDC9",
+      "tag": "MIS_OVERCOUNTING_HIDDEN_CUBES"
+    },
+    {
+      "misconception_id": "MIS_C00ABB8490",
+      "tag": "MIS_USING_RECURSIVE_RULE_ONLY_ADD_3_EACH_TIM"
+    },
+    {
+      "misconception_id": "MIS_C0692FD2C7",
+      "tag": "MIS_FACTORING_BY_DIVIDING_ONLY_ONE_TERM"
+    },
+    {
+      "misconception_id": "MIS_C1C8AC60DE",
+      "tag": "GRAPH_AS_PICTURE_ONLY"
+    },
+    {
+      "misconception_id": "MIS_C4C946ECCA",
+      "tag": "MIS_CHECKING_ONLY_ONE_PAIR_OF_SIDES"
+    },
+    {
+      "misconception_id": "MIS_C4E23CED88",
+      "tag": "MIS_CONFUSING_MORE_NEGATIVE_WITH_GREATER"
+    },
+    {
+      "misconception_id": "MIS_C6F20B95B3",
+      "tag": "RULE_MEMORIZATION_ONLY"
+    },
+    {
+      "misconception_id": "MIS_C9577A8E0D",
+      "tag": "MIS_CONFUSING_LINE_SYMMETRY_WITH_ROTATIONAL_"
+    },
+    {
+      "misconception_id": "MIS_CC3F33BC35",
+      "tag": "SAS_WRONG_ANGLE"
+    },
+    {
+      "misconception_id": "MIS_CC830DDFAD",
+      "tag": "ORDER_CONFUSION"
+    },
+    {
+      "misconception_id": "MIS_D20B6C7611",
+      "tag": "MIS_TREATING_NEGATIVES_AS_NOT_REAL_OR_IGNORI"
+    },
+    {
+      "misconception_id": "MIS_D34E59A7A1",
+      "tag": "MIS_SWAPPING_COMPLEMENTARY_AND_SUPPLEMENTARY"
+    },
+    {
+      "misconception_id": "MIS_D3CC617AD0",
+      "tag": "SIMILAR_CONFUSION"
+    },
+    {
+      "misconception_id": "MIS_D496859548",
+      "tag": "MIS_ASSUMING_THE_FRONT_VIEW_SHOWS_DEPTH"
+    },
+    {
+      "misconception_id": "MIS_D706C01326",
+      "tag": "PARALLEL_BY_EYE"
+    },
+    {
+      "misconception_id": "MIS_D7CD6012B7",
+      "tag": "MIS_THINKING_ABSOLUTE_VALUE_CHANGES_THE_DIRE"
+    },
+    {
+      "misconception_id": "MIS_D8010D64A2",
+      "tag": "MIS_USING_360_INSTEAD_OF_180"
+    },
+    {
+      "misconception_id": "MIS_D811433BD1",
+      "tag": "MIS_ROTATING_ABOUT_WRONG_CENTER"
+    },
+    {
+      "misconception_id": "MIS_D817443FC4",
+      "tag": "MIS_ADDING_EXPONENTS_WHEN_BASES_ARE_DIFFEREN"
+    },
+    {
+      "misconception_id": "MIS_D849D3B631",
+      "tag": "MIS_TREATING_0_35_AS_GREATER_THAN_0_5_BECAUS"
+    },
+    {
+      "misconception_id": "MIS_DBDEADA5F9",
+      "tag": "MIS_USING_PERIMETER_FORMULA_INSTEAD_OF_AREA"
+    },
+    {
+      "misconception_id": "MIS_DEB296F5B3",
+      "tag": "MIS_BELIEVING_A_RUN_OF_OUTCOMES_MUST_BALANCE"
+    },
+    {
+      "misconception_id": "MIS_DEF0102777",
+      "tag": "MIS_SIGN_CONFUSION_WHEN_THERE_ARE_MULTIPLE_N"
+    },
+    {
+      "misconception_id": "MIS_E1FC5A8E6A",
+      "tag": "MIS_IGNORING_UNITS_PERCENT_VS_QUANTITY"
+    },
+    {
+      "misconception_id": "MIS_E29EF07B92",
+      "tag": "MIS_BELIEVING_ESTIMATION_IS_GUESSING_AND_NOT"
+    },
+    {
+      "misconception_id": "MIS_E5EFB3E9DF",
+      "tag": "MIS_THINKING_THAT_7_IS_GREATER_THAN_3_BECAUS"
+    },
+    {
+      "misconception_id": "MIS_E643E74EF0",
+      "tag": "MIS_DISTRIBUTING_INCORRECTLY_WHEN_REWRITING"
+    },
+    {
+      "misconception_id": "MIS_E7835CCFA8",
+      "tag": "MIS_THINKING_3_2_6"
+    },
+    {
+      "misconception_id": "MIS_E8ADC2891F",
+      "tag": "POWER_TOO_BIG"
+    },
+    {
+      "misconception_id": "MIS_E9ECE46605",
+      "tag": "SWAP_XY"
+    },
+    {
+      "misconception_id": "MIS_EAD8D5C9A9",
+      "tag": "MIS_TREATING_PERCENT_SIGN_AS_DECORATION_E_G_"
+    },
+    {
+      "misconception_id": "MIS_EE36BAACAF",
+      "tag": "MIS_LOSING_TRACK_OF_NEGATIVE_SIGNS_DURING_CO"
+    },
+    {
+      "misconception_id": "MIS_F09C02064F",
+      "tag": "MIS_ASSUMING_COMPLEMENTARY_MEANS_EQUAL"
+    },
+    {
+      "misconception_id": "MIS_F0E3CFB5C3",
+      "tag": "MIS_ADDING_THE_ADJACENT_INTERIOR_ANGLE_INSTE"
+    },
+    {
+      "misconception_id": "MIS_F1D2BD9B49",
+      "tag": "MIS_DOUBLE_COUNTING_OVERLAPPING_PARTS"
+    },
+    {
+      "misconception_id": "MIS_F230A2FE70",
+      "tag": "MISSING_CASES"
+    },
+    {
+      "misconception_id": "MIS_F3B7D3449E",
+      "tag": "MIS_USING_SLANTED_SIDE_AS_HEIGHT"
+    },
+    {
+      "misconception_id": "MIS_F3BE79050F",
+      "tag": "MIS_CONFUSING_VOLUME_WITH_SURFACE_AREA"
+    },
+    {
+      "misconception_id": "MIS_F475A3CF79",
+      "tag": "MIS_MISSING_OUTCOMES_INCOMPLETE_SAMPLE_SPACE"
+    },
+    {
+      "misconception_id": "MIS_F5BF26E101",
+      "tag": "MIS_MULTIPLYING_BY_PERCENT_WITHOUT_CONVERTIN"
+    },
+    {
+      "misconception_id": "MIS_F6971A33CB",
+      "tag": "MIS_DRAWING_A_LINE_THAT_LOOKS_CENTERED_BUT_D"
+    },
+    {
+      "misconception_id": "MIS_F77CFE8E39",
+      "tag": "MIS_CONFUSING_ANGLE_SIZE_WITH_SIDE_LENGTH_IN"
+    },
+    {
+      "misconception_id": "MIS_F7B22A82EF",
+      "tag": "MIS_MISALIGNING_DECIMAL_POINTS_WHEN_ADDING_S"
+    },
+    {
+      "misconception_id": "MIS_FB97D2F62B",
+      "tag": "MIS_CONFUSING_WHICH_ANGLES_ARE_REMOTE"
+    }
+  ]
 }
