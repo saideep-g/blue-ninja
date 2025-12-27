@@ -1,25 +1,103 @@
 /**
  * src/services/bulkUploadValidator.js
- * Orchestrates validation of multiple questions in upload session
- * Handles progress tracking, duplicate detection, coverage analysis
- * Production-ready with comprehensive reporting
+ * ===================================
+ * 
+ * Orchestrates validation of multiple questions in a bulk upload.
+ * Handles parallel processing, duplicate detection, and report generation.
+ * 
+ * Features:
+ * - Parallel validation with configurable concurrency
+ * - Duplicate question ID detection
+ * - Curriculum coverage analysis
+ * - Performance metrics
+ * - Detailed reports
+ * 
+ * Usage:
+ * ------
+ * const results = await validateBulkUpload(questions, {
+ *   sessionId: 'session-123',
+ *   maxParallel: 4,
+ *   progressCallback: (progress) => console.log(progress.percentComplete)
+ * });
  */
 
-import { validateQuestion } from './questionValidator.js';
+import { validateQuestion } from './questionValidator';
+
+// ============================================================================
+// PARALLEL PROCESSING UTILITIES
+// ============================================================================
 
 /**
- * Validate a batch/bulk upload of questions
- * Orchestrates validation of multiple questions and provides comprehensive report
- *
- * @param {Array} questions - Array of question objects to validate
+ * Execute async functions with limited concurrency
+ * @private
+ * @param {Array} tasks - Array of async tasks/functions
+ * @param {number} maxParallel - Maximum concurrent tasks
+ * @param {Function} onProgress - Progress callback
+ * @returns {Array} Results array
+ */
+async function executeWithConcurrency(tasks, maxParallel = 4, onProgress = null) {
+  const results = [];
+  const executing = new Set();
+  let completed = 0;
+  let inProgress = 0;
+
+  const executeNext = async () => {
+    if (tasks.length === 0 && executing.size === 0) {
+      return;
+    }
+
+    if (inProgress >= maxParallel || tasks.length === 0) {
+      return;
+    }
+
+    inProgress++;
+    const taskIndex = tasks.length - 1;
+    const task = tasks.pop();
+    const promise = Promise.resolve(task()).then(
+      (result) => {
+        results[taskIndex] = result;
+        completed++;
+
+        if (onProgress) {
+          onProgress({
+            completed,
+            total: results.length + tasks.length,
+            percentComplete: Math.round((completed / (results.length + tasks.length)) * 100)
+          });
+        }
+
+        inProgress--;
+        return executeNext();
+      },
+      (error) => {
+        results[taskIndex] = { error };
+        completed++;
+        inProgress--;
+        return executeNext();
+      }
+    );
+
+    executing.add(promise);
+    promise.finally(() => executing.delete(promise));
+
+    return executeNext();
+  };
+
+  const allTasks = Array.from({ length: Math.min(maxParallel, tasks.length) }, executeNext);
+  await Promise.all(allTasks);
+
+  return results;
+}
+
+// ============================================================================
+// BULK VALIDATION ORCHESTRATION
+// ============================================================================
+
+/**
+ * Validate multiple questions in bulk
+ * @param {Array} questions - Array of question objects
  * @param {Object} options - Configuration options
- *   - sessionId: Session identifier
- *   - curriculum: Curriculum/atom reference data
- *   - progressCallback: Function called with progress updates
- *   - checkForDuplicates: Whether to check for duplicate IDs (default: true)
- *   - maxParallel: Max concurrent validations (default: 4)
- *
- * @returns {Object} Comprehensive validation report
+ * @returns {Object} Validation results with statistics
  */
 export async function validateBulkUpload(questions, options = {}) {
   const {
@@ -27,340 +105,374 @@ export async function validateBulkUpload(questions, options = {}) {
     curriculum = null,
     progressCallback = null,
     checkForDuplicates = true,
-    maxParallel = 4
+    maxParallel = 4,
+    performanceMetrics = true
   } = options;
 
-  if (!Array.isArray(questions)) {
-    throw new Error('questions must be an array');
-  }
+  const startTime = performance.now();
+  const totalQuestions = questions.length;
 
-  if (questions.length === 0) {
-    return createEmptyReport(sessionId);
-  }
+  console.log(`[BulkValidator] Starting validation of ${totalQuestions} questions`);
+  console.log(`[BulkValidator] Max parallel: ${maxParallel}, Check duplicates: ${checkForDuplicates}`);
 
-  const startTime = Date.now();
-
-  // Results container
   const results = {
     sessionId,
-    totalQuestions: questions.length,
     validatedAt: new Date().toISOString(),
+    totalQuestions,
     summary: {
       totalValid: 0,
       totalWithErrors: 0,
       totalWithWarnings: 0,
-      totalWithCriticalErrors: 0,
-      qualityGradeDistribution: {},
-      validationTime: 0
+      totalSkipped: 0,
+      qualityGradeDistribution: {
+        A: 0,
+        B: 0,
+        C: 0,
+        D: 0,
+        F: 0
+      },
+      errorCodeFrequency: {}
     },
     questionResults: [],
     globalIssues: [],
-    statistics: {
-      averageQualityScore: 0,
-      qualityGradeBreakdown: {},
-      atomCoverage: {},
-      typeDistribution: {}
-    },
-    performanceMetrics: {
+    coverage: {},
+    performanceMetrics: performanceMetrics ? {
+      totalTimeMs: 0,
+      averageTimePerQuestionMs: 0,
+      questionsPerSecond: 0,
       startTime,
-      endTime: null,
-      totalDuration: 0,
-      averagePerQuestion: 0
-    }
+      endTime: null
+    } : null
   };
 
-  // Validate each question with parallel processing
-  let validatedCount = 0;
-  const questionValidations = [];
+  if (!questions || questions.length === 0) {
+    console.warn('[BulkValidator] No questions to validate');
+    if (performanceMetrics) {
+      results.performanceMetrics.endTime = performance.now();
+      results.performanceMetrics.totalTimeMs = results.performanceMetrics.endTime - startTime;
+    }
+    return results;
+  }
 
-  for (let i = 0; i < questions.length; i += maxParallel) {
-    const batch = questions.slice(i, Math.min(i + maxParallel, questions.length));
-    
-    const batchPromises = batch.map((question, batchIdx) => {
-      return validateQuestion(question, curriculum).then(validation => {
-        validatedCount++;
-
-        // Call progress callback
-        if (progressCallback) {
-          progressCallback({
-            current: validatedCount,
-            total: questions.length,
-            percentComplete: Math.round((validatedCount / questions.length) * 100),
-            currentQuestion: question.id || `Unknown-${validatedCount}`
-          });
+  try {
+    // Create validation tasks
+    const validationTasks = questions.map((question, index) => {
+      return async () => {
+        try {
+          const validation = await validateQuestion(question, curriculum);
+          return {
+            index,
+            question,
+            validation
+          };
+        } catch (error) {
+          return {
+            index,
+            question,
+            validation: {
+              questionId: question?.id || `UNKNOWN_${index}`,
+              isValid: false,
+              errors: [{
+                severity: 'CRITICAL',
+                code: 'VALIDATION_ERROR',
+                message: error.message
+              }],
+              warnings: []
+            },
+            validationError: error
+          };
         }
-
-        return validation;
-      });
+      };
     });
 
-    questionValidations.push(...await Promise.all(batchPromises));
-  }
+    // Execute with concurrency control
+    const validationResults = await executeWithConcurrency(
+      validationTasks,
+      maxParallel,
+      (progress) => {
+        if (progressCallback) {
+          progressCallback({
+            current: progress.completed,
+            total: totalQuestions,
+            percentComplete: progress.percentComplete
+          });
+        }
+      }
+    );
 
-  // Process validation results
-  let totalQualityScore = 0;
-  let questionsWithQualityGrade = 0;
+    // Process results
+    for (const result of validationResults) {
+      if (!result || result.validationError) {
+        results.summary.totalSkipped++;
+        continue;
+      }
 
-  for (const validation of questionValidations) {
-    results.questionResults.push(validation);
+      const { validation, question } = result;
+      results.questionResults.push(validation);
 
-    // Update summary statistics
-    if (validation.isValid) {
-      results.summary.totalValid++;
-    } else {
-      results.summary.totalWithErrors++;
-      
-      // Count critical errors
-      const criticalCount = (validation.errors || [])
-        .filter(e => e.severity === 'CRITICAL').length;
-      if (criticalCount > 0) {
-        results.summary.totalWithCriticalErrors++;
+      // Update summary
+      if (validation.isValid) {
+        results.summary.totalValid++;
+      } else {
+        results.summary.totalWithErrors++;
+      }
+
+      if (validation.warnings && validation.warnings.length > 0) {
+        results.summary.totalWithWarnings++;
+      }
+
+      // Track quality grades
+      const grade = validation.qualityGrade || 'F';
+      if (results.summary.qualityGradeDistribution[grade] !== undefined) {
+        results.summary.qualityGradeDistribution[grade]++;
+      }
+
+      // Track error codes
+      if (validation.errors) {
+        for (const error of validation.errors) {
+          if (error.code) {
+            results.summary.errorCodeFrequency[error.code] =
+              (results.summary.errorCodeFrequency[error.code] || 0) + 1;
+          }
+        }
+      }
+
+      // Coverage analysis
+      const atom = question?.atom || 'UNKNOWN';
+      results.coverage[atom] = (results.coverage[atom] || 0) + 1;
+    }
+
+    // Check for duplicate question IDs
+    if (checkForDuplicates) {
+      const questionIds = results.questionResults
+        .map(r => r.questionId)
+        .filter(id => id !== undefined && id !== null);
+
+      const duplicateIds = questionIds.filter((id, idx) => questionIds.indexOf(id) !== idx);
+      const uniqueDuplicates = [...new Set(duplicateIds)];
+
+      if (uniqueDuplicates.length > 0) {
+        results.globalIssues.push({
+          severity: 'CRITICAL',
+          code: 'DUPLICATE_QUESTION_IDS',
+          message: `Found ${uniqueDuplicates.length} unique question ID(s) appearing multiple times in this batch`,
+          duplicateIds: uniqueDuplicates,
+          totalDuplicates: duplicateIds.length
+        });
       }
     }
 
-    if ((validation.warnings || []).length > 0) {
-      results.summary.totalWithWarnings++;
+    // Check for missing atoms
+    const missingAtoms = results.questionResults.filter(
+      r => !r.questionId || !results.coverage[r.questionId]
+    );
+    if (missingAtoms.length > 0) {
+      results.globalIssues.push({
+        severity: 'WARNING',
+        code: 'MISSING_ATOM_MAPPING',
+        message: `${missingAtoms.length} question(s) have no atom mapping`,
+        count: missingAtoms.length
+      });
     }
 
-    // Track quality grades
-    const grade = validation.qualityGrade || 'F';
-    results.summary.qualityGradeDistribution[grade] = 
-      (results.summary.qualityGradeDistribution[grade] || 0) + 1;
-    results.statistics.qualityGradeBreakdown[grade] = 
-      (results.statistics.qualityGradeBreakdown[grade] || 0) + 1;
-
-    // Track quality score
-    if (validation.qualityScore !== undefined) {
-      totalQualityScore += validation.qualityScore;
-      questionsWithQualityGrade++;
+    // Performance metrics
+    if (performanceMetrics) {
+      results.performanceMetrics.endTime = performance.now();
+      results.performanceMetrics.totalTimeMs = results.performanceMetrics.endTime - startTime;
+      results.performanceMetrics.averageTimePerQuestionMs =
+        results.performanceMetrics.totalTimeMs / Math.max(1, totalQuestions);
+      results.performanceMetrics.questionsPerSecond = 
+        (totalQuestions / results.performanceMetrics.totalTimeMs) * 1000;
     }
 
-    // Track atom coverage
-    if (validation.questionId) {
-      const question = questions.find(q => q.id === validation.questionId);
-      if (question && question.atom) {
-        results.statistics.atomCoverage[question.atom] = 
-          (results.statistics.atomCoverage[question.atom] || 0) + 1;
-      }
-    }
-
-    // Track question types
-    if (validation.questionId) {
-      const question = questions.find(q => q.id === validation.questionId);
-      if (question && question.type) {
-        results.statistics.typeDistribution[question.type] = 
-          (results.statistics.typeDistribution[question.type] || 0) + 1;
-      }
-    }
+    console.log(`[BulkValidator] Validation complete:`, {
+      total: totalQuestions,
+      valid: results.summary.totalValid,
+      errors: results.summary.totalWithErrors,
+      warnings: results.summary.totalWithWarnings,
+      timeMs: results.performanceMetrics?.totalTimeMs || 'N/A'
+    });
+  } catch (error) {
+    console.error('[BulkValidator] Bulk validation failed:', error);
+    results.globalIssues.push({
+      severity: 'ERROR',
+      code: 'BULK_VALIDATION_ERROR',
+      message: `Unexpected error during bulk validation: ${error.message}`,
+      error: error.toString()
+    });
   }
-
-  // Calculate average quality score
-  if (questionsWithQualityGrade > 0) {
-    results.statistics.averageQualityScore = 
-      (totalQualityScore / questionsWithQualityGrade).toFixed(2);
-  }
-
-  // Check for duplicate question IDs across batch
-  if (checkForDuplicates) {
-    const duplicateIssues = checkForDuplicateIds(questions, results.questionResults);
-    results.globalIssues.push(...duplicateIssues);
-  }
-
-  // Check for orphaned atoms (atoms not in curriculum)
-  if (curriculum && curriculum.atoms) {
-    const orphanedIssues = checkForOrphanedAtoms(questions, curriculum, results.questionResults);
-    results.globalIssues.push(...orphanedIssues);
-  }
-
-  // Check for coverage gaps
-  const coverageIssues = checkForCoverageGaps(results.statistics.atomCoverage);
-  results.globalIssues.push(...coverageIssues);
-
-  // Performance metrics
-  const endTime = Date.now();
-  const totalDuration = endTime - startTime;
-  results.performanceMetrics.endTime = endTime;
-  results.performanceMetrics.totalDuration = totalDuration;
-  results.performanceMetrics.averagePerQuestion = 
-    (totalDuration / questions.length).toFixed(2);
-  results.summary.validationTime = totalDuration;
 
   return results;
 }
 
-/**
- * Check for duplicate question IDs within the batch
- */
-function checkForDuplicateIds(questions, validationResults) {
-  const issues = [];
-  const ids = new Map();
-
-  questions.forEach((q, idx) => {
-    if (!q.id) return;
-    
-    if (!ids.has(q.id)) {
-      ids.set(q.id, []);
-    }
-    ids.get(q.id).push(idx);
-  });
-
-  // Find duplicates
-  const duplicates = Array.from(ids.entries())
-    .filter(([id, indices]) => indices.length > 1);
-
-  if (duplicates.length > 0) {
-    issues.push({
-      severity: 'CRITICAL',
-      code: 'DUPLICATE_QUESTION_IDS_IN_BATCH',
-      message: `Found ${duplicates.length} duplicate question ID(s) in this batch`,
-      duplicateIds: duplicates.map(([id, indices]) => ({
-        id,
-        count: indices.length,
-        indices
-      })),
-      impact: 'These questions cannot be published simultaneously. Rename duplicates and retry.'
-    });
-  }
-
-  return issues;
-}
+// ============================================================================
+// REPORT GENERATION
+// ============================================================================
 
 /**
- * Check for atoms not in curriculum
- */
-function checkForOrphanedAtoms(questions, curriculum, validationResults) {
-  const issues = [];
-  const validAtoms = curriculum.atoms || [];
-  const orphanedAtoms = new Set();
-
-  questions.forEach(q => {
-    if (q.atom && !validAtoms.includes(q.atom)) {
-      orphanedAtoms.add(q.atom);
-    }
-  });
-
-  if (orphanedAtoms.size > 0) {
-    const affectedQuestions = questions
-      .filter(q => orphanedAtoms.has(q.atom))
-      .map(q => q.id);
-
-    issues.push({
-      severity: 'WARNING',
-      code: 'ATOMS_NOT_IN_CURRICULUM',
-      message: `Found ${orphanedAtoms.size} atom(s) not in curriculum`,
-      orphanedAtoms: Array.from(orphanedAtoms),
-      affectedQuestionCount: affectedQuestions.length,
-      affectedQuestions: affectedQuestions.slice(0, 10), // Show first 10
-      impact: 'These questions may not be properly categorized in reports.'
-    });
-  }
-
-  return issues;
-}
-
-/**
- * Check for significant coverage gaps (atoms with no questions)
- */
-function checkForCoverageGaps(atomCoverage) {
-  const issues = [];
-  const totalQuestions = Object.values(atomCoverage).reduce((a, b) => a + b, 0);
-  const avgCoverage = totalQuestions / Object.keys(atomCoverage).length;
-  const threshold = avgCoverage * 0.5; // Alert if atom has < 50% of average
-
-  const lowCoverage = Object.entries(atomCoverage)
-    .filter(([atom, count]) => count < threshold)
-    .sort((a, b) => a[1] - b[1]);
-
-  if (lowCoverage.length > 0) {
-    issues.push({
-      severity: 'INFO',
-      code: 'COVERAGE_GAPS',
-      message: `${lowCoverage.length} atom(s) have lower than average coverage`,
-      lowCoverageAtoms: lowCoverage.map(([atom, count]) => ({
-        atom,
-        questionCount: count,
-        averageCoverage: Math.round(avgCoverage)
-      })),
-      impact: 'Consider adding more questions for these topics to improve coverage.'
-    });
-  }
-
-  return issues;
-}
-
-/**
- * Create empty report for no questions
- */
-function createEmptyReport(sessionId) {
-  return {
-    sessionId,
-    totalQuestions: 0,
-    validatedAt: new Date().toISOString(),
-    summary: {
-      totalValid: 0,
-      totalWithErrors: 0,
-      totalWithWarnings: 0,
-      totalWithCriticalErrors: 0,
-      qualityGradeDistribution: {}
-    },
-    questionResults: [],
-    globalIssues: [{
-      severity: 'WARNING',
-      code: 'NO_QUESTIONS_TO_VALIDATE',
-      message: 'No questions provided for validation'
-    }],
-    statistics: {
-      averageQualityScore: 0,
-      qualityGradeBreakdown: {},
-      atomCoverage: {},
-      typeDistribution: {}
-    }
-  };
-}
-
-/**
- * Generate a human-readable validation report
+ * Generate human-readable validation report
+ * @param {Object} validationResults - Results from validateBulkUpload
+ * @returns {Object} Formatted report
  */
 export function generateValidationReport(validationResults) {
-  const { summary, statistics, globalIssues, performanceMetrics } = validationResults;
+  const { summary, globalIssues, coverage, questionResults, performanceMetrics } = validationResults;
 
   const report = {
-    title: 'Question Upload Validation Report',
     generatedAt: new Date().toISOString(),
     summary: {
       totalQuestions: validationResults.totalQuestions,
-      validQuestions: summary.totalValid,
-      questionsWithErrors: summary.totalWithErrors,
-      questionsWithCriticalErrors: summary.totalWithCriticalErrors,
-      questionsWithWarnings: summary.totalWithWarnings,
-      validationPercentage: validationResults.totalQuestions > 0 
-        ? Math.round((summary.totalValid / validationResults.totalQuestions) * 100)
-        : 0
+      passedValidation: summary.totalValid,
+      failedValidation: summary.totalWithErrors,
+      skipped: summary.totalSkipped,
+      withWarnings: summary.totalWithWarnings,
+      successRate: ((summary.totalValid / validationResults.totalQuestions) * 100).toFixed(1) + '%'
     },
-    qualityMetrics: {
-      averageQualityScore: statistics.averageQualityScore,
-      gradeDistribution: statistics.qualityGradeBreakdown
-    },
+    qualityDistribution: summary.qualityGradeDistribution,
+    commonErrors: Object.entries(summary.errorCodeFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map(([code, count]) => ({ code, count })),
     coverage: {
-      atomCount: Object.keys(statistics.atomCoverage).length,
-      typeDistribution: statistics.typeDistribution,
-      topAtoms: Object.entries(statistics.atomCoverage)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 5)
-        .map(([atom, count]) => ({ atom, count }))
+      uniqueAtoms: Object.keys(coverage).length,
+      distribution: coverage
     },
-    globalIssues: globalIssues.filter(i => i.severity !== 'INFO'),
-    infos: globalIssues.filter(i => i.severity === 'INFO'),
-    performance: {
-      totalDuration: `${performanceMetrics.totalDuration}ms`,
-      averagePerQuestion: `${performanceMetrics.averagePerQuestion}ms`
-    }
+    globalIssues: globalIssues.length > 0 ? globalIssues : null,
+    performance: performanceMetrics || null,
+    failedQuestions: questionResults
+      .filter(r => !r.isValid)
+      .map(r => ({
+        id: r.questionId,
+        errorCount: r.errors?.length || 0,
+        errors: r.errors?.slice(0, 3).map(e => `${e.code}: ${e.message}`) || []
+      }))
+      .slice(0, 20)
   };
 
   return report;
 }
 
+/**
+ * Generate CSV export of validation results
+ * @param {Object} validationResults - Results from validateBulkUpload
+ * @returns {String} CSV formatted data
+ */
+export function generateCSVReport(validationResults) {
+  const { questionResults } = validationResults;
+
+  // CSV header
+  const headers = [
+    'Question ID',
+    'Status',
+    'Quality Grade',
+    'Error Count',
+    'Warning Count',
+    'Primary Error',
+    'Suggestions'
+  ];
+
+  // CSV rows
+  const rows = questionResults.map(result => [
+    result.questionId || 'UNKNOWN',
+    result.isValid ? 'VALID' : 'INVALID',
+    result.qualityGrade || 'N/A',
+    result.errors?.length || 0,
+    result.warnings?.length || 0,
+    result.errors?.[0]?.code || '',
+    (result.suggestions?.map(s => s.message).join('; ') || '').substring(0, 100)
+  ]);
+
+  // Combine and escape
+  const allRows = [headers, ...rows];
+  const csv = allRows
+    .map(row =>
+      row
+        .map(cell => {
+          const str = String(cell || '');
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        })
+        .join(',')
+    )
+    .join('\n');
+
+  return csv;
+}
+
+// ============================================================================
+// AUTO-FIX SUGGESTIONS
+// ============================================================================
+
+/**
+ * Generate auto-fix suggestions for common errors
+ * @param {Object} validationResult - Single question validation result
+ * @param {Object} question - Original question object
+ * @returns {Array} Array of suggested fixes
+ */
+export function getAutoFixSuggestions(validationResult, question) {
+  const suggestions = [];
+
+  const errorCodes = validationResult.errors?.map(e => e.code) || [];
+
+  // Duplicate options fix
+  if (errorCodes.includes('DUPLICATE_OPTIONS')) {
+    suggestions.push({
+      code: 'REMOVE_DUPLICATES',
+      description: 'Remove duplicate options',
+      action: () => {
+        const unique = [...new Map(
+          question.options.map(o => [
+            (typeof o === 'string' ? o : o.text).toLowerCase(),
+            o
+          ])
+        ).values()];
+        return { ...question, options: unique };
+      }
+    });
+  }
+
+  // Empty options fix
+  if (errorCodes.includes('EMPTY_OPTION')) {
+    suggestions.push({
+      code: 'REMOVE_EMPTY_OPTIONS',
+      description: 'Remove empty options',
+      action: () => ({
+        ...question,
+        options: question.options.filter(
+          o => (typeof o === 'string' ? o : o?.text || '').trim().length > 0
+        )
+      })
+    });
+  }
+
+  // Missing diagnostic tags fix
+  if (errorCodes.includes('MISSING_DIAGNOSTIC_TAGS')) {
+    suggestions.push({
+      code: 'ADD_DEFAULT_TAG',
+      description: 'Add default diagnostic tag',
+      action: () => ({
+        ...question,
+        diagnosticTags: question.diagnosticTags || ['GENERAL_KNOWLEDGE']
+      })
+    });
+  }
+
+  // Missing difficulty fix
+  if (validationResult.suggestions?.some(s => s.code === 'MISSING_DIFFICULTY')) {
+    suggestions.push({
+      code: 'SET_DIFFICULTY_MEDIUM',
+      description: 'Set difficulty to MEDIUM',
+      action: () => ({ ...question, difficulty: 'MEDIUM' })
+    });
+  }
+
+  return suggestions;
+}
+
 export default {
   validateBulkUpload,
-  generateValidationReport
+  generateValidationReport,
+  generateCSVReport,
+  getAutoFixSuggestions
 };
