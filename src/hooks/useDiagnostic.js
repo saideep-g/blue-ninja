@@ -86,7 +86,7 @@ export function useDiagnostic(injectedQuestions = null) {
             // Failsafe: If masteryData is somehow empty, use default mastery for all atoms
             if (isComplete && auth.currentUser) {
                 const userRef = doc(db, "students", auth.currentUser.uid);
-                
+
                 // Prepare mastery data - use defaults if empty
                 let finalMastery = masteryData;
                 if (Object.keys(masteryData).length === 0) {
@@ -101,22 +101,22 @@ export function useDiagnostic(injectedQuestions = null) {
                         'A5': 0.5
                     };
                 }
-                
+
                 try {
                     console.log('[useDiagnostic] Saving completion to Firestore...', {
                         masteryData: finalMastery,
                         hurdles
                     });
-                    
+
                     await updateDoc(userRef, {
                         currentQuest: 'COMPLETED',
                         mastery: finalMastery, // Save the actual mastery scores
                         hurdles: hurdles,     // Save the identified misconceptions
                         lastUpdated: new Date().toISOString()
                     });
-                    
+
                     console.log('[useDiagnostic] ✅ Completion saved successfully!');
-                    
+
                     // Also update local state immediately so App.jsx reacts
                     setNinjaStats(prev => ({
                         ...prev,
@@ -124,7 +124,7 @@ export function useDiagnostic(injectedQuestions = null) {
                         mastery: finalMastery,
                         hurdles: hurdles
                     }));
-                    
+
                     // 🎯 CRITICAL FIX: Also update localStorage so it doesn't have stale data on refresh
                     // This prevents the "diagnostic restarts after refresh" bug
                     console.log('[useDiagnostic] 📝 Updating localStorage with completion data...');
@@ -144,7 +144,7 @@ export function useDiagnostic(injectedQuestions = null) {
                         role: 'STUDENT'
                     }));
                     console.log('[useDiagnostic] ✅ localStorage updated with completion status!');
-                    
+
                 } catch (error) {
                     console.error("[useDiagnostic] 🔴 Failed to save quest completion:", error);
                 }
@@ -170,7 +170,13 @@ export function useDiagnostic(injectedQuestions = null) {
      * @param {string} correctAnswer - The correct answer
      * @param {number} timeSpentSeconds - Time spent in seconds (from MissionCard)
      */
+    // FIX: Match the MissionCard signature (isCorrect, choice, isRecovered, tag, timeSpent)
+
     const submitAnswer = async (questionId, isCorrect, atomId, isRecovered, diagnosticTag, studentAnswer, correctAnswer, timeSpentSeconds) => {
+        // Retrieve current question data internally instead of expecting it from params
+        const currentQuestion = questions[currentIndex];
+        const questionId = currentQuestion.id;
+        const atomId = currentQuestion.atom;
         console.log('[useDiagnostic] submitAnswer called:', {
             questionId,
             isCorrect,
@@ -178,7 +184,7 @@ export function useDiagnostic(injectedQuestions = null) {
             currentIndex,
             totalQuestions: questions.length
         });
-        
+
         // ✅ FIXED: Use timeSpentSeconds from MissionCard if provided
         // Otherwise calculate from our internal timer
         let timeSpent;

@@ -12,9 +12,9 @@ const NinjaContext = createContext();
  * NinjaProvider: Phase 3 Stability Upgrade
  * Implements the Hybrid Sync Engine: Local-First with Batched Firestore Writes.
  * Protects quotas while ensuring data integrity for high-precision analytics.
- * * DEBUG UPGRADE: Persistence Lifecycle Tracing
- * This version includes detailed console grouping and path validation to 
- * troubleshoot why the 'session_logs' sub-collection might be failing to initialize.
+ * * * DEBUG UPGRADE: Persistence Lifecycle Tracing & Data Quality Guard
+ * Adds grouped console logs to monitor Firestore pathing and batch commits.
+ * Fixes the "Missing diagnosticTag" issue by enforcing default values.
  */
 export function NinjaProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -54,25 +54,25 @@ export function NinjaProvider({ children }) {
     // Handle Authentication & Initial Hydration
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
-            console.group('🔐 Ninja Auth Lifecycle');
+            console.group('🔐 [NinjaContext] Auth Initialization');
             setUser(user);
             if (user) {
-                console.log('👤 User Authenticated:', user.uid);
+                console.log('👤 User UID:', user.uid);
                 // Priority 1: Check Local Storage for interrupted session (Zero Cost Read)
                 const localSession = localStorage.getItem(`ninja_session_${user.uid}`);
 
                 if (localSession) {
-                    console.log('📦 Hydrating from LocalStorage');
+                    console.log('📦 Local session found. Hydrating state...');
                     const data = JSON.parse(localSession);
                     setNinjaStats(data.stats);
                     setLocalBuffer(data.buffer);
                     setUserRole(data.role || 'STUDENT'); // Restore role
                 } else {
                     // Priority 2: Fetch from Firestore only if no local scratchpad exists
-                    console.log('☁️ Fetching from Firestore (students collection)');
+                    console.log('☁️ No local session. Fetching from Firestore...');
                     const userDoc = await getDoc(doc(db, "students", user.uid));
                     if (userDoc.exists()) {
-                        console.log('✅ Student document found');
+                        console.log('✅ Remote profile loaded successfully');
                         // Sync database status (including COMPLETED status) to local state
                         setNinjaStats(userDoc.data());
                         setUserRole(userDoc.data().role || 'STUDENT'); // Get role from DB
@@ -80,7 +80,7 @@ export function NinjaProvider({ children }) {
                         fetchSessionLogs(user.uid);
                     } else {
                         // Initialize a new student profile if it doesn't exist
-                        console.log('🆕 Creating new student profile');
+                        console.log('🆕 No profile found. Initializing new Ninja...');
                         const initialStats = {
                             powerPoints: 0,
                             heroLevel: 1,
@@ -97,7 +97,7 @@ export function NinjaProvider({ children }) {
                     }
                 }
             } else {
-                console.log('🚪 No user authenticated');
+                console.log('🚪 User logged out');
             }
             console.groupEnd();
             setLoading(false);
@@ -116,12 +116,11 @@ export function NinjaProvider({ children }) {
         // Use overrideLogs if provided, otherwise fallback to the buffered state
         const logsToSync = overrideLogs || localBuffer.logs;
 
-        console.group('🚀 [syncToCloud] Firestore Batch Start');
-        console.log('Target UID:', auth.currentUser?.uid);
-        console.log('Logs in Batch:', logsToSync.length);
+        console.group('🚀 [syncToCloud] Firestore Transaction Start');
+        console.log('Target Logs Count:', logsToSync.length);
 
         if (!auth.currentUser || logsToSync.length === 0) {
-            console.warn('🛑 Sync aborted: No logs to sync or user not authenticated');
+            console.log('🛑 Aborting Sync: No authenticated user or empty log buffer');
             console.groupEnd();
             return;
         }
@@ -131,19 +130,29 @@ export function NinjaProvider({ children }) {
         const logsPath = `students/${auth.currentUser.uid}/session_logs`;
         const logsRef = collection(db, "students", auth.currentUser.uid, "session_logs");
 
-        console.log('Writing to Path:', logsPath);
+        console.log('📂 Path:', `students/${auth.currentUser.uid}/session_logs`);
 
         try {
             // Add all buffered question logs in a single transaction
             logsToSync.forEach((log, idx) => {
                 const newLogRef = doc(logsRef);
-                batch.set(newLogRef, {
+
+                // DATA QUALITY FIX: Ensure diagnosticTag is never 'missing' or null
+                // Enriches log with a success flag for the holistic view
+                const enrichedLog = {
                     ...log,
-                    studentId: auth.currentUser.uid, // Added for Admin Collection Group queries
+                    studentId: auth.currentUser.uid,
+                    diagnosticTag: log.diagnosticTag || (log.isCorrect ? 'NONE' : 'UNTAGGED'),
+                    isSuccess: !!(log.isCorrect || log.isRecovered),
+                    masteryDelta: log.masteryBefore !== undefined && log.masteryAfter !== undefined
+                        ? Number((log.masteryAfter - log.masteryBefore).toFixed(3))
+                        : 0,
                     timestamp: serverTimestamp(),
                     syncedAt: Date.now()
-                });
-                console.log(`[syncToCloud] Batched log ${idx + 1} of ${logsToSync.length}`);
+                };
+
+                batch.set(newLogRef, enrichedLog);
+                console.log(`[Batch] Queueing Log ${idx + 1}: ${log.questionId}`);
             });
 
             // Update global student profile using the latest ref to avoid stale data
@@ -154,18 +163,18 @@ export function NinjaProvider({ children }) {
                 lastSyncTime: serverTimestamp()
             });
 
-            console.log('Committing batch write...');
+            console.log('⏳ Committing batch to Firestore...');
             await batch.commit();
 
-            console.log('✅ Batch committed successfully!');
+            console.log('✅ Cloud Persistence Successful!');
 
             // Reset buffer AFTER successful cloud persistence
             setLocalBuffer({ logs: [], pointsGained: 0 });
-            console.log('Buffer cleared');
+            console.log('🗑️ Local buffer cleared');
 
             if (isFinal) {
                 localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
-                console.log('localStorage cleared (final sync)');
+                console.log('🔐 Session finalized. localStorage cleared.');
             }
 
             // Refresh history view after sync
@@ -174,8 +183,8 @@ export function NinjaProvider({ children }) {
             console.log('✅ syncToCloud Lifecycle Complete');
 
         } catch (error) {
-            console.error("❌ Batch sync failed:", error);
-            console.error('Error details:', {
+            console.error("❌ Firestore Sync Failed:", error);
+            console.error('Context:', {
                 logsCount: logsToSync.length,
                 userId: auth.currentUser?.uid,
                 errorCode: error.code,
@@ -187,10 +196,10 @@ export function NinjaProvider({ children }) {
 
 
     /**
- * refreshSessionLogs (NEW)
- * Explicitly fetches the latest session logs from Firestore.
- * Should be called after mission completion to display new analytics.
- */
+    * refreshSessionLogs (NEW)
+    * Explicitly fetches the latest session logs from Firestore.
+    * Should be called after mission completion to display new analytics.
+    */
     const refreshSessionLogs = async () => {
         if (!auth.currentUser) return;
 
@@ -215,9 +224,9 @@ export function NinjaProvider({ children }) {
 
 
     /**
- * fetchSessionLogs (Phase 2.2)
- * Retrieves the transactional log for the student to power dashboard charts.
- */
+    * fetchSessionLogs (Phase 2.2)
+    * Retrieves the transactional log for the student to power dashboard charts.
+    */
 
     const fetchSessionLogs = async (uid) => {
         try {
@@ -243,30 +252,33 @@ export function NinjaProvider({ children }) {
      * masteryBefore, masteryAfter, atomId, mode, timestamp
      */
     const logQuestionResult = async (logData) => {
-        console.group('📝 [logQuestionResult] Direct Cloud Write');
+        console.group(`📝 [logQuestionResult] Direct Write: ${logData.questionId}`);
         if (!auth.currentUser) {
-            console.warn('🛑 Direct log aborted: No user');
+            console.log('🛑 Aborted: No user context');
             console.groupEnd();
             return;
         }
 
         try {
-            // ✅ CRITICAL: Ensure all required fields are present with proper defaults
+            // ✅ CRITICAL: Enforce defaults for all 14 fields to prevent "missing data" alerts
+            // HOLISTIC VIEW: Added isSuccess and masteryDelta
             const completeLog = {
                 // Identity
-                questionId: logData.questionId || '',
-                studentAnswer: logData.studentAnswer || '',
-                studentId: auth.currentUser.uid, // Added for analytical tracing
+                questionId: logData.questionId,
+                studentAnswer: logData.studentAnswer,
+                studentId: auth.currentUser.uid,
 
                 // Performance
                 isCorrect: logData.isCorrect !== undefined ? logData.isCorrect : false,
                 isRecovered: logData.isRecovered !== undefined ? logData.isRecovered : false,
+                isSuccess: !!(logData.isCorrect || logData.isRecovered),
 
-                // ✅ FIXED: recoveryVelocity (was missing)
+                // Recovery
                 recoveryVelocity: logData.recoveryVelocity !== undefined ? logData.recoveryVelocity : 0,
 
                 // Learning Target
-                diagnosticTag: logData.diagnosticTag || null,
+                // FIXED: Default to 'NONE' if correct to avoid "Missing" alerts
+                diagnosticTag: logData.diagnosticTag || (logData.isCorrect ? 'NONE' : 'UNTAGGED'),
 
                 // Timing
                 timeSpent: logData.timeSpent || 0,
@@ -278,12 +290,15 @@ export function NinjaProvider({ children }) {
                 // Speed Analysis
                 speedRating: logData.speedRating || 'NORMAL',
 
-                // Mastery Tracking
+                // Mastery Tracking & Improvement Analysis
                 masteryBefore: logData.masteryBefore !== undefined ? logData.masteryBefore : 0,
                 masteryAfter: logData.masteryAfter !== undefined ? logData.masteryAfter : 0,
+                masteryDelta: logData.masteryBefore !== undefined && logData.masteryAfter !== undefined
+                    ? Number((logData.masteryAfter - logData.masteryBefore).toFixed(3))
+                    : 0,
 
                 // Curriculum
-                atomId: logData.atomId || '',
+                atomId: logData.atomId,
 
                 // Context
                 mode: logData.mode || 'DAILY',
@@ -302,6 +317,7 @@ export function NinjaProvider({ children }) {
             });
             console.log('✅ Direct write successful');
 
+            console.log('✅ Transaction written to Cloud Firestore');
             // Refresh history after logging new data
             fetchSessionLogs(auth.currentUser.uid);
 
@@ -406,7 +422,7 @@ export function NinjaProvider({ children }) {
      * Triggers syncToCloud at Question 5 (Midpoint) and Question 10 (Completion).
      */
     const logQuestionResultLocal = (logData, currentQuestionIndex) => {
-        console.log(`📍 Buffering log locally for question index ${currentQuestionIndex + 1}`);
+        console.log(`📍 [Buffering] Question Index: ${currentQuestionIndex + 1} | User Answer: ${logData.studentAnswer}`);
         const updatedLogs = [...localBuffer.logs, logData];
         const newBuffer = { ...localBuffer, logs: updatedLogs };
 
@@ -417,7 +433,7 @@ export function NinjaProvider({ children }) {
         // WHY: We pass updatedLogs directly to syncToCloud to fix the race condition 
         // caused by asynchronous React state updates.
         if (currentQuestionIndex === 4 || currentQuestionIndex === 9) {
-            console.log(`📊 Milestone reached (${currentQuestionIndex + 1}). Triggering Cloud Sync...`);
+            console.log('📊 Sync Threshold Reached. Moving buffer to Cloud...');
             syncToCloud(currentQuestionIndex === 9, updatedLogs);
         }
     };
