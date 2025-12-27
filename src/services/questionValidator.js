@@ -1,582 +1,497 @@
 /**
  * src/services/questionValidator.js
- * Comprehensive question validation with 4 tiers
- * Validates question structure, options, metadata, and quality
- * Production-ready with full error reporting
+ * ================================
+ * 
+ * Production-ready 4-tier question validation system for admin question uploads.
+ * 
+ * Validation Tiers:
+ * - Tier 1: Schema validation (required fields, types)
+ * - Tier 2: Options validation (duplicates, correct answer exists)
+ * - Tier 3: Metadata validation (atoms, tags, curriculum mapping)
+ * - Tier 4: Quality assessment (completeness scoring, recommendations)
+ * 
+ * Usage:
+ * ------
+ * const result = await validateQuestion(question, curriculum);
+ * if (!result.isValid) {
+ *   console.log('Errors:', result.errors);
+ *   console.log('Warnings:', result.warnings);
+ * }
  */
 
-import { advancedValidationService } from './advancedValidationService.js';
+// ============================================================================
+// TIER 1: SCHEMA VALIDATION
+// ============================================================================
 
 /**
- * TIER 1: Question Schema Validation
- * Ensures question has all required fields with correct types
+ * Validates question has all required fields with correct types
+ * @param {Object} question - Question object to validate
+ * @returns {Object} { isValid, errors, warnings }
  */
 export async function validateQuestionSchema(question) {
   const errors = [];
   const warnings = [];
+
+  if (!question) {
+    return {
+      isValid: false,
+      errors: [{
+        severity: 'CRITICAL',
+        code: 'NULL_QUESTION',
+        message: 'Question object is null or undefined'
+      }],
+      warnings: []
+    };
+  }
+
+  // Required fields check
+  const required = ['id', 'atom', 'type', 'content', 'options', 'correctAnswer', 'diagnosticTags'];
   
-  // Required fields
-  const requiredFields = {
-    id: 'string',
-    atom: 'string',
-    type: 'string',
-    content: 'object',
-    options: 'array',
-    correctAnswer: 'string',
-    diagnosticTags: 'array'
-  };
-  
-  for (const [field, expectedType] of Object.entries(requiredFields)) {
-    if (!(field in question)) {
+  for (const field of required) {
+    if (question[field] === undefined || question[field] === null) {
       errors.push({
         severity: 'CRITICAL',
         code: 'MISSING_REQUIRED_FIELD',
         field,
-        message: `Required field "${field}" is missing`,
-        tier: 1
-      });
-      continue;
-    }
-    
-    const value = question[field];
-    const actualType = Array.isArray(value) ? 'array' : typeof value;
-    
-    if (actualType !== expectedType) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'INVALID_FIELD_TYPE',
-        field,
-        expectedType,
-        actualType,
-        message: `Field "${field}" must be ${expectedType}, got ${actualType}`,
-        tier: 1
+        message: `Required field "${field}" is missing or null`
       });
     }
   }
-  
-  // Question ID validation (format and length)
-  if (question.id && typeof question.id === 'string') {
-    if (question.id.length < 2) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'INVALID_QUESTION_ID_FORMAT',
-        message: 'Question ID must be at least 2 characters',
-        currentLength: question.id.length,
-        tier: 1
-      });
-    }
-    
-    // Check for valid characters (alphanumeric, underscore, hyphen)
-    if (!/^[a-zA-Z0-9_-]+$/.test(question.id)) {
-      errors.push({
-        severity: 'WARNING',
-        code: 'QUESTION_ID_SPECIAL_CHARS',
-        message: 'Question ID should contain only alphanumeric characters, underscore, or hyphen',
-        currentId: question.id,
-        tier: 1
-      });
-    }
+
+  // Field type validation
+  if (typeof question.id !== 'string' || question.id.trim().length === 0) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_QUESTION_ID',
+      message: 'Question ID must be a non-empty string',
+      received: typeof question.id
+    });
   }
-  
-  // Question type validation
-  const validTypes = ['MULTIPLE_CHOICE', 'SHORT_ANSWER', 'ESSAY', 'TRUE_FALSE', 'FILL_BLANK'];
-  if (question.type && !validTypes.includes(question.type)) {
+
+  // ID format validation (alphanumeric with underscore/hyphen)
+  if (question.id && !/^[a-zA-Z0-9_-]+$/.test(question.id)) {
+    warnings.push({
+      severity: 'WARNING',
+      code: 'INVALID_ID_FORMAT',
+      message: 'Question ID should only contain alphanumeric characters, hyphens, and underscores',
+      value: question.id
+    });
+  }
+
+  if (typeof question.atom !== 'string' || question.atom.trim().length === 0) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_ATOM',
+      message: 'Atom must be a non-empty string',
+      received: typeof question.atom
+    });
+  }
+
+  // Type validation
+  const validTypes = ['MULTIPLE_CHOICE', 'SHORT_ANSWER', 'ESSAY', 'TRUE_FALSE', 'MATCHING'];
+  if (!validTypes.includes(question.type)) {
     errors.push({
       severity: 'CRITICAL',
       code: 'INVALID_QUESTION_TYPE',
       message: `Question type must be one of: ${validTypes.join(', ')}`,
-      providedType: question.type,
-      tier: 1
+      received: question.type,
+      validTypes
     });
   }
-  
+
   // Content validation
-  if (question.content && typeof question.content === 'object') {
-    if (!question.content.question || typeof question.content.question !== 'string') {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'MISSING_QUESTION_TEXT',
-        message: 'Question content must have a "question" field with text',
-        tier: 1
-      });
-    }
-    
-    if (question.content.question && question.content.question.trim().length === 0) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'EMPTY_QUESTION_TEXT',
-        message: 'Question text cannot be empty',
-        tier: 1
-      });
-    }
+  if (typeof question.content !== 'object' || question.content === null) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_CONTENT',
+      message: 'Content must be an object',
+      received: typeof question.content
+    });
+  } else if (!question.content.question || question.content.question.trim().length === 0) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'EMPTY_QUESTION_TEXT',
+      message: 'Question content text cannot be empty',
+      value: question.content.question
+    });
   }
-  
-  // Atom validation
-  if (question.atom && typeof question.atom === 'string') {
-    if (question.atom.trim().length === 0) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'EMPTY_ATOM',
-        message: 'Atom (curriculum unit) cannot be empty',
-        tier: 1
-      });
-    }
+
+  // Correct answer validation
+  if (typeof question.correctAnswer !== 'string' || question.correctAnswer.trim().length === 0) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_CORRECT_ANSWER',
+      message: 'Correct answer must be a non-empty string',
+      received: typeof question.correctAnswer
+    });
   }
-  
+
   // Diagnostic tags validation
-  if (question.diagnosticTags && Array.isArray(question.diagnosticTags)) {
-    if (question.diagnosticTags.length === 0) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'EMPTY_DIAGNOSTIC_TAGS',
-        message: 'At least one diagnostic tag is required',
-        tier: 1
-      });
-    }
-    
-    // Check for empty tags
-    const emptyTags = question.diagnosticTags.filter(tag => 
-      typeof tag !== 'string' || tag.trim().length === 0
-    );
-    if (emptyTags.length > 0) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'EMPTY_TAG_VALUE',
-        message: `Found ${emptyTags.length} empty diagnostic tag(s)`,
-        count: emptyTags.length,
-        tier: 1
-      });
-    }
+  if (!Array.isArray(question.diagnosticTags)) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_DIAGNOSTIC_TAGS',
+      message: 'Diagnostic tags must be an array',
+      received: typeof question.diagnosticTags
+    });
   }
-  
+
+  // Options array validation
+  if (!Array.isArray(question.options)) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'INVALID_OPTIONS_FORMAT',
+      message: 'Options must be an array',
+      received: typeof question.options
+    });
+  }
+
   return {
     isValid: errors.length === 0,
     errors,
-    warnings,
-    tier: 'SCHEMA'
+    warnings
   };
 }
 
+// ============================================================================
+// TIER 2: OPTIONS VALIDATION
+// ============================================================================
+
 /**
- * TIER 2: Options Validation
- * Checks for common option errors: duplicates, missing correct answer, etc.
+ * Validates question options for common issues
+ * @param {Object} question - Question object
+ * @returns {Object} { isValid, errors, warnings }
  */
 export async function validateOptions(question) {
   const errors = [];
   const warnings = [];
-  
-  // Skip for non-multiple choice questions
-  if (question.type && !['MULTIPLE_CHOICE', 'TRUE_FALSE'].includes(question.type)) {
-    return { isValid: true, errors, warnings, tier: 'OPTIONS' };
+
+  if (!question.options || !Array.isArray(question.options)) {
+    return { isValid: false, errors: [{
+      severity: 'CRITICAL',
+      code: 'NO_OPTIONS',
+      message: 'Question must have options'
+    }], warnings };
   }
-  
-  const options = question.options || [];
-  
-  // Must have 2-6 options (configurable, defaults to 2-4)
+
+  const options = question.options;
   const MIN_OPTIONS = 2;
   const MAX_OPTIONS = 6;
-  
-  if (options.length < MIN_OPTIONS || options.length > MAX_OPTIONS) {
+
+  // Option count validation
+  if (options.length < MIN_OPTIONS) {
     errors.push({
       severity: 'CRITICAL',
-      code: 'INVALID_OPTION_COUNT',
-      message: `Must have ${MIN_OPTIONS}-${MAX_OPTIONS} options, found ${options.length}`,
-      minOptions: MIN_OPTIONS,
-      maxOptions: MAX_OPTIONS,
-      currentCount: options.length,
-      tier: 2
+      code: 'TOO_FEW_OPTIONS',
+      message: `Question must have at least ${MIN_OPTIONS} options, found ${options.length}`,
+      found: options.length,
+      minimum: MIN_OPTIONS
     });
   }
-  
-  // Check for empty options
-  options.forEach((opt, idx) => {
-    if (!opt || typeof opt !== 'object') {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'INVALID_OPTION_FORMAT',
-        index: idx,
-        message: `Option ${idx} must be an object with a text field`,
-        tier: 2
-      });
-      return;
-    }
-    
-    if (!opt.text || typeof opt.text !== 'string') {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'OPTION_MISSING_TEXT',
-        index: idx,
-        message: `Option ${idx} must have a "text" field`,
-        tier: 2
-      });
-      return;
-    }
-    
-    if (opt.text.trim().length === 0) {
-      errors.push({
-        severity: 'CRITICAL',
-        code: 'EMPTY_OPTION_TEXT',
-        index: idx,
-        message: `Option ${idx} text cannot be empty`,
-        tier: 2
-      });
-    }
-  });
-  
+
+  if (options.length > MAX_OPTIONS) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'TOO_MANY_OPTIONS',
+      message: `Question should have at most ${MAX_OPTIONS} options, found ${options.length}`,
+      found: options.length,
+      maximum: MAX_OPTIONS
+    });
+  }
+
   // Check for duplicate options (case-insensitive)
   const optionTexts = options
-    .filter(o => o && o.text && typeof o.text === 'string')
-    .map(o => o.text.trim().toLowerCase());
-  
-  const seen = new Set();
-  const duplicates = [];
-  
-  optionTexts.forEach((text, idx) => {
-    if (seen.has(text)) {
-      duplicates.push({
-        text: options[idx].text,
-        indices: optionTexts
-          .map((t, i) => t === text ? i : -1)
-          .filter(i => i !== -1)
-      });
-    }
-    seen.add(text);
-  });
-  
+    .map(o => (typeof o === 'string' ? o : o?.text || '').trim().toLowerCase())
+    .filter(t => t.length > 0);
+
+  const duplicates = optionTexts.filter((text, idx) => optionTexts.indexOf(text) !== idx);
   if (duplicates.length > 0) {
     errors.push({
       severity: 'CRITICAL',
       code: 'DUPLICATE_OPTIONS',
-      message: `Found ${duplicates.length} duplicate option(s)`,
-      duplicates,
-      tier: 2
+      message: `Found ${duplicates.length} duplicate option(s): ${[...new Set(duplicates)].join(', ')}`,
+      duplicates: [...new Set(duplicates)]
     });
   }
-  
-  // Correct answer must exist in options
-  if (question.correctAnswer && typeof question.correctAnswer === 'string') {
-    const hasCorrect = options.some(o => 
-      o && o.text && o.text.trim() === question.correctAnswer.trim()
-    );
-    
-    if (!hasCorrect) {
+
+  // Check if correct answer exists in options
+  const correctAnswer = question.correctAnswer ? question.correctAnswer.trim() : '';
+  const optionValues = options.map(o => 
+    (typeof o === 'string' ? o : o?.text || '').trim()
+  );
+
+  const correctAnswerExists = optionValues.some(opt => opt === correctAnswer);
+  if (!correctAnswerExists && correctAnswer.length > 0) {
+    errors.push({
+      severity: 'CRITICAL',
+      code: 'MISSING_CORRECT_ANSWER',
+      message: `Correct answer "${correctAnswer}" not found in options`,
+      correctAnswer,
+      availableOptions: optionValues.filter(o => o.length > 0)
+    });
+  }
+
+  // Check for empty options
+  options.forEach((opt, idx) => {
+    const text = (typeof opt === 'string' ? opt : opt?.text || '').trim();
+    if (text.length === 0) {
       errors.push({
         severity: 'CRITICAL',
-        code: 'MISSING_CORRECT_ANSWER',
-        message: `Correct answer "${question.correctAnswer}" not found in options`,
-        correctAnswer: question.correctAnswer,
-        availableOptions: options
-          .filter(o => o && o.text)
-          .map(o => o.text),
-        tier: 2
-      });
-    }
-  }
-  
-  // Check option text length (not too long, not too short)
-  options.forEach((opt, idx) => {
-    if (!opt || !opt.text) return;
-    
-    if (opt.text.trim().length > 500) {
-      warnings.push({
-        severity: 'WARNING',
-        code: 'OPTION_TOO_LONG',
+        code: 'EMPTY_OPTION',
         index: idx,
-        message: `Option ${idx} is very long (${opt.text.length} chars), consider shortening`,
-        length: opt.text.length,
-        tier: 2
-      });
-    }
-    
-    if (opt.text.trim().length < 2) {
-      warnings.push({
-        severity: 'WARNING',
-        code: 'OPTION_TOO_SHORT',
-        index: idx,
-        message: `Option ${idx} is very short, might not be clear enough`,
-        tier: 2
+        message: `Option ${idx + 1} is empty`
       });
     }
   });
-  
+
+  // Check for very long options (potential formatting issue)
+  options.forEach((opt, idx) => {
+    const text = (typeof opt === 'string' ? opt : opt?.text || '').trim();
+    if (text.length > 500) {
+      warnings.push({
+        severity: 'WARNING',
+        code: 'VERY_LONG_OPTION',
+        index: idx,
+        length: text.length,
+        message: `Option ${idx + 1} is very long (${text.length} chars) - may cause display issues`
+      });
+    }
+  });
+
   return {
     isValid: errors.length === 0,
     errors,
-    warnings,
-    tier: 'OPTIONS'
+    warnings
   };
 }
 
+// ============================================================================
+// TIER 3: METADATA VALIDATION
+// ============================================================================
+
 /**
- * TIER 3: Metadata Validation
- * Validates atoms, diagnostic tags, and other metadata
+ * Validates question metadata against curriculum
+ * @param {Object} question - Question object
+ * @param {Object} curriculum - Curriculum/atom reference (optional)
+ * @returns {Object} { isValid, errors, warnings }
  */
 export async function validateMetadata(question, curriculum = null) {
   const errors = [];
   const warnings = [];
-  
+
   // Atom validation
-  if (!question.atom || (typeof question.atom === 'string' && question.atom.trim() === '')) {
+  if (!question.atom || question.atom.trim().length === 0) {
     errors.push({
       severity: 'CRITICAL',
       code: 'MISSING_ATOM',
-      message: 'Question must be mapped to a curriculum atom',
-      tier: 3
+      message: 'Question must be mapped to a curriculum atom'
     });
-  } else if (curriculum && curriculum.atoms && typeof curriculum.atoms === 'object') {
-    const atomsList = Array.isArray(curriculum.atoms) 
-      ? curriculum.atoms 
-      : Object.keys(curriculum.atoms);
-    
-    if (!atomsList.includes(question.atom)) {
+  } else if (curriculum && curriculum.atoms) {
+    // Check if atom exists in curriculum
+    const atomExists = curriculum.atoms.includes(question.atom);
+    if (!atomExists) {
       warnings.push({
         severity: 'WARNING',
         code: 'ATOM_NOT_IN_CURRICULUM',
         atom: question.atom,
-        message: `Atom "${question.atom}" not found in current curriculum`,
-        availableAtoms: atomsList.slice(0, 5), // Show first 5
-        tier: 3
+        message: `Atom "${question.atom}" not found in current curriculum`
       });
     }
   }
-  
+
   // Diagnostic tags validation
-  if (!question.diagnosticTags || !Array.isArray(question.diagnosticTags)) {
+  if (!Array.isArray(question.diagnosticTags) || question.diagnosticTags.length === 0) {
     errors.push({
       severity: 'CRITICAL',
       code: 'MISSING_DIAGNOSTIC_TAGS',
-      message: 'Question must have diagnostic tags (misconception tags)',
-      tier: 3
+      message: 'Question must have at least one diagnostic tag (misconception/skill tag)'
     });
-  } else if (question.diagnosticTags.length === 0) {
-    errors.push({
-      severity: 'CRITICAL',
-      code: 'EMPTY_DIAGNOSTIC_TAGS_ARRAY',
-      message: 'Diagnostic tags array cannot be empty',
-      tier: 3
+  } else {
+    // Check for empty strings in tags
+    question.diagnosticTags.forEach((tag, idx) => {
+      if (typeof tag !== 'string' || tag.trim().length === 0) {
+        errors.push({
+          severity: 'CRITICAL',
+          code: 'EMPTY_DIAGNOSTIC_TAG',
+          index: idx,
+          message: `Diagnostic tag at index ${idx} is empty or invalid`
+        });
+      }
     });
   }
-  
+
   // Bloom level validation (optional but recommended)
   const validBloomLevels = ['REMEMBER', 'UNDERSTAND', 'APPLY', 'ANALYZE', 'EVALUATE', 'CREATE'];
   if (question.bloomLevel && !validBloomLevels.includes(question.bloomLevel)) {
     warnings.push({
       severity: 'WARNING',
       code: 'INVALID_BLOOM_LEVEL',
+      received: question.bloomLevel,
       message: `Bloom level should be one of: ${validBloomLevels.join(', ')}`,
-      providedLevel: question.bloomLevel,
-      validLevels: validBloomLevels,
-      tier: 3
+      validBloomLevels
     });
   }
-  
-  // Difficulty validation (optional but recommended)
+
+  // Difficulty validation
   const validDifficulties = ['EASY', 'MEDIUM', 'HARD'];
   if (question.difficulty && !validDifficulties.includes(question.difficulty)) {
     warnings.push({
       severity: 'WARNING',
       code: 'INVALID_DIFFICULTY',
+      received: question.difficulty,
       message: `Difficulty should be one of: ${validDifficulties.join(', ')}`,
-      providedDifficulty: question.difficulty,
-      validDifficulties,
-      tier: 3
+      validDifficulties
     });
   }
-  
-  // Time limit validation (optional, in milliseconds)
-  if (question.timeLimit !== undefined && typeof question.timeLimit === 'number') {
-    if (question.timeLimit < 5000 || question.timeLimit > 300000) {
+
+  // Time limit validation (optional)
+  if (question.timeLimit) {
+    if (typeof question.timeLimit !== 'number' || question.timeLimit < 5000 || question.timeLimit > 300000) {
       warnings.push({
         severity: 'WARNING',
         code: 'UNUSUAL_TIME_LIMIT',
-        message: 'Time limit is outside typical range (5s - 5min). Current: ' + 
-                  (question.timeLimit / 1000) + 's',
-        currentSeconds: question.timeLimit / 1000,
-        suggestedRange: '5000-300000ms (5s-5min)',
-        tier: 3
+        timeLimit: question.timeLimit,
+        message: 'Time limit should be between 5-300 seconds (5000-300000 ms)',
+        recommended: '30000 (30 seconds)'
       });
     }
   }
-  
+
   return {
     isValid: errors.length === 0,
     errors,
-    warnings,
-    tier: 'METADATA'
+    warnings
   };
 }
 
+// ============================================================================
+// TIER 4: QUALITY ASSESSMENT
+// ============================================================================
+
 /**
- * TIER 4: Quality Metrics
- * Scores question quality and provides recommendations
+ * Assesses overall question quality and provides improvement suggestions
+ * @param {Object} question - Question object
+ * @returns {Object} { qualityScore, qualityGrade, suggestions }
  */
 export async function assessQuestionQuality(question) {
   let score = 1.0; // Start at 100%
   const suggestions = [];
-  const metrics = {};
-  
-  // Check question text length (150-500 chars is ideal)
-  const questionLength = question.content?.question?.length || 0;
-  if (questionLength < 20) {
+
+  // Has common misconceptions documented
+  if (!question.commonMisconceptions || !Array.isArray(question.commonMisconceptions) || question.commonMisconceptions.length === 0) {
     score -= 0.15;
     suggestions.push({
       priority: 'MEDIUM',
-      code: 'SHORT_QUESTION_TEXT',
-      message: 'Question text is very short. Make it more descriptive.',
-      currentLength: questionLength,
-      suggestedRange: '20-500 characters'
+      code: 'MISSING_MISCONCEPTIONS',
+      message: 'Consider adding 2-3 common misconceptions. This helps with diagnostic analysis.',
+      impact: '-15%'
     });
-    metrics.questionLength = 'TOO_SHORT';
-  } else if (questionLength > 500) {
-    score -= 0.1;
-    suggestions.push({
-      priority: 'LOW',
-      code: 'LONG_QUESTION_TEXT',
-      message: 'Question text is quite long. Consider breaking it up.',
-      currentLength: questionLength,
-      suggestedRange: '20-500 characters'
-    });
-    metrics.questionLength = 'TOO_LONG';
-  } else {
-    metrics.questionLength = 'IDEAL';
   }
-  
-  // Check for common misconceptions
-  if (!question.commonMisconceptions || question.commonMisconceptions.length === 0) {
-    score -= 0.15;
-    suggestions.push({
-      priority: 'MEDIUM',
-      code: 'NO_MISCONCEPTIONS',
-      message: 'Consider adding common misconceptions to help with diagnostic analysis'
-    });
-    metrics.misconceptions = 'MISSING';
-  } else {
-    metrics.misconceptions = question.commonMisconceptions.length;
-  }
-  
-  // Check difficulty estimate
+
+  // Has difficulty rating
   if (!question.difficulty) {
-    score -= 0.1;
+    score -= 0.10;
     suggestions.push({
-      priority: 'LOW',
-      code: 'NO_DIFFICULTY_RATING',
-      message: 'Consider rating difficulty: EASY, MEDIUM, HARD'
+      priority: 'MEDIUM',
+      code: 'MISSING_DIFFICULTY',
+      message: 'Add difficulty rating: EASY, MEDIUM, or HARD',
+      impact: '-10%'
     });
-    metrics.difficulty = 'MISSING';
-  } else {
-    metrics.difficulty = question.difficulty;
   }
-  
-  // Check Bloom level
+
+  // Has Bloom level
   if (!question.bloomLevel) {
-    score -= 0.1;
+    score -= 0.10;
     suggestions.push({
-      priority: 'LOW',
-      code: 'NO_BLOOM_LEVEL',
-      message: 'Consider assigning Bloom level (REMEMBER, UNDERSTAND, APPLY, etc.)'
+      priority: 'MEDIUM',
+      code: 'MISSING_BLOOM_LEVEL',
+      message: 'Add Bloom taxonomy level for better curriculum alignment',
+      impact: '-10%'
     });
-    metrics.bloomLevel = 'MISSING';
-  } else {
-    metrics.bloomLevel = question.bloomLevel;
   }
-  
-  // Check time estimate
-  const hasTimeLimit = question.timeLimit !== undefined && question.timeLimit > 0;
-  if (!hasTimeLimit) {
+
+  // Has time estimate
+  if (!question.timeLimit) {
     score -= 0.05;
     suggestions.push({
       priority: 'LOW',
-      code: 'NO_TIME_LIMIT',
-      message: 'Consider setting a time limit (10-120 seconds typically)'
+      code: 'MISSING_TIME_LIMIT',
+      message: 'Consider adding estimated time to answer (e.g., 30000 for 30 seconds)',
+      impact: '-5%'
     });
-    metrics.timeLimit = 'MISSING';
-  } else {
-    metrics.timeLimit = `${question.timeLimit / 1000}s`;
   }
-  
-  // Check for context/explanation
-  if (question.content?.context) {
-    metrics.hasContext = true;
-  } else {
+
+  // Check explanation/reasoning
+  if (!question.explanation || question.explanation.trim().length === 0) {
+    score -= 0.15;
+    suggestions.push({
+      priority: 'HIGH',
+      code: 'MISSING_EXPLANATION',
+      message: 'Add explanation of why correct answer is right. This helps student learning.',
+      impact: '-15%'
+    });
+  }
+
+  // Check for content metadata
+  if (!question.content || !question.content.context) {
     score -= 0.05;
-    metrics.hasContext = false;
+    suggestions.push({
+      priority: 'LOW',
+      code: 'MISSING_CONTEXT',
+      message: 'Consider adding context to make question more meaningful',
+      impact: '-5%'
+    });
   }
-  
-  // Number of options (more options = harder but more reliable)
-  const optionCount = (question.options || []).length;
-  metrics.optionCount = optionCount;
-  
-  // Check for images/diagrams
-  if (question.content?.image || question.content?.diagram) {
-    metrics.hasVisuals = true;
-  } else {
-    metrics.hasVisuals = false;
+
+  // Ensure all diagnostic tags are present
+  if (!question.diagnosticTags || question.diagnosticTags.length < 2) {
+    score -= 0.10;
+    suggestions.push({
+      priority: 'MEDIUM',
+      code: 'INSUFFICIENT_TAGS',
+      message: 'Add multiple diagnostic tags for better skill tracking',
+      impact: '-10%'
+    });
   }
-  
-  // Ensure score doesn't go negative
-  const finalScore = Math.max(0, score);
-  const gradeMap = {
-    A: finalScore > 0.85,
-    B: finalScore > 0.7,
-    C: finalScore > 0.55,
-    D: finalScore > 0.4,
-    F: finalScore <= 0.4
-  };
-  
-  let grade = 'F';
-  for (const [g, condition] of Object.entries(gradeMap)) {
-    if (condition) {
-      grade = g;
-      break;
-    }
-  }
-  
+
+  // Calculate grade
+  let qualityGrade = 'F';
+  if (score >= 0.90) qualityGrade = 'A';
+  else if (score >= 0.80) qualityGrade = 'B';
+  else if (score >= 0.70) qualityGrade = 'C';
+  else if (score >= 0.60) qualityGrade = 'D';
+
   return {
-    qualityScore: finalScore,
-    qualityGrade: grade,
+    qualityScore: Math.max(0, score),
+    qualityGrade,
     suggestions,
-    metrics
+    completenessPercent: Math.round(Math.max(0, score) * 100)
   };
 }
 
+// ============================================================================
+// MASTER VALIDATION FUNCTION
+// ============================================================================
+
 /**
- * MASTER VALIDATION FUNCTION
- * Orchestrates all question validation tiers
- * This is the main entry point for validating a single question
+ * Orchestrates all 4 tiers of question validation
+ * @param {Object} question - Question object to validate
+ * @param {Object} curriculum - Optional curriculum reference
+ * @returns {Object} Complete validation result
  */
 export async function validateQuestion(question, curriculum = null) {
-  if (!question) {
-    return {
-      questionId: null,
-      isValid: false,
-      qualityGrade: 'F',
-      qualityScore: 0,
-      errors: [
-        {
-          severity: 'CRITICAL',
-          code: 'QUESTION_NULL_OR_UNDEFINED',
-          message: 'Question object is null or undefined',
-          tier: 0
-        }
-      ],
-      warnings: [],
-      tiers: {
-        schema: null,
-        options: null,
-        metadata: null,
-        quality: null
-      }
-    };
-  }
-  
-  const results = {
-    questionId: question.id || null,
+  const startTime = performance.now();
+
+  const result = {
+    questionId: question?.id || 'UNKNOWN',
     isValid: true,
-    qualityGrade: 'A',
-    qualityScore: 1.0,
+    validatedAt: new Date().toISOString(),
+    validationTimeMs: 0,
+    qualityGrade: 'F',
+    qualityScore: 0,
     errors: [],
     warnings: [],
-    validatedAt: new Date().toISOString(),
+    suggestions: [],
     tiers: {
       schema: null,
       options: null,
@@ -584,44 +499,106 @@ export async function validateQuestion(question, curriculum = null) {
       quality: null
     }
   };
-  
-  // Tier 1: Schema validation
-  results.tiers.schema = await validateQuestionSchema(question);
-  if (!results.tiers.schema.isValid) {
-    results.errors.push(...results.tiers.schema.errors);
-    results.isValid = false;
+
+  try {
+    // TIER 1: Schema validation
+    result.tiers.schema = await validateQuestionSchema(question);
+    if (!result.tiers.schema.isValid) {
+      result.errors.push(...result.tiers.schema.errors);
+      result.isValid = false;
+    }
+    result.warnings.push(...result.tiers.schema.warnings);
+
+    // Stop here if schema is invalid - other tiers depend on schema
+    if (!result.isValid) {
+      result.validationTimeMs = Math.round(performance.now() - startTime);
+      return result;
+    }
+
+    // TIER 2: Options validation
+    result.tiers.options = await validateOptions(question);
+    if (!result.tiers.options.isValid) {
+      result.errors.push(...result.tiers.options.errors);
+      result.isValid = false;
+    }
+    result.warnings.push(...result.tiers.options.warnings);
+
+    // TIER 3: Metadata validation
+    result.tiers.metadata = await validateMetadata(question, curriculum);
+    if (!result.tiers.metadata.isValid) {
+      result.errors.push(...result.tiers.metadata.errors);
+      result.isValid = false;
+    }
+    result.warnings.push(...result.tiers.metadata.warnings);
+
+    // TIER 4: Quality assessment (only if valid)
+    if (result.isValid) {
+      result.tiers.quality = await assessQuestionQuality(question);
+      result.qualityScore = result.tiers.quality.qualityScore;
+      result.qualityGrade = result.tiers.quality.qualityGrade;
+      result.suggestions = result.tiers.quality.suggestions;
+    }
+  } catch (error) {
+    result.errors.push({
+      severity: 'ERROR',
+      code: 'VALIDATION_ERROR',
+      message: `Unexpected error during validation: ${error.message}`,
+      stack: error.stack
+    });
+    result.isValid = false;
   }
-  results.warnings.push(...results.tiers.schema.warnings);
-  
-  // Skip remaining tiers if schema validation failed
-  if (!results.tiers.schema.isValid) {
-    results.qualityGrade = 'F';
-    results.qualityScore = 0;
-    return results;
+
+  result.validationTimeMs = Math.round(performance.now() - startTime);
+  return result;
+}
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+/**
+ * Gets human-readable summary of validation errors
+ * @param {Object} validationResult - Result from validateQuestion
+ * @returns {String} Formatted error message
+ */
+export function formatValidationErrors(validationResult) {
+  if (!validationResult.errors || validationResult.errors.length === 0) {
+    return 'No errors found';
   }
-  
-  // Tier 2: Options validation
-  results.tiers.options = await validateOptions(question);
-  if (!results.tiers.options.isValid) {
-    results.errors.push(...results.tiers.options.errors);
-    results.isValid = false;
-  }
-  results.warnings.push(...results.tiers.options.warnings);
-  
-  // Tier 3: Metadata validation
-  results.tiers.metadata = await validateMetadata(question, curriculum);
-  if (!results.tiers.metadata.isValid) {
-    results.errors.push(...results.tiers.metadata.errors);
-    results.isValid = false;
-  }
-  results.warnings.push(...results.tiers.metadata.warnings);
-  
-  // Tier 4: Quality assessment (always run, doesn't affect isValid)
-  results.tiers.quality = await assessQuestionQuality(question);
-  results.qualityScore = results.tiers.quality.qualityScore;
-  results.qualityGrade = results.tiers.quality.qualityGrade;
-  
-  return results;
+
+  return validationResult.errors
+    .map((err, idx) => `${idx + 1}. [${err.severity}] ${err.code}: ${err.message}`)
+    .join('\n');
+}
+
+/**
+ * Converts validation result to display object
+ * @param {Object} validationResult - Result from validateQuestion
+ * @returns {Object} Display-friendly format
+ */
+export function prepareValidationForDisplay(validationResult) {
+  return {
+    questionId: validationResult.questionId,
+    status: validationResult.isValid ? 'VALID' : 'INVALID',
+    qualityGrade: validationResult.qualityGrade,
+    qualityPercent: Math.round(validationResult.qualityScore * 100),
+    errorCount: validationResult.errors.length,
+    warningCount: validationResult.warnings.length,
+    suggestionCount: validationResult.suggestions.length,
+    errors: validationResult.errors.map(e => ({
+      code: e.code,
+      message: e.message,
+      severity: e.severity
+    })),
+    warnings: validationResult.warnings.map(w => ({
+      code: w.code,
+      message: w.message
+    })),
+    suggestions: validationResult.suggestions.map(s => ({
+      priority: s.priority,
+      message: s.message
+    }))
+  };
 }
 
 export default {
@@ -629,5 +606,7 @@ export default {
   validateQuestionSchema,
   validateOptions,
   validateMetadata,
-  assessQuestionQuality
+  assessQuestionQuality,
+  formatValidationErrors,
+  prepareValidationForDisplay
 };
