@@ -1,8 +1,8 @@
 {
   "schema_version": "2.0",
   "document_type": "core_curriculum",
-  "curriculum_id": "mathquest-cbse7-olympiad",
-  "title": "CBSE Grade 7 MathQuest Core Curriculum",
+  "curriculum_id": "mathquest-cbse7-olympiad-eapcet-foundation",
+  "title": "CBSE Grade 7 MathQuest Core Curriculum (CBSE + Olympiad + EAPCET foundation)",
   "board": "CBSE (NCERT)",
   "country": "India",
   "grade_level": 7,
