@@ -1,13 +1,15 @@
 /**
  * DailyMissionRunner.jsx
  * 
- * Main mission interface component.
- * Uses useDailyMissionV2 hook to run 14+ template daily missions.
- * Orchestrates mission flow, question progression, and completion.
+ * REDESIGNED: World-class mission interface
+ * - Minimal, distraction-free header
+ * - Content-first layout
+ * - Encouraging, anxiety-free experience
+ * - Perfect for young learners
  */
 
 import React, { useState } from 'react';
-import { AlertCircle, CheckCircle, Trophy } from 'lucide-react';
+import { AlertCircle, Trophy } from 'lucide-react';
 import useDailyMissionV2 from '../../hooks/useDailyMissionV2';
 import MissionCard from './MissionCard';
 import MissionSummary from './MissionSummary';
@@ -27,7 +29,7 @@ const DailyMissionRunner = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
-  // Check if debug mode is enabled (safe way to check environment variables)
+  // Safe debug mode check
   const isDebugMode = typeof window !== 'undefined' && 
     localStorage?.getItem('DEBUG_MODE') === 'true';
 
@@ -52,61 +54,61 @@ const DailyMissionRunner = () => {
     }
   };
 
-  // Loading state
+  // ========== LOADING STATE ==========
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
-          <h2 className="text-xl font-semibold text-gray-700 mb-2">Generating Your Mission</h2>
-          <p className="text-gray-500">Selecting 14+ diverse questions just for you...</p>
+      <div className="flex items-center justify-center min-h-screen bg-white">
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin" />
+          <h2 className="text-xl font-bold text-gray-900">Preparing your mission...</h2>
+          <p className="text-gray-500">Finding the perfect questions for you</p>
         </div>
       </div>
     );
   }
 
-  // Error state
+  // ========== ERROR STATE ==========
   if (error && !isComplete) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-        <div className="bg-red-50 border-2 border-red-300 rounded-lg p-8 max-w-md w-full">
+        <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 max-w-md w-full">
           <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-red-900 mb-2">Mission Error</h2>
-          <p className="text-red-700 mb-4">{error}</p>
+          <h2 className="text-xl font-bold text-red-900 mb-2 text-center">Oops! Something went wrong</h2>
+          <p className="text-red-700 mb-6 text-center">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded"
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition"
           >
-            Reload
+            Try Again
           </button>
         </div>
       </div>
     );
   }
 
-  // No questions state
+  // ========== NO QUESTIONS STATE ==========
   if (!isLoading && totalQuestions === 0) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-50 p-4">
-        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-lg p-8 max-w-md w-full">
+        <div className="bg-yellow-50 border-2 border-yellow-300 rounded-2xl p-8 max-w-md w-full text-center">
           <AlertCircle className="w-12 h-12 text-yellow-600 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-yellow-900 mb-2">No Questions Available</h2>
-          <p className="text-yellow-700">Please check back later or contact support.</p>
+          <h2 className="text-xl font-bold text-yellow-900 mb-2">No questions available</h2>
+          <p className="text-yellow-700">Please check back later or contact your teacher.</p>
         </div>
       </div>
     );
   }
 
-  // Completion state
+  // ========== COMPLETION STATE ==========
   if (isComplete) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-blue-50 to-purple-50 p-4">
-        <div className="max-w-2xl mx-auto">
-          {/* Completion header */}
-          <div className="text-center mb-8">
-            <Trophy className="w-16 h-16 text-yellow-500 mx-auto mb-4 animate-bounce" />
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">Mission Complete!</h1>
-            <p className="text-lg text-gray-600">Excellent work, ninja warrior! 🥋</p>
+        <div className="max-w-2xl mx-auto space-y-8">
+          {/* Celebration header */}
+          <div className="text-center pt-8 space-y-3">
+            <Trophy className="w-16 h-16 text-yellow-500 mx-auto animate-bounce" />
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900">Mission Complete!</h1>
+            <p className="text-lg text-gray-600">Amazing work, ninja warrior! 🥋</p>
           </div>
 
           {/* Summary card */}
@@ -118,16 +120,16 @@ const DailyMissionRunner = () => {
           )}
 
           {/* Actions */}
-          <div className="grid grid-cols-2 gap-4 mt-8">
+          <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => window.location.reload()}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-md hover:shadow-lg"
             >
               Next Mission
             </button>
             <button
               onClick={() => window.history.back()}
-              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-lg transition"
+              className="bg-gray-600 hover:bg-gray-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-md hover:shadow-lg"
             >
               Dashboard
             </button>
@@ -137,51 +139,31 @@ const DailyMissionRunner = () => {
     );
   }
 
-  // Active mission state
+  // ========== ACTIVE MISSION STATE ==========
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-3xl font-bold text-gray-900">Daily Mission</h1>
-            <div className="text-right">
-              <div className="text-sm text-gray-500 mb-1">Progress</div>
-              <div className="text-2xl font-bold text-blue-600">
-                {currentIndex + 1}/{totalQuestions}
-              </div>
-            </div>
-          </div>
-          
-          {/* Phase indicator */}
-          {currentQuestion?.phase && (
-            <div className="inline-block bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-semibold mb-4">
-              Phase: {currentQuestion.phase.replace(/_/g, ' ')}
-            </div>
-          )}
+    <div className="min-h-screen bg-white flex flex-col">
+      {/* Mission card component handles all UI */}
+      {currentQuestion && (
+        <MissionCard
+          question={currentQuestion}
+          currentIndex={currentIndex}
+          totalQuestions={totalQuestions}
+          onSubmit={handleAnswer}
+          isSubmitting={isSubmitting}
+        />
+      )}
+
+      {/* Debug info (only if enabled) */}
+      {isDebugMode && currentQuestion && (
+        <div className="fixed bottom-4 right-4 bg-gray-900 text-green-400 p-3 rounded font-mono text-xs max-w-xs overflow-auto max-h-40 shadow-lg border border-green-400">
+          <div className="font-bold mb-2">📊 DEBUG INFO</div>
+          <div>Template: {currentQuestion?.templateId}</div>
+          <div>Atom: {currentQuestion?.atomId}</div>
+          <div>Difficulty: {currentQuestion?.difficulty}</div>
+          <div>Mastery: {Math.round((currentQuestion?.masteryBefore || 0) * 100)}%</div>
+          <div>Phase: {currentQuestion?.phase}</div>
         </div>
-
-        {/* Mission card */}
-        {currentQuestion && (
-          <MissionCard
-            question={currentQuestion}
-            currentIndex={currentIndex}
-            totalQuestions={totalQuestions}
-            onSubmit={handleAnswer}
-            isSubmitting={isSubmitting}
-          />
-        )}
-
-        {/* Debug info (dev only) - Only show if DEBUG_MODE is enabled in localStorage */}
-        {isDebugMode && currentQuestion && (
-          <div className="mt-8 bg-gray-800 text-green-400 p-4 rounded font-mono text-xs overflow-auto max-h-32">
-            <div>Template: {currentQuestion?.templateId}</div>
-            <div>Atom: {currentQuestion?.atomId}</div>
-            <div>Difficulty: {currentQuestion?.difficulty}</div>
-            <div>Mastery: {Math.round((currentQuestion?.masteryBefore || 0) * 100)}%</div>
-          </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };
