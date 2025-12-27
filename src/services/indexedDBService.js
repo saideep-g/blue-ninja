@@ -1,607 +1,605 @@
 /**
  * src/services/indexedDBService.js
- * IndexedDB abstraction using Dexie for admin panel
- * Handles pending questions, upload sessions, and validation cache
- * Production-ready with proper error handling and transaction support
+ * ================================
+ * 
+ * Production-ready IndexedDB service using Dexie library for persistent storage.
+ * Handles pending questions, upload sessions, and validation caching.
+ * 
+ * Why IndexedDB instead of localStorage?
+ * - localStorage throws SecurityError in strict Firestore rules
+ * - IndexedDB has 50MB+ limit vs localStorage's 5-10MB
+ * - Async API (non-blocking)
+ * - Designed for this use case
+ * 
+ * Database Schema:
+ * - pendingQuestions: Questions being reviewed before publishing
+ * - uploadSessions: Upload batch metadata and progress
+ * - validationCache: Cached validation results (24h TTL)
+ * 
+ * Usage:
+ * ------
+ * const db = new IndexedDBService();
+ * await db.initDatabase();
+ * await db.addPendingQuestion('Q1', questionData);
+ * const result = await db.getValidationCache('Q1');
  */
 
-import Dexie from 'dexie';
+import Dexie, { type Table } from 'dexie';
 
-// Initialize Dexie database
-const db = new Dexie('BlueNinjaAdminDB');
+// ============================================================================
+// DATABASE SCHEMA
+// ============================================================================
 
-db.version(1).stores({
-  // pendingQuestions: Store for questions in upload workflow
-  pendingQuestions: '&qId, sessionId, status, lastModified',
-  
-  // uploadSessions: Track bulk upload sessions
-  uploadSessions: '&sessionId, uploadedAt, adminId',
-  
-  // validationCache: Cache validation results (24h TTL)
-  validationCache: '&qId, expiresAt'
-});
+export class AdminPanelDB extends Dexie {
+  pendingQuestions: Table;
+  uploadSessions: Table;
+  validationCache: Table;
 
-/**
- * Question object shape:
- * {
- *   qId: string (unique),
- *   sessionId: string,
- *   originalData: object (full question from file),
- *   editedData: object (with user edits, merged with original),
- *   status: 'DRAFT' | 'VALIDATING' | 'READY_TO_PUBLISH' | 'NEEDS_REVIEW' | 'PUBLISHED' | 'FAILED',
- *   validationResult: object (from questionValidator),
- *   errors: array,
- *   warnings: array,
- *   lastModified: timestamp,
- *   isReadyToPublish: boolean,
- *   publishAttempts: number,
- *   publishError: string | null
- * }
- */
+  constructor() {
+    super('AdminPanelDB');
+    this.version(1).stores({
+      pendingQuestions: 'qId, sessionId, status, lastModified',
+      uploadSessions: 'sessionId, uploadedAt, status',
+      validationCache: 'qId, expiresAt'
+    });
+  }
+}
 
-/**
- * Session object shape:
- * {
- *   sessionId: uuid,
- *   uploadedAt: timestamp,
- *   fileName: string,
- *   fileSize: number,
- *   totalQuestions: number,
- *   questionsProcessed: number,
- *   questionsPublished: number,
- *   questionsWithErrors: number,
- *   status: 'IN_PROGRESS' | 'COMPLETED' | 'FAILED',
- *   adminId: string,
- *   adminEmail: string,
- *   notes: string,
- *   completedAt: timestamp | null
- * }
- */
+// ============================================================================
+// SERVICE CLASS
+// ============================================================================
 
-class IndexedDBService {
-  /**
-   * Initialize database and ensure schema is set up
-   */
-  async initDatabase() {
-    try {
-      // Test connection
-      const count = await db.pendingQuestions.count();
-      console.log(`[IndexedDB] Initialized successfully, ${count} pending questions`);
-      return true;
-    } catch (error) {
-      console.error('[IndexedDB] Initialization failed:', error);
-      throw new Error(`Failed to initialize IndexedDB: ${error.message}`);
-    }
+export class IndexedDBService {
+  constructor() {
+    this.db = new AdminPanelDB();
+    this.isInitialized = false;
+    this.initError = null;
   }
 
   /**
-   * ===== PENDING QUESTIONS OPERATIONS =====
+   * Initialize the database
+   * Should be called once on app startup
    */
+  async initDatabase() {
+    if (this.isInitialized) {
+      return;
+    }
+
+    const MAX_ATTEMPTS = 3;
+    let attempt = 0;
+    let lastError;
+
+    while (attempt < MAX_ATTEMPTS) {
+      try {
+        await this.db.open();
+        this.isInitialized = true;
+        console.log('[IndexedDB] Database initialized successfully');
+        return;
+      } catch (error) {
+        attempt++;
+        lastError = error;
+        console.warn(`[IndexedDB] Initialization attempt ${attempt} failed:`, error);
+
+        if (attempt < MAX_ATTEMPTS) {
+          // Exponential backoff
+          await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 100));
+        }
+      }
+    }
+
+    this.initError = lastError;
+    console.error('[IndexedDB] Failed to initialize after', MAX_ATTEMPTS, 'attempts');
+    throw new Error(`Failed to initialize IndexedDB: ${lastError?.message}`);
+  }
 
   /**
-   * Add a new pending question to the database
+   * Ensures database is initialized
+   * @private
+   */
+  async _ensureInitialized() {
+    if (!this.isInitialized) {
+      await this.initDatabase();
+    }
+  }
+
+  // ============================================================================
+  // PENDING QUESTIONS OPERATIONS
+  // ============================================================================
+
+  /**
+   * Add a pending question
+   * @param {string} qId - Question ID
+   * @param {Object} questionData - Question data object
    */
   async addPendingQuestion(qId, questionData) {
+    await this._ensureInitialized();
     try {
-      if (!qId || !questionData) {
-        throw new Error('qId and questionData are required');
-      }
-
-      const record = {
+      const data = {
         qId,
-        sessionId: questionData.sessionId,
+        sessionId: questionData.sessionId || null,
         originalData: questionData.originalData || {},
-        editedData: null,
-        status: questionData.status || 'DRAFT',
-        validationResult: null,
-        errors: [],
-        warnings: [],
-        lastModified: Date.now(),
-        isReadyToPublish: false,
+        editedData: questionData.editedData || null,
+        status: questionData.status || 'DRAFT', // DRAFT, VALIDATING, VALID, NEEDS_REVIEW, READY_TO_PUBLISH
+        validationResult: questionData.validationResult || null,
+        errors: questionData.errors || [],
+        warnings: questionData.warnings || [],
+        isReadyToPublish: questionData.isReadyToPublish || false,
         publishAttempts: 0,
-        publishError: null
+        createdAt: Date.now(),
+        lastModified: Date.now()
       };
 
-      await db.pendingQuestions.add(record);
-      console.log(`[IndexedDB] Added question: ${qId}`);
-      return record;
+      await this.db.pendingQuestions.put(data);
+      console.log(`[IndexedDB] Added pending question: ${qId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to add question ${qId}:`, error);
+      console.error('[IndexedDB] Error adding pending question:', error);
       throw error;
     }
   }
 
   /**
-   * Update an existing pending question
+   * Update a pending question
+   * @param {string} qId - Question ID
+   * @param {Object} updates - Partial update object
    */
   async updatePendingQuestion(qId, updates) {
+    await this._ensureInitialized();
     try {
-      if (!qId) {
-        throw new Error('qId is required');
+      const existing = await this.db.pendingQuestions.get(qId);
+      if (!existing) {
+        throw new Error(`Question ${qId} not found`);
       }
 
-      const updateObj = {
+      const updated = {
+        ...existing,
         ...updates,
         lastModified: Date.now()
       };
 
-      const changes = await db.pendingQuestions.update(qId, updateObj);
-      console.log(`[IndexedDB] Updated question: ${qId}`);
-      return changes > 0;
+      await this.db.pendingQuestions.put(updated);
+      console.log(`[IndexedDB] Updated pending question: ${qId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to update question ${qId}:`, error);
+      console.error('[IndexedDB] Error updating pending question:', error);
       throw error;
     }
   }
 
   /**
-   * Get a specific pending question
+   * Get a single pending question
+   * @param {string} qId - Question ID
+   * @returns {Object|undefined} Question data or undefined
    */
   async getPendingQuestion(qId) {
+    await this._ensureInitialized();
     try {
-      if (!qId) {
-        throw new Error('qId is required');
-      }
-
-      const question = await db.pendingQuestions.get(qId);
-      return question || null;
+      return await this.db.pendingQuestions.get(qId);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to get question ${qId}:`, error);
+      console.error('[IndexedDB] Error getting pending question:', error);
       throw error;
     }
   }
 
   /**
-   * Get all pending questions (optionally filter by session)
+   * Get all pending questions (optionally filtered by session)
+   * @param {string} sessionId - Optional session ID filter
+   * @returns {Array} Array of pending questions
    */
   async getAllPendingQuestions(sessionId = null) {
+    await this._ensureInitialized();
     try {
-      let query = db.pendingQuestions;
+      let query = this.db.pendingQuestions;
 
       if (sessionId) {
         query = query.where('sessionId').equals(sessionId);
       }
 
-      const questions = await query.toArray();
-      console.log(`[IndexedDB] Retrieved ${questions.length} pending questions`);
-      return questions;
+      return await query.toArray();
     } catch (error) {
-      console.error('[IndexedDB] Failed to get pending questions:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * Get pending questions by status
-   */
-  async getPendingQuestionsByStatus(status, sessionId = null) {
-    try {
-      let query = db.pendingQuestions.where('status').equals(status);
-
-      const questions = await query.toArray();
-
-      if (sessionId) {
-        return questions.filter(q => q.sessionId === sessionId);
-      }
-
-      return questions;
-    } catch (error) {
-      console.error(`[IndexedDB] Failed to get questions by status ${status}:`, error);
+      console.error('[IndexedDB] Error getting all pending questions:', error);
       throw error;
     }
   }
 
   /**
    * Delete a pending question
+   * @param {string} qId - Question ID
    */
   async deletePendingQuestion(qId) {
+    await this._ensureInitialized();
     try {
-      if (!qId) {
-        throw new Error('qId is required');
-      }
-
-      await db.pendingQuestions.delete(qId);
-      console.log(`[IndexedDB] Deleted question: ${qId}`);
+      await this.db.pendingQuestions.delete(qId);
+      console.log(`[IndexedDB] Deleted pending question: ${qId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to delete question ${qId}:`, error);
+      console.error('[IndexedDB] Error deleting pending question:', error);
       throw error;
     }
   }
 
   /**
-   * Delete all questions in a batch (session)
+   * Delete all pending questions for a session
+   * @param {string} sessionId - Session ID
    */
   async deleteBatchBySessionId(sessionId) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
-
-      const questions = await db.pendingQuestions
+      const questions = await this.db.pendingQuestions
         .where('sessionId')
         .equals(sessionId)
         .toArray();
 
-      const deletedCount = await db.pendingQuestions
-        .where('sessionId')
-        .equals(sessionId)
-        .delete();
+      for (const q of questions) {
+        await this.db.pendingQuestions.delete(q.qId);
+      }
 
-      console.log(`[IndexedDB] Deleted ${deletedCount} questions from session: ${sessionId}`);
-      return deletedCount;
+      console.log(`[IndexedDB] Deleted ${questions.length} questions for session ${sessionId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to delete batch ${sessionId}:`, error);
+      console.error('[IndexedDB] Error deleting batch:', error);
       throw error;
     }
   }
 
-  /**
-   * ===== SESSION MANAGEMENT =====
-   */
+  // ============================================================================
+  // UPLOAD SESSION OPERATIONS
+  // ============================================================================
 
   /**
    * Create a new upload session
+   * @param {string} sessionId - Unique session ID (UUID)
+   * @param {Object} metadata - Session metadata
    */
   async createSession(sessionId, metadata) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
-
       const session = {
         sessionId,
-        uploadedAt: Date.now(),
-        fileName: metadata.fileName || '',
+        fileName: metadata.fileName || 'unknown',
         fileSize: metadata.fileSize || 0,
+        uploadedAt: metadata.uploadedAt || Date.now(),
         totalQuestions: metadata.totalQuestions || 0,
         questionsProcessed: 0,
         questionsPublished: 0,
         questionsWithErrors: 0,
-        status: 'IN_PROGRESS',
-        adminId: metadata.adminId || '',
-        adminEmail: metadata.adminEmail || '',
+        questionsSkipped: 0,
+        adminId: metadata.adminId || null,
+        adminEmail: metadata.adminEmail || null,
+        status: 'IN_PROGRESS', // IN_PROGRESS, COMPLETED, FAILED
         notes: metadata.notes || '',
-        completedAt: null
+        errorLog: [],
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       };
 
-      await db.uploadSessions.add(session);
-      console.log(`[IndexedDB] Created session: ${sessionId}`);
-      return session;
+      await this.db.uploadSessions.put(session);
+      console.log(`[IndexedDB] Created upload session: ${sessionId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to create session ${sessionId}:`, error);
+      console.error('[IndexedDB] Error creating session:', error);
       throw error;
     }
   }
 
   /**
-   * Get a specific session
+   * Get a session
+   * @param {string} sessionId - Session ID
+   * @returns {Object|undefined} Session data or undefined
    */
   async getSession(sessionId) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
-
-      const session = await db.uploadSessions.get(sessionId);
-      return session || null;
+      return await this.db.uploadSessions.get(sessionId);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to get session ${sessionId}:`, error);
+      console.error('[IndexedDB] Error getting session:', error);
       throw error;
     }
   }
 
   /**
    * Update a session
+   * @param {string} sessionId - Session ID
+   * @param {Object} updates - Partial update object
    */
   async updateSession(sessionId, updates) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
+      const session = await this.db.uploadSessions.get(sessionId);
+      if (!session) {
+        throw new Error(`Session ${sessionId} not found`);
       }
 
-      const updateObj = {
+      const updated = {
+        ...session,
         ...updates,
-        lastModified: Date.now()
+        updatedAt: Date.now()
       };
 
-      await db.uploadSessions.update(sessionId, updateObj);
+      await this.db.uploadSessions.put(updated);
       console.log(`[IndexedDB] Updated session: ${sessionId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to update session ${sessionId}:`, error);
+      console.error('[IndexedDB] Error updating session:', error);
       throw error;
     }
   }
 
   /**
    * Close a session (mark as completed)
+   * @param {string} sessionId - Session ID
    */
   async closeSession(sessionId) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
-
-      await db.uploadSessions.update(sessionId, {
+      await this.updateSession(sessionId, {
         status: 'COMPLETED',
         completedAt: Date.now()
       });
-
       console.log(`[IndexedDB] Closed session: ${sessionId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to close session ${sessionId}:`, error);
+      console.error('[IndexedDB] Error closing session:', error);
       throw error;
     }
   }
 
   /**
-   * Get all sessions with pagination
+   * Get all sessions (with optional limit)
+   * @param {number} limit - Max number of sessions to return
+   * @returns {Array} Array of sessions
    */
-  async getAllSessions(limit = 20, offset = 0) {
+  async getAllSessions(limit = 20) {
+    await this._ensureInitialized();
     try {
-      const sessions = await db.uploadSessions
+      return await this.db.uploadSessions
         .orderBy('uploadedAt')
         .reverse()
-        .offset(offset)
         .limit(limit)
         .toArray();
-
-      console.log(`[IndexedDB] Retrieved ${sessions.length} sessions`);
-      return sessions;
     } catch (error) {
-      console.error('[IndexedDB] Failed to get sessions:', error);
+      console.error('[IndexedDB] Error getting all sessions:', error);
       throw error;
     }
   }
 
+  // ============================================================================
+  // VALIDATION CACHE OPERATIONS
+  // ============================================================================
+
   /**
-   * Get sessions by admin
+   * Cache a validation result
+   * @param {string} qId - Question ID
+   * @param {Object} result - Validation result object
+   * @param {number} ttlHours - Time to live in hours (default 24)
    */
-  async getSessionsByAdmin(adminId, limit = 10) {
+  async cacheValidationResult(qId, result, ttlHours = 24) {
+    await this._ensureInitialized();
     try {
-      if (!adminId) {
-        throw new Error('adminId is required');
-      }
-
-      const sessions = await db.uploadSessions
-        .where('adminId')
-        .equals(adminId)
-        .reverse()
-        .limit(limit)
-        .toArray();
-
-      return sessions;
-    } catch (error) {
-      console.error(`[IndexedDB] Failed to get sessions for admin ${adminId}:`, error);
-      throw error;
-    }
-  }
-
-  /**
-   * ===== VALIDATION CACHE =====
-   */
-
-  /**
-   * Cache a validation result (24-hour TTL)
-   */
-  async cacheValidationResult(qId, result) {
-    try {
-      if (!qId || !result) {
-        throw new Error('qId and result are required');
-      }
-
       const now = Date.now();
-      const TTL = 24 * 60 * 60 * 1000; // 24 hours
+      const expiresAt = now + ttlHours * 60 * 60 * 1000;
 
-      const cacheRecord = {
+      const cacheEntry = {
         qId,
         validationResult: result,
         cachedAt: now,
-        expiresAt: now + TTL
+        expiresAt
       };
 
-      await db.validationCache.put(cacheRecord);
+      await this.db.validationCache.put(cacheEntry);
       console.log(`[IndexedDB] Cached validation for: ${qId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to cache validation for ${qId}:`, error);
+      console.error('[IndexedDB] Error caching validation:', error);
       throw error;
     }
   }
 
   /**
-   * Get a cached validation result (if not expired)
+   * Get cached validation result
+   * @param {string} qId - Question ID
+   * @returns {Object|undefined} Validation result or undefined if expired/not found
    */
   async getValidationCache(qId) {
+    await this._ensureInitialized();
     try {
-      if (!qId) {
-        throw new Error('qId is required');
-      }
+      const cache = await this.db.validationCache.get(qId);
 
-      const cacheRecord = await db.validationCache.get(qId);
-
-      if (!cacheRecord) {
-        return null;
+      if (!cache) {
+        return undefined;
       }
 
       // Check if expired
-      if (cacheRecord.expiresAt < Date.now()) {
-        await db.validationCache.delete(qId);
-        return null;
+      if (Date.now() > cache.expiresAt) {
+        await this.db.validationCache.delete(qId);
+        return undefined;
       }
 
-      return cacheRecord.validationResult;
+      return cache.validationResult;
     } catch (error) {
-      console.error(`[IndexedDB] Failed to get cache for ${qId}:`, error);
+      console.error('[IndexedDB] Error getting validation cache:', error);
       throw error;
     }
   }
 
   /**
-   * Clear a specific validation cache entry
+   * Clear validation cache for a question
+   * @param {string} qId - Question ID
    */
   async clearValidationCache(qId) {
+    await this._ensureInitialized();
     try {
-      if (!qId) {
-        throw new Error('qId is required');
-      }
-
-      await db.validationCache.delete(qId);
+      await this.db.validationCache.delete(qId);
       console.log(`[IndexedDB] Cleared cache for: ${qId}`);
     } catch (error) {
-      console.error(`[IndexedDB] Failed to clear cache for ${qId}:`, error);
+      console.error('[IndexedDB] Error clearing cache:', error);
       throw error;
     }
   }
 
-  /**
-   * ===== CLEANUP OPERATIONS =====
-   */
+  // ============================================================================
+  // CLEANUP & MAINTENANCE
+  // ============================================================================
 
   /**
-   * Clear expired cache entries
+   * Clear all expired cache entries
+   * @returns {number} Number of entries cleared
    */
   async clearExpiredCache() {
+    await this._ensureInitialized();
     try {
       const now = Date.now();
-      const expiredRecords = await db.validationCache
+      const expired = await this.db.validationCache
         .where('expiresAt')
         .below(now)
         .toArray();
 
-      const idsToDelete = expiredRecords.map(r => r.qId);
-
-      for (const qId of idsToDelete) {
-        await db.validationCache.delete(qId);
+      for (const entry of expired) {
+        await this.db.validationCache.delete(entry.qId);
       }
 
-      console.log(`[IndexedDB] Cleared ${idsToDelete.length} expired cache entries`);
-      return idsToDelete.length;
+      console.log(`[IndexedDB] Cleared ${expired.length} expired cache entries`);
+      return expired.length;
     } catch (error) {
-      console.error('[IndexedDB] Failed to clear expired cache:', error);
+      console.error('[IndexedDB] Error clearing expired cache:', error);
       throw error;
     }
   }
 
   /**
-   * Clear old completed sessions (older than 30 days)
+   * Clear old completed sessions
+   * @param {number} daysOld - Sessions older than this many days will be deleted
+   * @returns {number} Number of sessions deleted
    */
   async clearOldSessions(daysOld = 30) {
+    await this._ensureInitialized();
     try {
-      const cutoffTime = Date.now() - (daysOld * 24 * 60 * 60 * 1000);
+      const cutoffTime = Date.now() - daysOld * 24 * 60 * 60 * 1000;
 
-      const oldSessions = await db.uploadSessions
+      const oldSessions = await this.db.uploadSessions
         .where('uploadedAt')
         .below(cutoffTime)
-        .and(s => s.status === 'COMPLETED')
         .toArray();
 
       for (const session of oldSessions) {
-        // Delete associated questions
+        // Delete questions associated with this session
         await this.deleteBatchBySessionId(session.sessionId);
         // Delete session
-        await db.uploadSessions.delete(session.sessionId);
+        await this.db.uploadSessions.delete(session.sessionId);
       }
 
-      console.log(`[IndexedDB] Cleared ${oldSessions.length} old sessions`);
+      console.log(`[IndexedDB] Deleted ${oldSessions.length} old sessions`);
       return oldSessions.length;
     } catch (error) {
-      console.error('[IndexedDB] Failed to clear old sessions:', error);
+      console.error('[IndexedDB] Error clearing old sessions:', error);
       throw error;
     }
   }
 
   /**
-   * ===== EXPORT/IMPORT OPERATIONS =====
+   * Get database statistics
+   * @returns {Object} Storage stats
    */
+  async getStats() {
+    await this._ensureInitialized();
+    try {
+      const questionCount = await this.db.pendingQuestions.count();
+      const sessionCount = await this.db.uploadSessions.count();
+      const cacheCount = await this.db.validationCache.count();
+
+      const stats = {
+        pendingQuestions: questionCount,
+        uploadSessions: sessionCount,
+        cachedValidations: cacheCount,
+        totalRecords: questionCount + sessionCount + cacheCount,
+        estimatedSizeMB: ((questionCount * 5 + sessionCount * 2 + cacheCount * 3) / 1024).toFixed(2),
+        lastUpdated: new Date().toISOString()
+      };
+
+      console.log('[IndexedDB] Statistics:', stats);
+      return stats;
+    } catch (error) {
+      console.error('[IndexedDB] Error getting stats:', error);
+      throw error;
+    }
+  }
+
+  // ============================================================================
+  // EXPORT/IMPORT (BACKUP)
+  // ============================================================================
 
   /**
-   * Export a session's data for backup or sharing
+   * Export a session and its questions
+   * @param {string} sessionId - Session ID
+   * @returns {Object} Exportable data
    */
   async exportSession(sessionId) {
+    await this._ensureInitialized();
     try {
-      if (!sessionId) {
-        throw new Error('sessionId is required');
-      }
-
       const session = await this.getSession(sessionId);
       const questions = await this.getAllPendingQuestions(sessionId);
 
       return {
+        version: '1.0',
+        exportedAt: new Date().toISOString(),
         session,
         questions,
-        exportedAt: new Date().toISOString()
+        questionCount: questions.length
       };
     } catch (error) {
-      console.error(`[IndexedDB] Failed to export session ${sessionId}:`, error);
+      console.error('[IndexedDB] Error exporting session:', error);
       throw error;
     }
   }
 
   /**
-   * Import previously exported session data
+   * Import a previously exported session
+   * @param {Object} data - Exported data object
    */
-  async importSession(exportedData) {
+  async importSession(data) {
+    await this._ensureInitialized();
     try {
-      if (!exportedData || !exportedData.session || !exportedData.questions) {
-        throw new Error('Invalid export data format');
+      if (data.version !== '1.0') {
+        throw new Error('Unsupported export version');
       }
 
-      const { session, questions } = exportedData;
+      // Import session
+      await this.db.uploadSessions.put(data.session);
 
-      // Create session
-      await this.createSession(session.sessionId, session);
-
-      // Add questions
-      for (const question of questions) {
-        await db.pendingQuestions.add(question);
+      // Import questions
+      for (const question of data.questions) {
+        await this.db.pendingQuestions.put(question);
       }
 
-      console.log(`[IndexedDB] Imported ${questions.length} questions from session ${session.sessionId}`);
-      return questions.length;
+      console.log(`[IndexedDB] Imported session with ${data.questionCount} questions`);
     } catch (error) {
-      console.error('[IndexedDB] Failed to import session:', error);
+      console.error('[IndexedDB] Error importing session:', error);
       throw error;
     }
   }
 
   /**
-   * ===== STATISTICS =====
+   * Clear all data (destructive!)
+   * Use with caution
    */
-
-  /**
-   * Get database statistics
-   */
-  async getStats() {
+  async clearAll() {
+    await this._ensureInitialized();
     try {
-      const totalQuestions = await db.pendingQuestions.count();
-      const readyToPublish = await db.pendingQuestions
-        .where('status')
-        .equals('READY_TO_PUBLISH')
-        .count();
-      const needsReview = await db.pendingQuestions
-        .where('status')
-        .equals('NEEDS_REVIEW')
-        .count();
-      const totalSessions = await db.uploadSessions.count();
-      const cacheSize = await db.validationCache.count();
-
-      return {
-        pendingQuestions: {
-          total: totalQuestions,
-          readyToPublish,
-          needsReview
-        },
-        uploadSessions: totalSessions,
-        validationCache: cacheSize,
-        timestamp: Date.now()
-      };
+      await this.db.pendingQuestions.clear();
+      await this.db.uploadSessions.clear();
+      await this.db.validationCache.clear();
+      console.warn('[IndexedDB] All data cleared!');
     } catch (error) {
-      console.error('[IndexedDB] Failed to get stats:', error);
+      console.error('[IndexedDB] Error clearing all data:', error);
       throw error;
     }
   }
 }
 
-// Export singleton instance
-export const indexedDBService = new IndexedDBService();
+// Create singleton instance
+let instance = null;
 
-export default indexedDBService;
+/**
+ * Get singleton IndexedDB service instance
+ * @returns {IndexedDBService}
+ */
+export function getIndexedDBService() {
+  if (!instance) {
+    instance = new IndexedDBService();
+  }
+  return instance;
+}
+
+export default IndexedDBService;
