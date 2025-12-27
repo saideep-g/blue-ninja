@@ -11,10 +11,11 @@ const NinjaContext = createContext();
  * Adds historical data hydration to support the Analytics Foundation.
  * NinjaProvider: Phase 3 Stability Upgrade
  * Implements the Hybrid Sync Engine: Local-First with Batched Firestore Writes.
- * Protects quotas while ensuring data integrity for high-precision analytics.
- * * * DEBUG UPGRADE: Persistence Lifecycle Tracing & Data Quality Guard
- * Adds grouped console logs to monitor Firestore pathing and batch commits.
- * Fixes the "Missing diagnosticTag" issue by enforcing default values.
+ * * FIX: Resolved Buffer Race Condition using bufferRef. 
+ * WHY: Back-to-back calls to log logs and points were overwriting the React state buffer.
+ * A synchronous Ref now acts as the source of truth for the background persistence engine.
+ * * DATA QUALITY: Enforces defaults for diagnosticTag and adds holistic tracking fields 
+ * (isSuccess, masteryDelta) to provide a complete view of student performance.
  */
 export function NinjaProvider({ children }) {
     const [user, setUser] = useState(null);
@@ -48,7 +49,13 @@ export function NinjaProvider({ children }) {
         statsRef.current = ninjaStats;
     }, [ninjaStats]);
 
-    // Local Buffer for Question Logs and Mastery Deltas to minimize DB writes
+    /**
+     * bufferRef (Race Condition Guard)
+     * WHY: logQuestionResultLocal and updatePower are often called sequentially.
+     * React state batching causes them to overwrite each other's changes to localBuffer.
+     * This Ref provides a synchronous accumulator for logs and points.
+     */
+    const bufferRef = useRef({ logs: [], pointsGained: 0 });
     const [localBuffer, setLocalBuffer] = useState({ logs: [], pointsGained: 0 });
 
     // Handle Authentication & Initial Hydration
@@ -66,6 +73,8 @@ export function NinjaProvider({ children }) {
                     const data = JSON.parse(localSession);
                     setNinjaStats(data.stats);
                     setLocalBuffer(data.buffer);
+                    // Sync the synchronous ref with the recovered session
+                    bufferRef.current = data.buffer;
                     setUserRole(data.role || 'STUDENT'); // Restore role
                 } else {
                     // Priority 2: Fetch from Firestore only if no local scratchpad exists
@@ -113,8 +122,8 @@ export function NinjaProvider({ children }) {
      * to prevent race conditions during rapid state updates.
      */
     const syncToCloud = async (isFinal = false, overrideLogs = null) => {
-        // Use overrideLogs if provided, otherwise fallback to the buffered state
-        const logsToSync = overrideLogs || localBuffer.logs;
+        // Use overrideLogs if provided, otherwise fallback to the synchronous Ref
+        const logsToSync = overrideLogs || [...bufferRef.current.logs];
 
         console.group('🚀 [syncToCloud] Firestore Transaction Start');
         console.log('Target Logs Count:', logsToSync.length);
@@ -127,7 +136,6 @@ export function NinjaProvider({ children }) {
 
         const batch = writeBatch(db);
         const userRef = doc(db, "students", auth.currentUser.uid);
-        const logsPath = `students/${auth.currentUser.uid}/session_logs`;
         const logsRef = collection(db, "students", auth.currentUser.uid, "session_logs");
 
         console.log('📂 Path:', `students/${auth.currentUser.uid}/session_logs`);
@@ -168,9 +176,10 @@ export function NinjaProvider({ children }) {
 
             console.log('✅ Cloud Persistence Successful!');
 
-            // Reset buffer AFTER successful cloud persistence
+            // Reset synchronous Ref AND state AFTER successful cloud persistence
+            bufferRef.current = { logs: [], pointsGained: 0 };
             setLocalBuffer({ logs: [], pointsGained: 0 });
-            console.log('🗑️ Local buffer cleared');
+            console.log('🗑️ Local buffer and Ref cleared');
 
             if (isFinal) {
                 localStorage.removeItem(`ninja_session_${auth.currentUser.uid}`);
@@ -317,7 +326,6 @@ export function NinjaProvider({ children }) {
             });
             console.log('✅ Direct write successful');
 
-            console.log('✅ Transaction written to Cloud Firestore');
             // Refresh history after logging new data
             fetchSessionLogs(auth.currentUser.uid);
 
@@ -402,17 +410,15 @@ export function NinjaProvider({ children }) {
             console.error("Error persisting power points:", error);
         }
 
-        // Buffer the change locally for the next Cloud sync
-        const updatedBuffer = {
-            ...localBuffer,
-            pointsGained: localBuffer.pointsGained + gain
-        };
-        setLocalBuffer(updatedBuffer);
+        // ✅ FIX: Synchronous Buffer Update for Points
+        // We update the Ref first to ensure logQuestionResultLocal doesn't overwrite this gain
+        bufferRef.current.pointsGained += gain;
+        setLocalBuffer({ ...bufferRef.current });
 
         // Mirror to LocalStorage to protect against page refreshes
         localStorage.setItem(`ninja_session_${auth.currentUser.uid}`, JSON.stringify({
             stats: updatedStats,
-            buffer: updatedBuffer
+            buffer: bufferRef.current
         }));
     };
 
@@ -423,18 +429,17 @@ export function NinjaProvider({ children }) {
      */
     const logQuestionResultLocal = (logData, currentQuestionIndex) => {
         console.log(`📍 [Buffering] Question Index: ${currentQuestionIndex + 1} | User Answer: ${logData.studentAnswer}`);
-        const updatedLogs = [...localBuffer.logs, logData];
-        const newBuffer = { ...localBuffer, logs: updatedLogs };
 
-        // Update local buffer state
-        setLocalBuffer(newBuffer);
+        // ✅ FIX: Accumulate logs in the synchronous Ref to prevent state race condition overwrites
+        bufferRef.current.logs.push(logData);
+        setLocalBuffer({ ...bufferRef.current });
 
         // Milestone Batching: Sync at Question 5 and Question 10 to save quota
-        // WHY: We pass updatedLogs directly to syncToCloud to fix the race condition 
+        // WHY: We pass a copy of the synchronous logs directly to syncToCloud to fix the race condition 
         // caused by asynchronous React state updates.
         if (currentQuestionIndex === 4 || currentQuestionIndex === 9) {
-            console.log('📊 Sync Threshold Reached. Moving buffer to Cloud...');
-            syncToCloud(currentQuestionIndex === 9, updatedLogs);
+            console.log('📊 Sync Threshold Reached. Moving synchronous buffer to Cloud...');
+            syncToCloud(currentQuestionIndex === 9, [...bufferRef.current.logs]);
         }
     };
 
