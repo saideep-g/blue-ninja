@@ -6,6 +6,7 @@
  * UPDATED FOR V2 FORMAT:
  * - Accepts V2 JSON format (items array with item_id, template_id, etc.)
  * - Validates using new questionValidatorV2.js
+ * - Publishes to Firestore using firestoreQuestionService.js
  * - Supports 14 template types
  * - Handles both old and new formats (auto-detection)
  * 
@@ -15,6 +16,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { validateBulkUploadV2 } from '../../services/bulkUploadValidatorV2.js';
+import { publishQuestionsToFirestore } from '../../services/firestoreQuestionService.js';
 import { useIndexedDB } from '../../hooks/useIndexedDB.js';
 import FileUploadZone from './FileUploadZone.jsx';
 import ValidationReportPanel from './ValidationReportPanel.jsx';
@@ -25,7 +27,8 @@ import {
   CheckCircle,
   AlertCircle,
   FileJson,
-  Loader
+  Loader,
+  Download
 } from 'lucide-react';
 
 const UPLOAD_STEPS = {
@@ -53,7 +56,9 @@ export default function AdminQuestionsPanel() {
   const [successMessage, setSuccessMessage] = useState(null);
   const [selectedQuestionIds, setSelectedQuestionIds] = useState(new Set());
   const [validationProgress, setValidationProgress] = useState(0);
+  const [publishProgress, setPublishProgress] = useState(0);
   const [formatDetected, setFormatDetected] = useState(null); // 'V2' or 'LEGACY'
+  const [bankId, setBankId] = useState('cbse7_mathquest_gold_questions_v1');
 
   // Database hook
   const db = useIndexedDB();
@@ -271,6 +276,7 @@ export default function AdminQuestionsPanel() {
       try {
         setIsPublishing(true);
         setError(null);
+        setPublishProgress(0);
 
         // Determine which questions to publish
         const idsToPublish = selectedIds || selectedQuestionIds;
@@ -288,51 +294,76 @@ export default function AdminQuestionsPanel() {
 
         if (validQuestions.length === 0) {
           setError('No valid questions to publish');
+          setIsPublishing(false);
           return;
         }
 
-        // For now, simulate the publish
-        const publishedCount = await simulatePublishToFirestore(validQuestions);
+        setStep(UPLOAD_STEPS.PUBLISHING);
+
+        // Publish to Firestore
+        const firebaseResults = await publishQuestionsToFirestore(validQuestions, {
+          bankId,
+          userId: 'admin-user',
+          batchSize: 500,
+          onProgress: (progress) => {
+            setPublishProgress(Math.round((progress.itemsProcessed / progress.totalItems) * 100));
+          },
+          conflictResolution: 'SKIP'
+        });
+
+        // Combine validation and publish results
+        setPublishResults({
+          validationSummary: validationResults.summary,
+          firebaseSummary: firebaseResults,
+          totalItems: questionsToPublish.length,
+          validItems: validQuestions.length,
+          publishedCount: firebaseResults.totalPublished,
+          failedCount: firebaseResults.totalFailed,
+          skippedCount: firebaseResults.totalSkipped,
+          timestamp: new Date().toISOString()
+        });
 
         // Update session
         if (sessionId) {
           await db.closeSession(sessionId);
           await db.updateSession(sessionId, {
-            itemsPublished: publishedCount,
+            itemsPublished: firebaseResults.totalPublished,
+            itemsPublishFailed: firebaseResults.totalFailed,
             status: 'COMPLETED'
           });
         }
 
-        setPublishResults({
-          totalPublished: publishedCount,
-          totalRequested: validQuestions.length,
-          failedCount: 0,
-          timestamp: new Date().toISOString()
-        });
-
         setStep(UPLOAD_STEPS.COMPLETED);
         setSuccessMessage(
-          `✅ Successfully published ${publishedCount} items!`
+          `✅ Successfully published ${firebaseResults.totalPublished} items to Firestore!`
         );
       } catch (err) {
         setError(`Publishing failed: ${err.message}`);
+        setStep(UPLOAD_STEPS.REVIEW);
       } finally {
         setIsPublishing(false);
+        setPublishProgress(0);
       }
     },
-    [questions, validationResults, selectedQuestionIds, sessionId, db]
+    [questions, validationResults, selectedQuestionIds, sessionId, db, bankId]
   );
 
   /**
-   * Simulate publishing to Firestore (TODO: Replace with real implementation)
+   * Download summary report as CSV
    */
-  const simulatePublishToFirestore = async (questionsToPublish) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        console.log('Publishing', questionsToPublish.length, 'items');
-        resolve(questionsToPublish.length);
-      }, 1000);
-    });
+  const downloadSummaryReport = () => {
+    if (!publishResults) return;
+
+    const csv = generateSummaryCSV(publishResults);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `question-publish-summary-${Date.now()}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
   };
 
   /**
@@ -348,6 +379,7 @@ export default function AdminQuestionsPanel() {
     setSuccessMessage(null);
     setSelectedQuestionIds(new Set());
     setValidationProgress(0);
+    setPublishProgress(0);
     setFormatDetected(null);
   }, []);
 
@@ -367,7 +399,7 @@ export default function AdminQuestionsPanel() {
           )}
         </div>
         <p className="text-slate-600">
-          Upload, validate, review, and publish bulk questions (V2 format)
+          Upload, validate, review, and publish bulk questions to Firestore (V2 format)
         </p>
       </div>
 
@@ -498,18 +530,120 @@ export default function AdminQuestionsPanel() {
                 disabled={isPublishing || validationResults.summary.invalidItems > 0}
                 className="ml-auto px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 rounded-lg font-medium transition"
               >
-                {isPublishing ? 'Publishing...' : 'Publish Valid Items'}
+                {isPublishing ? 'Publishing...' : 'Publish to Firestore'}
               </button>
             </div>
           </div>
         )}
 
+        {step === UPLOAD_STEPS.PUBLISHING && (
+          <div className="p-8">
+            <div className="flex flex-col items-center justify-center gap-4">
+              <Loader className="w-12 h-12 text-green-600 animate-spin" />
+              <h2 className="text-xl font-semibold text-slate-900">
+                Publishing to Firestore
+              </h2>
+              <div className="w-full max-w-md">
+                <div className="bg-slate-200 h-2 rounded-full overflow-hidden">
+                  <div
+                    className="bg-green-600 h-full transition-all duration-300"
+                    style={{ width: `${publishProgress}%` }}
+                  />
+                </div>
+                <p className="text-center text-sm text-slate-600 mt-2">
+                  {publishProgress}% - Uploading to database...
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {step === UPLOAD_STEPS.COMPLETED && publishResults && (
-          <PublishSummary
-            sessionId={sessionId}
-            publishResults={publishResults}
-            onStartOver={handleReset}
-          />
+          <div className="p-8">
+            <PublishSummary
+              sessionId={sessionId}
+              publishResults={publishResults}
+              onStartOver={handleReset}
+            />
+
+            {/* Comprehensive Summary Report */}
+            <div className="mt-8 bg-slate-50 border-2 border-slate-200 rounded-xl p-6">
+              <h3 className="text-lg font-bold text-slate-900 mb-4">📊 Publish Summary Report</h3>
+
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-white rounded-lg p-4 border border-slate-200">
+                  <p className="text-sm text-slate-600">Total Attempted</p>
+                  <p className="text-2xl font-bold text-slate-900">{publishResults.totalItems}</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-slate-200">
+                  <p className="text-sm text-slate-600">Valid</p>
+                  <p className="text-2xl font-bold text-blue-600">{publishResults.validItems}</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-green-200 bg-green-50">
+                  <p className="text-sm text-slate-600">Published ✓</p>
+                  <p className="text-2xl font-bold text-green-600">{publishResults.publishedCount}</p>
+                </div>
+                <div className="bg-white rounded-lg p-4 border border-red-200 bg-red-50">
+                  <p className="text-sm text-slate-600">Failed ✗</p>
+                  <p className="text-2xl font-bold text-red-600">{publishResults.failedCount}</p>
+                </div>
+              </div>
+
+              {/* Validation Stats */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <h4 className="font-semibold text-slate-900 mb-3">Validation Result</h4>
+                  <div className="space-y-2 text-sm">
+                    <p className="flex justify-between"><span>Valid:</span> <strong>{publishResults.validationSummary.validItems}</strong></p>
+                    <p className="flex justify-between"><span>Invalid:</span> <strong>{publishResults.validationSummary.invalidItems}</strong></p>
+                    <p className="flex justify-between"><span>With Warnings:</span> <strong>{publishResults.validationSummary.withWarnings || 0}</strong></p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold text-slate-900 mb-3">Firestore Result</h4>
+                  <div className="space-y-2 text-sm">
+                    <p className="flex justify-between"><span>Published:</span> <strong className="text-green-600">{publishResults.publishedCount}</strong></p>
+                    <p className="flex justify-between"><span>Failed:</span> <strong className="text-red-600">{publishResults.failedCount}</strong></p>
+                    <p className="flex justify-between"><span>Skipped:</span> <strong className="text-amber-600">{publishResults.skippedCount || 0}</strong></p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quality Distribution */}
+              {publishResults.firebaseSummary.stats && (
+                <div className="mb-6">
+                  <h4 className="font-semibold text-slate-900 mb-3">Questions by Template</h4>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-sm">
+                    {Object.entries(publishResults.firebaseSummary.stats.byTemplate || {})
+                      .sort((a, b) => b[1] - a[1])
+                      .map(([template, count]) => (
+                        <div key={template} className="bg-white rounded p-2 border border-slate-200 text-center">
+                          <p className="text-xs text-slate-600">{template}</p>
+                          <p className="text-lg font-bold text-blue-600">{count}</p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Download Report Button */}
+              <div className="flex gap-3 pt-4 border-t border-slate-200">
+                <button
+                  onClick={downloadSummaryReport}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-lg font-medium transition"
+                >
+                  <Download className="w-4 h-4" />
+                  Download Report as CSV
+                </button>
+                <button
+                  onClick={handleReset}
+                  className="ml-auto px-4 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-lg font-medium transition"
+                >
+                  Upload More
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
 
@@ -543,11 +677,48 @@ export default function AdminQuestionsPanel() {
             <ul className="text-sm text-purple-700 space-y-1">
               <li>✓ Schema validation</li>
               <li>✓ Duplicate detection</li>
-              <li>✓ Quality metrics</li>
+              <li>✓ Firestore publishing</li>
             </ul>
           </div>
         </div>
       )}
     </div>
   );
+}
+
+/**
+ * Generate CSV summary report
+ */
+function generateSummaryCSV(publishResults) {
+  const lines = [
+    ['Question Upload Summary Report'],
+    ['Timestamp', publishResults.timestamp],
+    [],
+    ['OVERVIEW'],
+    ['Metric', 'Count'],
+    ['Total Attempted', publishResults.totalItems],
+    ['Total Valid', publishResults.validItems],
+    ['Successfully Published', publishResults.publishedCount],
+    ['Failed to Publish', publishResults.failedCount],
+    ['Skipped (Duplicates)', publishResults.skippedCount || 0],
+    [],
+    ['VALIDATION RESULTS'],
+    ['Metric', 'Count'],
+    ['Valid Items', publishResults.validationSummary.validItems],
+    ['Invalid Items', publishResults.validationSummary.invalidItems],
+    ['Items with Warnings', publishResults.validationSummary.withWarnings || 0],
+    [],
+    ['TEMPLATES PUBLISHED']
+  ];
+
+  if (publishResults.firebaseSummary?.stats?.byTemplate) {
+    lines.push(['Template', 'Count']);
+    Object.entries(publishResults.firebaseSummary.stats.byTemplate)
+      .sort((a, b) => b[1] - a[1])
+      .forEach(([template, count]) => {
+        lines.push([template, count]);
+      });
+  }
+
+  return lines.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
 }
